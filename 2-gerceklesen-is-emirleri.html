@@ -6,6 +6,11 @@
   <title>Kardemir - Gerçekleşen İş Emirleri</title>
   <link href="style.css" rel="stylesheet" />
   <style>
+    :root{
+      --border-color:#ddd;
+      --main-bg-light:#f2f2f2;
+      --text-color-dark:#333;
+    }
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -77,9 +82,62 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-    .detail-btn:hover {
-      background: #125a9c;
+    .detail-btn:hover { background: #125a9c; }
+
+    /* Özet alanı (açılır/kapanır) */
+    .summary-wrapper {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      overflow: hidden;
     }
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background:#42a5f5;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 13px;
+      border-bottom: 1px solid #ccc;
+    }
+    .toggle-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    .toggle-btn.rotated { transform: rotate(180deg); }
+    .collapsible {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all .3s ease;
+    }
+    .collapsible.open {
+      max-height: 800px;
+      opacity: 1;
+    }
+
+    /* --- Summary chips & bars --- */
+    .summary { display:flex; flex-direction:column; gap:10px; background:#fff; padding:12px; }
+    .summary .range { text-align:left; font-size:12px; color:#555; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; }
+    .chip  { display:flex; align-items:center; gap:6px; background:#f5f7fa; border:1px solid #ddd; padding:6px 10px; border-radius:999px; font-size:12px; }
+    .chip b{ font-weight:700; color:#111; }
+    .bars { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    @media (max-width:1024px){ .bars{grid-template-columns:repeat(2,minmax(0,1fr));} }
+    @media (max-width:640px){  .bars{grid-template-columns:1fr;} }
+    .bar-card  { border:1px solid #ddd; border-radius:8px; padding:10px; background:#fff; }
+    .bar-head  { display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; }
+    .bar-title { font-weight:700; color:#222; }
+    .bar-value { font-weight:700; }
+    .bar       { height:8px; background:#e9eef5; border-radius:999px; overflow:hidden; }
+    .bar > span{ display:block; height:100%; background:linear-gradient(90deg,#1976d2,#42a5f5); }
   </style>
 </head>
 <body>
@@ -101,8 +159,7 @@
       </div>
     </header>
 
-    <!-- Filtre Alanı -->
-    <!-- Filtreler (ÇKH odağında) -->
+    <!-- Filtreler -->
     <div class="filters">
       <div class="field">
         <label>İş Emri No</label>
@@ -112,7 +169,6 @@
         <label>Malzeme No</label>
         <input type="text" id="fMalzeme" placeholder="8003…">
       </div>
-   
       <div class="field">
         <label>Başlangıç</label>
         <input type="date" id="fStart">
@@ -122,6 +178,19 @@
         <input type="date" id="fEnd">
       </div>
       <button class="btn-filter" onclick="applyFilters()">Filtrele</button>
+    </div>
+
+    <!-- Özet / Trend -->
+    <div class="summary-wrapper">
+      <div class="summary-header">
+        <h3>Özet / Trend Bilgileri</h3>
+        <button id="toggleSummaryBtn" class="toggle-btn" onclick="toggleSummary()">▲</button>
+      </div>
+      <div id="summary" class="summary collapsible open">
+        <div class="range" id="summary-range"></div>
+        <div class="chips" id="summary-chips"></div>
+        <div class="bars"  id="summary-bars"></div>
+      </div>
     </div>
 
     <!-- Tablo -->
@@ -152,7 +221,7 @@
               <th>Döküm Tipi</th>
               <th>Planlanan Miktar</th>
               <th>Gerçekleşme Oranı</th>
-              <th>Detay</th>
+              <!-- <th>Detay</th> -->
             </tr>
           </thead>
           <tbody id="detail-table-body"></tbody>
@@ -162,12 +231,26 @@
   </div>
 
   <script>
+    /* --- Mock veri (KHH) --- */
     const detailOrders = [
       { tarih: "27.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "551,178", gunlukUretim: "526,664", birinciSinifMI: "520,214", birinciSinifDokum: "6,450", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", haddeBozgun: "9,558", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" },
       { tarih: "26.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "1.787,346", gunlukUretim: "1.813,997", birinciSinifMI: "1.795,482", birinciSinifDokum: "17,615", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", haddeBozgun: "14,337", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" },
-      { tarih: "25.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "1.651,941", gunlukUretim: "1.629,969", birinciSinifMI: "1.612,906", birinciSinifDokum: "17,063", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", haddeBozgun: "30,267", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" }
-    ];
+      { tarih: "25.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "1.651,941", gunlukUretim: "1.629,969", birinciSinifMI: "1.612,906", birinciSinifDokum: "17,063", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", havdeBozgun: "30,267", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" }
+    ].map(r=> ({...r, haddeBozgun: r.haddeBozgun ?? r.havdeBozgun})); // olası yazım farkını normalize ettik
 
+    /* --- Yardımcılar --- */
+    function toFloat(str){
+      if (typeof str === "number") return str;
+      if (!str) return 0;
+      return parseFloat(String(str).replace(/\./g,'').replace(',', '.')) || 0;
+    }
+    function toISODateTR(dmy){ const [d,m,y]=dmy.split('.'); return `${y}-${m}-${d}`; }
+    function formatTon(v){
+      const n = Math.round(v*100)/100;
+      return n.toLocaleString('tr-TR', {minimumFractionDigits:0, maximumFractionDigits:2}) + ' ton';
+    }
+
+    /* --- Tablo --- */
     function renderTable(data) {
       const tbody = document.getElementById("detail-table-body");
       tbody.innerHTML = "";
@@ -178,7 +261,7 @@
           <td>${order.isyeri}</td>
           <td>${order.malzeme}</td>
           <td class="tanim">${order.tanim}</td>
-          <td><a href="is-emri-detay.html?no=${order.siparis}" style="color:#1976d2;font-weight:600;text-decoration:none">${order.siparis}</a></td>
+          <td><a href="2-1-is-emri-detay.html?no=${order.siparis}" style="color:#1976d2;font-weight:600;text-decoration:none">${order.siparis}</a></td>
           <td>${order.sarjMiktar}</td>
           <td>${order.gunlukUretim}</td>
           <td>${order.birinciSinifMI}</td>
@@ -195,33 +278,135 @@
           <td>${order.dokumTipi}</td>
           <td>${order.planlanan}</td>
           <td>${order.gerceklestirme}</td>
-          <td><button class="detail-btn" onclick="window.location.href='yarı-mamul-listesi.html'">Yarı Mamul Listesi</button></td>
+         
         `;
         tbody.appendChild(row);
       });
     }
 
-    function applyFilters() {
-      const startDate = document.getElementById("startDate").value;
-      const endDate = document.getElementById("endDate").value;
-      const dokum = document.getElementById("filterDokum").value.trim();
-      const siparis = document.getElementById("filterSiparis").value.trim();
-
-      let filtered = detailOrders;
-
-      if (startDate)
-        filtered = filtered.filter(o => new Date(o.tarih.split(".").reverse().join("-")) >= new Date(startDate));
-      if (endDate)
-        filtered = filtered.filter(o => new Date(o.tarih.split(".").reverse().join("-")) <= new Date(endDate));
-      if (dokum)
-        filtered = filtered.filter(o => o.malzeme.includes(dokum));
-      if (siparis)
-        filtered = filtered.filter(o => o.siparis.includes(siparis));
-
-      renderTable(filtered);
+    /* --- KHH özet toplamları --- */
+    function computeTotalsKHH(rows){
+      const sum = (k)=> rows.reduce((a,r)=> a + toFloat(r[k]), 0);
+      return {
+        gunlukUretim: sum('gunlukUretim'),
+        s1Miktar:     sum('birinciSinifMI'),
+        s2Miktar:     sum('ikinciSinifMI'),
+        hurdaMiktar:  sum('hurdaMiktar'),
+        holdMiktar:   sum('holdMiktar'),
+        haddeBozgun:  sum('haddeBozgun'),
+        s1Dokum:      sum('birinciSinifDokum')
+      };
     }
 
-    document.addEventListener("DOMContentLoaded", () => renderTable(detailOrders));
+    /* --- Özet panelini doldur --- */
+    function renderSummaryBar(rows){
+      const wrap    = document.getElementById('summary');
+      const rangeEl = document.getElementById('summary-range');
+      const chipsEl = document.getElementById('summary-chips');
+      const barsEl  = document.getElementById('summary-bars');
+
+      if (!rows || !rows.length){ wrap.style.display='none'; return; }
+      wrap.style.display='';
+
+      const qS = document.getElementById("fStart")?.value;
+      const qE = document.getElementById("fEnd")?.value;
+
+      const dates = rows.map(r=> new Date(toISODateTR(r.tarih)));
+      const minD  = new Date(Math.min.apply(null, dates));
+      const maxD  = new Date(Math.max.apply(null, dates));
+      const fmt   = (d)=> d.toLocaleDateString('tr-TR');
+
+      const showS = qS ? new Date(qS) : minD;
+      const showE = qE ? new Date(qE) : maxD;
+      rangeEl.textContent = `${fmt(showS)} – ${fmt(showE)} aralığı için özet (KHH)`;
+
+      const t = computeTotalsKHH(rows);
+
+      chipsEl.innerHTML = '';
+      [
+        ["Günlük Üretim", t.gunlukUretim],
+        ["1. Sınıf MI",   t.s1Miktar],
+        ["2. Sınıf MI",   t.s2Miktar],
+        ["Hurda",         t.hurdaMiktar]
+      ].forEach(([label,val])=>{
+        const div = document.createElement('div');
+        div.className = 'chip';
+        div.innerHTML = `<span>${label}:</span> <b>${formatTon(val)}</b>`;
+        chipsEl.appendChild(div);
+      });
+
+      const items = [
+        { key:"gunlukUretim", title:"Günlük Üretim" },
+        { key:"s1Miktar",     title:"1. Sınıf MI" },
+        { key:"s2Miktar",     title:"2. Sınıf MI" },
+        { key:"hurdaMiktar",  title:"Hurda Miktarı" },
+        { key:"holdMiktar",   title:"Hold Miktarı" },
+        { key:"haddeBozgun",  title:"Hadde Bozgun" }
+      ];
+      const maxVal = Math.max(...items.map(i=> t[i.key]||0), 1);
+
+      barsEl.innerHTML = '';
+      items.forEach(i=>{
+        const val = t[i.key] || 0;
+        const pct = Math.max(3, Math.min(100, Math.round((val/maxVal)*100)));
+        const card = document.createElement('div');
+        card.className = 'bar-card';
+        card.innerHTML = `
+          <div class="bar-head">
+            <div class="bar-title">${i.title}</div>
+            <div class="bar-value">${formatTon(val)}</div>
+          </div>
+          <div class="bar"><span style="width:${pct}%"></span></div>
+        `;
+        barsEl.appendChild(card);
+      });
+    }
+
+    /* --- Filtreler --- */
+    function applyFilters() {
+      const startDate = document.getElementById("fStart").value;    // yyyy-mm-dd
+      const endDate   = document.getElementById("fEnd").value;      // yyyy-mm-dd
+      const malzemeQ  = document.getElementById("fMalzeme").value.trim();
+      const siparisQ  = document.getElementById("fSiparis").value.trim();
+
+      let out = detailOrders.slice();
+
+      if (startDate) {
+        const s = new Date(startDate);
+        out = out.filter(o => new Date(toISODateTR(o.tarih)) >= s);
+      }
+      if (endDate) {
+        const e = new Date(endDate);
+        out = out.filter(o => new Date(toISODateTR(o.tarih)) <= e);
+      }
+      if (malzemeQ) {
+        out = out.filter(o =>
+          (o.malzeme && o.malzeme.includes(malzemeQ)) ||
+          (o.tanim && o.tanim.toLowerCase().includes(malzemeQ.toLowerCase()))
+        );
+      }
+      if (siparisQ) {
+        out = out.filter(o => o.siparis && o.siparis.includes(siparisQ));
+      }
+
+      renderTable(out);
+      renderSummaryBar(out);
+    }
+
+    /* --- Özet aç/kapa --- */
+    function toggleSummary() {
+      const summary = document.getElementById("summary");
+      const btn = document.getElementById("toggleSummaryBtn");
+      const isOpen = summary.classList.toggle("open");
+      btn.textContent = isOpen ? "▲" : "▼";
+      btn.classList.toggle("rotated", !isOpen);
+    }
+
+    /* --- Init --- */
+    document.addEventListener("DOMContentLoaded", () => {
+      renderTable(detailOrders);
+      renderSummaryBar(detailOrders);
+    });
   </script>
 </body>
 </html>

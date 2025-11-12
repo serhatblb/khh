@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Haddehaneler Tüketim Takip Raporu</title>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      background: #f5f6f7;
+      color: #2c3e50;
+    }
+    .content-wrapper { margin-left: 250px; padding: 20px; }
+ 
+    /* Kart genel */
+    .card {
+      background: #fff;
+      border: 1px solid #e6e9ef;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(16,24,40,.06), 0 1px 2px rgba(16,24,40,.03);
+    }
+    .report-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+ 
+    /* Filtre alanı */
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;
+    }
+    .field { display: flex; flex-direction: column; gap: 6px; min-width: 160px; }
+    .field label { font-size: 12px; font-weight: 600; color: #6b7a8c; }
+    .field select, .field input {
+      height: 36px; padding: 6px 10px;
+      border: 1px solid #d0d7e2; border-radius: 8px;
+    }
+    .btn {
+      border: none; border-radius: 8px; cursor: pointer;
+      padding: 8px 14px; font-size: 14px; font-weight: 600;
+    }
+    .btn-blue { background: #1976d2; color: #fff; }
+    .btn-red { background: #dc3545; color: #fff; }
+    .btn-ghost { background: #fff; border: 1px solid #d0d7e2; color: #2c3e50; }
+    .btn-pill { border-radius: 999px; padding: 6px 12px; font-size: 12px; }
+ 
+    /* Tablo */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td {
+      padding: 10px 8px; text-align: center;
+      border-bottom: 1px solid #e6e9ef;
+      white-space: nowrap;
+    }
+    thead th {
+      background: #f9fafb;
+      font-size: 12px; font-weight: 700; color: #374151;
+      text-transform: uppercase;
+    }
+    tbody tr:nth-child(even) { background: #f9fbff; }
+    tbody tr:hover { background: #eef5ff; }
+ 
+    /* Tag */
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 8px; border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+    }
+    .tag-blue { background: #e3f2fd; color: #1976d2; }
+    .tag-red { background: #fff2f1; color: #b42318; }
+    .tag-green { background: #e9f7ee; color: #2e7d32; }
+ 
+    /* Detay görünümü */
+    #detailView { display: none; }
+    .detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+      gap: 12px; margin-bottom: 16px;
+    }
+    .detail-item {
+      background: #fafbfc; border: 1px solid #e6e9ef;
+      border-radius: 8px; padding: 10px;
+      text-align: left;
+    }
+    .detail-item .key { font-size: 12px; font-weight: 700; color: #6b7a8c; }
+    .detail-item .val { font-size: 14px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch('sidebar.html')
+        .then(r => r.text())
+        .then(html => document.getElementById('sidebar-container').innerHTML = html);
+    </script>
+  </aside>
+ 
+  <div class="content-wrapper">
+    <div class="card">
+      <h1 class="report-title">Haddehaneler Tüketim Takip Raporu</h1>
+      <div class="filters">
+        <div class="field">
+          <label>İş Yeri</label>
+          <select><option>KHH</option><option>RPH</option></select>
+        </div>
+        <div class="field">
+          <label>Had-Sipariş No</label>
+          <select><option>5XXXX66</option><option>5XXXX27</option></select>
+        </div>
+        <div class="field">
+          <label>Başlangıç</label>
+          <input type="date" />
+        </div>
+        <div class="field">
+          <label>Bitiş</label>
+          <input type="date" />
+        </div>
+        <button class="btn btn-blue">Listele</button>
+      </div>
+    </div>
+ 
+    <!-- Ana tablo -->
+    <div id="mainTable" class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Döküm No</th>
+              <th>Malzeme No</th>
+              <th>Malzeme Tanımı</th>
+              <th>Kalite</th>
+              <th>Stok Yeri</th>
+              <th>Gerçekleşen Had. Sipariş No</th>
+              <th>Planlanan Sipariş No</th>
+              <th>Tonaj</th>
+              <th>Adet</th>
+              <th>Tüketim Başlangıç Tarihi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="btn btn-pill btn-ghost" onclick="showDetail('25100213')">Detay</button></td>
+              <td><span class="tag tag-blue">25100213</span></td>
+              <td>80000025</td>
+              <td>Nervürlü İnşaat Demiri</td>
+              <td>B420C_00</td>
+              <td><span class="tag">KHH</span></td>
+              <td><span class="tag tag-blue">5XXXX66</span></td>
+              <td><span class="tag tag-red">5XXXX27</span></td>
+              <td>60</td>
+              <td>24</td>
+              <td>23.09.2025</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+ 
+    <!-- Detay görünümü -->
+    <div id="detailView" class="card">
+      <div class="detail-header">
+        <button class="btn btn-ghost" onclick="backToMain()">← Geri Dön</button>
+        <div class="report-title">Döküm Detayı: <span class="tag tag-blue">25100213</span></div>
+      </div>
+ 
+      <div class="detail-grid">
+        <div class="detail-item"><span class="key">Döküm No</span><span class="val">25100213</span></div>
+        <div class="detail-item"><span class="key">Kütük Adedi</span><span class="val">24</span></div>
+        <div class="detail-item"><span class="key">Tonaj</span><span class="val">60 ton</span></div>
+        <div class="detail-item"><span class="key">Malzeme No</span><span class="val">80000025</span></div>
+        <div class="detail-item"><span class="key">Kalite</span><span class="val">B420C_00</span></div>
+        <div class="detail-item"><span class="key">Stok Yeri</span><span class="val">KHH</span></div>
+      </div>
+ 
+      <h3 class="report-title">Kütük Hareketleri</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Kütük Id</th>
+              <th>Tonaj</th>
+              <th>Fırın Giriş Saati</th>
+              <th>Fırın Çıkış Saati</th>
+              <th>Fiili Üretim Süresi</th>
+              <th>Hadde Çalışma Hızı</th>
+              <th>Hadde Bozuğu Yeri</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>25100213_1</td><td>2.5</td><td>08:10</td><td>08:30</td><td>20 dk</td><td>—</td><td>—</td></tr>
+            <tr><td>25100213_2</td><td>2.5</td><td>08:31</td><td>08:51</td><td>20 dk</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+ 
+  <script>
+    function showDetail(docNo) {
+      document.getElementById("mainTable").style.display = "none";
+      document.getElementById("detailView").style.display = "block";
+    }
+    function backToMain() {
+      document.getElementById("detailView").style.display = "none";
+      document.getElementById("mainTable").style.display = "block";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kardemir - Proses Parametreleri Takip Raporu</title>
+
+  <!-- Ortak stil -->
+  <link href="style.css" rel="stylesheet" />
+
+  <!-- Sayfaya özel ufak dokunuşlar -->
+  <style>
+    .content-wrapper{ margin-left:250px; padding:20px; min-height:100vh; }
+    @media(max-width:768px){ .content-wrapper{ margin-left:0; padding:12px; } }
+
+    .table-container{ overflow-x:auto; margin-top:14px; }
+
+    /* Başlıklar sığsın (2 satır) */
+    .data-table{ width:100%; border-collapse:collapse; table-layout:auto; }
+    .data-table thead th{
+      background: var(--main-bg-light, #f2f2f2);
+      color: var(--text-color-dark, #333);
+      font-weight:700;
+      text-transform:uppercase;
+      border-bottom:1px solid var(--border-color, #ccc);
+      padding:8px 6px;
+      font-size:11px;
+      line-height:1.2;
+      white-space:normal;
+      min-width:100px;
+      text-align:center;
+    }
+    .data-table td{
+      border-bottom:1px solid var(--border-color, #e3e3e3);
+      padding:8px 6px;
+      font-size:12px;
+      text-align:center;
+      min-width:100px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .data-table tbody tr:hover{ background:#f8f8f8; }
+
+    .filter-section{ margin-bottom:12px; }
+    .action-buttons{ display:flex; gap:8px; flex-wrap:wrap; }
+    .action-buttons input[type="date"],
+    .action-buttons input[type="text"]{
+      border:1px solid var(--border-color,#ccc);
+      border-radius:4px; padding:8px 10px; font-size:13px; min-width:160px;
+      background:#fff;
+    }
+    .action-buttons button{
+      background: var(--kardemir-blue,#1976d2); color:#fff; border:0;
+      padding:8px 14px; border-radius:4px; font-size:13px; cursor:pointer;
+    }
+    .action-buttons button.secondary{ background:#6c757d; }
+    .action-buttons button.warning{ background:#f0ad4e; color:#000; }
+
+    /* Pagination (göstermelik/çalışan) */
+    .pagination{
+      display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+      justify-content:flex-end; margin-top:12px;
+    }
+    .pagination .info{
+      margin-right:auto; font-size:12px; color:#555;
+    }
+    .pagination button{
+      border:1px solid var(--border-color,#ccc);
+      background:#fff; padding:6px 10px; border-radius:6px;
+      font-size:12px; cursor:pointer;
+    }
+    .pagination button[disabled]{ opacity:.5; cursor:not-allowed; }
+    .pagination .page-btn.active{
+      background:var(--kardemir-blue,#1976d2); color:#fff; border-color:transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">  
+    <div id="sidebar-container"></div>
+    <script>
+      fetch('sidebar.html').then(r=>r.text()).then(h=>{document.getElementById('sidebar-container').innerHTML=h;});
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <header class="header">
+     <div class="breadcrumbs">
+       <a href="izleme-ekranı.html">Ana Sayfa</a> <span>&gt;</span>
+       <span>Kontinü Haddehane İzleme Ekranı</span>
+     </div>
+    </header>
+
+    <h1 class="report-title">Proses Parametreleri Takip Raporu</h1>
+
+    <!-- Filtre Bölümü -->
+    <div class="filter-section">
+      <div class="action-buttons" style="margin-left:0">
+        <input type="date" id="startDate" title="Başlangıç Tarihi" />
+        <input type="date" id="endDate" title="Bitiş Tarihi" />
+        <input type="text" id="siparisFilter" placeholder="İş Emri No" />
+        <button onclick="applyFilter()">Filtrele</button>
+        <button class="secondary" onclick="resetFilter()">Temizle</button>
+        <button class="warning" onclick="exportExcel()">Excel'e Aktar</button>
+      </div>
+    </div>
+
+    <!-- Tablo -->
+    <div class="table-container">
+      <table class="data-table" id="kutuk-rapor">
+        <thead>
+          <tr>
+            <th>Kütük ID</th>
+            <th>İş Emri No</th>
+            <th>Döküm Numarası</th>
+            <th>Kütük Ebatı</th>
+            <th>Kalite</th>
+            <th>Üretim Ebatı</th>
+            <th>Üretim Tarihi</th>
+            <th>Fırın Şarj Zamanı</th>
+            <th>Fırın Deşarj Zamanı</th>
+            <th>Fırın Basıncı(Ortalama)</th>
+            <th>Fırın Deşarj Sıcaklığı</th>
+            <th>Hadde Çalışma Hızı (m/sn)</th>
+            <th>QTB Basıncı(Ortalama)</th>
+          </tr>
+        </thead>
+        <tbody id="rapor-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Pagination şeridi -->
+    <div id="pagination" class="pagination">
+      <span class="info" id="pageInfo"></span>
+      <button id="firstBtn" title="İlk Sayfa">&laquo;</button>
+      <button id="prevBtn" title="Önceki Sayfa">&lsaquo;</button>
+      <span id="pageNumbers"></span>
+      <button id="nextBtn" title="Sonraki Sayfa">&rsaquo;</button>
+      <button id="lastBtn" title="Son Sayfa">&raquo;</button>
+    </div>
+  </div>
+
+  <!-- XLSX (Excel) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const bodyEl = document.getElementById('rapor-body');
+    const pageInfoEl = document.getElementById('pageInfo');
+    const pageNumbersEl = document.getElementById('pageNumbers');
+    const firstBtn = document.getElementById('firstBtn');
+    const prevBtn  = document.getElementById('prevBtn');
+    const nextBtn  = document.getElementById('nextBtn');
+    const lastBtn  = document.getElementById('lastBtn');
+
+    let allRows = [];
+    let currentViewRows = [];    // filtre sonrası görüntülenecek liste
+    const pageSize = 10;
+    let currentPage = 1;
+
+    // --- Yardımcılar ---
+    const pad = n => String(n).padStart(2,'0');
+    function ddmmyyyy(d){ return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`; }
+    function yyyymmdd_to_dmy(s){ if(!s) return ''; const [Y,M,D]=s.split('-'); return `${D}.${M}.${Y}`; }
+    function parse_dmy(s){ const [d,m,y] = s.split('.').map(Number); return new Date(y, m-1, d); }
+
+    // --- Rastgele (örnek) veri üretimi ---
+    const kaliteList = ['B420C_00','B420C_01','B500C_00'];
+    const ebatList = ['Ø12','Ø14','Ø16','Ø18','Ø20'];
+
+    for(let i=0;i<40;i++){
+      const base = new Date(2025, 7, 20);
+      const d = new Date(base.getTime() + 86400000 * Math.floor(Math.random()*20));
+      const uretimTarih = ddmmyyyy(d);
+      const firinSarj   = `${uretimTarih} ${pad(6+Math.floor(Math.random()*6))}:${pad(Math.floor(Math.random()*60))}`;
+      const firinDesarj = `${uretimTarih} ${pad(12+Math.floor(Math.random()*6))}:${pad(Math.floor(Math.random()*60))}`;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${1700000+i}</td>
+        <td>5000000${100+i}</td>
+        <td>${2524000+i}</td>
+        <td>${ebatList[Math.floor(Math.random()*ebatList.length)]}</td>
+        <td>${kaliteList[Math.floor(Math.random()*kaliteList.length)]}</td>
+        <td>${ebatList[Math.floor(Math.random()*ebatList.length)]}</td>
+        <td>${uretimTarih}</td>
+        <td>${firinSarj}</td>
+        <td>${firinDesarj}</td>
+        <td>${(1+Math.random()).toFixed(1)} bar</td>
+        <td>${(950+Math.floor(Math.random()*150))} °C</td>
+        <td>${(3+Math.random()*3).toFixed(2)}</td>
+        <td>${(4+Math.random()*2).toFixed(1)} bar</td>
+      `;
+      allRows.push(tr);
+    }
+    currentViewRows = allRows.slice(); // başlangıçta hepsi
+
+    // --- Tablo & Sayfalama render ---
+    function renderTablePage(){
+      const total = currentViewRows.length;
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      // currentPage'i sınırla
+      if(currentPage > totalPages) currentPage = totalPages;
+      if(currentPage < 1) currentPage = 1;
+
+      const startIdx = (currentPage - 1) * pageSize;
+      const pageRows = currentViewRows.slice(startIdx, startIdx + pageSize);
+
+      // tabloya bas
+      bodyEl.innerHTML = '';
+      pageRows.forEach(tr => bodyEl.appendChild(tr));
+
+      // pagination UI
+      updatePagination(total, totalPages);
+    }
+
+    function updatePagination(total, totalPages){
+      const start = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+      const end   = Math.min(currentPage * pageSize, total);
+      pageInfoEl.textContent = `${total} kayıttan ${start}-${end} arası gösteriliyor`;
+
+      // Önce düğmeleri aktif/pasif ayarla
+      firstBtn.disabled = currentPage === 1;
+      prevBtn.disabled  = currentPage === 1;
+      nextBtn.disabled  = currentPage === totalPages;
+      lastBtn.disabled  = currentPage === totalPages;
+
+      // Basit sayfa numaraları (maks 5 buton)
+      const numbers = [];
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage   = Math.min(totalPages, startPage + 4);
+      startPage     = Math.max(1, endPage - 4);
+
+      for(let p = startPage; p <= endPage; p++){
+        numbers.push(p);
+      }
+
+      pageNumbersEl.innerHTML = '';
+      numbers.forEach(p=>{
+        const b = document.createElement('button');
+        b.className = 'page-btn' + (p === currentPage ? ' active' : '');
+        b.textContent = p;
+        b.dataset.page = p;
+        b.addEventListener('click', ()=>{
+          currentPage = p;
+          renderTablePage();
+        });
+        pageNumbersEl.appendChild(b);
+      });
+    }
+
+    // Sayfa kontrol butonları
+    firstBtn.addEventListener('click', ()=>{ currentPage = 1; renderTablePage(); });
+    prevBtn .addEventListener('click', ()=>{ currentPage = Math.max(1, currentPage-1); renderTablePage(); });
+    nextBtn .addEventListener('click', ()=>{ currentPage = currentPage+1; renderTablePage(); });
+    lastBtn .addEventListener('click', ()=>{
+      const totalPages = Math.max(1, Math.ceil(currentViewRows.length / pageSize));
+      currentPage = totalPages; renderTablePage();
+    });
+
+    // Sayfa açılınca ilk 10 satır (sayfa 1)
+    renderTablePage();
+
+    // --- Filtreleme ---
+    function applyFilter(){
+      const sDate = document.getElementById('startDate').value;
+      const eDate = document.getElementById('endDate').value;
+      const sipNo = document.getElementById('siparisFilter').value.trim();
+
+      const start = sDate ? parse_dmy(yyyymmdd_to_dmy(sDate)) : null;
+      const end   = eDate ? parse_dmy(yyyymmdd_to_dmy(eDate)) : null;
+
+      currentViewRows = allRows.filter(tr=>{
+        const uretim = parse_dmy(tr.children[6].textContent.trim());
+        const siparis= tr.children[1].textContent.trim();
+
+        let ok=true;
+        if(start) ok = ok && (uretim >= start);
+        if(end)   ok = ok && (uretim <= end);
+        if(sipNo) ok = ok && siparis.includes(sipNo);
+        return ok;
+      });
+
+      currentPage = 1;         // filtre sonrası başa dön
+      renderTablePage();       // sadece 10 satır gösterilir
+    }
+
+    // --- Reset ---
+    function resetFilter(){
+      document.getElementById('startDate').value='';
+      document.getElementById('endDate').value='';
+      document.getElementById('siparisFilter').value='';
+      currentViewRows = allRows.slice();
+      currentPage = 1;
+      renderTablePage();       // yine 10 satır
+    }
+
+    // --- Excel'e Aktar ---
+    function exportExcel(){
+      // Not: Bu yöntem sadece ekranda görünen (sayfadaki) satırları dışa aktarır.
+      // Tüm veriyi istiyorsan currentViewRows'u geçici tabloya basıp onu export edebiliriz.
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(document.getElementById('kutuk-rapor'));
+      XLSX.utils.book_append_sheet(wb, ws, 'Kütük Raporu');
+      XLSX.writeFile(wb, 'kutuk-operasyon-raporu.xlsx');
+    }
+  </script>
+</body>
+</html>

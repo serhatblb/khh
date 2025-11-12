@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Paket İzleme Ekranı</title>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    :root{
+      --k-blue:#1976d2;
+      --k-green:#2e7d32;
+      --k-red:#dc3545;
+      --k-soft:#f5f6f7;
+      --k-border:#e3e6ea;
+      --row-alt:#f9fbfd;
+      --text:#2c3e50;
+    }
+
+    body{margin:0;background:var(--k-soft);font-family:Arial,Helvetica,sans-serif;color:var(--text)}
+    .content-wrapper{margin-left:250px;padding:20px}
+
+    /* Breadcrumbs */
+    .breadcrumbs{color:#5b6b7b;font-size:14px;margin-bottom:14px}
+    .breadcrumbs a{color:var(--k-blue);text-decoration:none;font-weight:600}
+    .breadcrumbs span{margin:0 6px}
+
+    /* TOP BAR (İş Emri sayfası stilinde) */
+    .topbar{
+      background:#fff;border:1px solid var(--k-border);border-radius:12px;
+      padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+      box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:20px
+    }
+    .title{font-size:18px;font-weight:700;color:var(--text);margin-right:auto;display:flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--k-blue)}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .iinput{
+      min-width:240px;padding:8px 10px;border:1px solid var(--k-border);
+      border-radius:8px;background:#fff;font-size:14px
+    }
+    .btn{border:0;border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;transition:.2s}
+    .btn:hover{opacity:.92}
+    .btn-green{background:#1ba94c;color:#fff}
+    .pill{
+      border:1px solid var(--k-border);background:#fff;border-radius:10px;padding:8px 12px;
+      display:flex;align-items:center;gap:8px;font-size:13px;color:#394150
+    }
+
+    /* TABLE CARD */
+    .table-card{
+      background:#fff;border:1px solid var(--k-border);border-radius:12px;
+      padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)
+    }
+    .table-card h3{margin:0 0 12px;font-size:16px;color:var(--k-blue)}
+    .table-wrap{overflow:auto;border-radius:8px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid var(--k-border);padding:12px 10px;text-align:center;white-space:nowrap}
+    thead th{background:#f8f9fb;text-transform:uppercase;font-size:12px;letter-spacing:.02em;font-weight:700}
+    tbody tr:nth-child(even){background:var(--row-alt)}
+    tbody tr:hover{background:#eef5ff}
+    .ok-chip{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:22px;height:22px;border-radius:50%;background:#e9f7ee;color:var(--k-green);border:1px solid #c8ead3;font-weight:700
+    }
+    .link{color:var(--k-blue);text-decoration:none;font-weight:600}
+    .light{color:#6b7a8c;font-size:12px}
+    .danger{color:var(--k-red);font-weight:700}
+    .muted{color:#6c7580}
+    .pkg-select{padding:6px 8px;border:1px solid var(--k-border);border-radius:6px;background:#fff}
+    .x-badge{display:inline-block;border:1px solid var(--k-red);color:var(--k-red);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700}
+
+    /* Sticky footer actions */
+    .footer-actions{
+      position:sticky;bottom:0;left:0;right:0;z-index:5;
+      margin-left:-10px;margin-right:-10px;
+      background:#fff;border-top:1px solid var(--k-border);
+      box-shadow:0 -2px 10px rgba(0,0,0,.04);
+      padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap
+    }
+    .footer-actions .btn{display:inline-flex;gap:8px;align-items:center}
+    .btn-dark{background:#2f3947;color:#fff}
+    .btn-outline{border:1px solid var(--k-border);background:#fff;color:#394150}
+    .btn-outline:hover{background:#f8f9fb}
+
+    /* min widths */
+    .w120{min-width:120px}.w140{min-width:140px}.w100{min-width:100px}.w80{min-width:80px}
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(r=>r.text())
+        .then(html=>{document.getElementById("sidebar-container").innerHTML=html});
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <!-- Breadcrumbs -->
+    <header class="header">
+      <div class="breadcrumbs">
+        <a href="izleme-ekrani.html">Ana Sayfa</a> <span>&gt;</span>
+        <span>Paket İzleme Ekranı</span>
+      </div>
+    </header>
+
+    <!-- Üst bar (İş Emri stilinde) -->
+    <div class="topbar">
+      <div class="title"><span class="dot"></span> Paket İzleme Ekranı</div>
+      <div class="toolbar">
+        <input class="iinput" id="searchCast" placeholder="Döküm numarası giriniz" />
+        <button class="btn btn-green" onclick="filterByCast()">Dökümü Getir</button>
+        <div class="pill">📅 <span id="shiftText">23 Eyl 2025 - 02-ÖğleVardiya</span></div>
+      </div>
+    </div>
+
+    <!-- Tablo kartı -->
+    <div class="table-card">
+      <h3>Paketler</h3>
+      <div class="table-wrap">
+        <table id="pkgTable">
+          <thead>
+            <tr>
+              <th class="w80">Etiket<br/>Durumu</th>
+              <th class="w120">Döküm No</th>
+              <th class="w140">Sipariş No</th>
+              <th class="w120">Paket Tipi</th>
+              <th class="w140">Kayıt Tarihi<br/>(Gün/Ay/Yıl)</th>
+              <th class="w120">Paket Ağırlığı<br/>(Kg)</th>
+              <th class="w120">Teyit Saati</th>
+              <th class="w140">Paket ID</th>
+              <th class="w80">Çapı<br/>(mm)</th>
+              <th class="w120">Ürün Kalitesi</th>
+              <th class="w120">Boyu<br/>(mm)</th>
+              <th class="w100">Paket Silme</th>
+              <th class="w100">Sıra No</th>
+              <th class="w140">Ekleyen Kullanıcı</th>
+            </tr>
+          </thead>
+          <tbody id="pkgBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sticky footer actions -->
+    <div class="footer-actions">
+      <button class="btn btn-outline">🗑️ Paketi Sil</button>
+      <button class="btn btn-outline">↩️ Silmeyi Geri Al</button>
+      <button class="btn btn-outline">➕ Paket Ekle</button>
+      <button class="btn btn-dark">⚙️ Değiştir</button>
+      <button class="btn btn-outline">🏷️ Etiket Bas</button>
+      <button class="btn btn-outline">📊 Excele Aktar</button>
+    </div>
+  </div>
+
+  <script>
+    // Örnek veri
+    const data = [
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:1720, confirm:'08:10:17', pid:'25N1727608', dia:16, grade:'B420C_01', length:12000, del:'X', seq:'1067591', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:1718, confirm:'07:45:08', pid:'25N1727607', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067590', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:1814, confirm:'07:43:56', pid:'25N1727606', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067589', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2490, confirm:'07:42:58', pid:'25N1727605', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067588', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2646, confirm:'07:40:26', pid:'25N1727604', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067587', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Muhtelif', date:'23/09/2025', weight:2740, confirm:'07:27:21', pid:'25N1727603', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067586', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2442, confirm:'07:23:14', pid:'25N1727602', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067585', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2436, confirm:'07:20:13', pid:'25N1727601', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067584', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2470, confirm:'07:17:51', pid:'25N1727600', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067583', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2432, confirm:'07:11:37', pid:'25N1727599', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067582', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Muhtelif', date:'23/09/2025', weight:2462, confirm:'07:09:58', pid:'25N1727598', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067581', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2372, confirm:'07:07:56', pid:'25N1727597', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067580', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2408, confirm:'07:05:22', pid:'25N1727596', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067579', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2408, confirm:'07:04:09', pid:'25N1727595', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067578', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2428, confirm:'07:01:19', pid:'25N1727594', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067577', user:'PCO_USER'},
+      {cast:'2525282', order:'500000001593', type:'Standart', date:'23/09/2025', weight:2466, confirm:'06:59:59', pid:'25N1727593', dia:16, grade:'B420C_01', length:12000, del:'', seq:'1067576', user:'PCO_USER'}
+    ];
+
+    const pkgBody = document.getElementById('pkgBody');
+
+    function render(rows){
+      pkgBody.innerHTML = rows.map((r,i)=>{
+        const weightClass = r.weight>=1700 && r.weight<=2300 ? '' : 'danger';
+        const etiketCell = i === 0
+          ? '<span class="light">—</span>'
+          : '<span class="ok-chip" title="Etiket Durumu">✓</span>';
+        return `
+        <tr>
+          <td>${etiketCell}</td>
+          <td><a class="link" href="#">${r.cast}</a></td>
+          <td class="muted">${r.order}</td>
+          <td>
+            <select class="pkg-select">
+              <option ${r.type==='Standart'?'selected':''}>Standart</option>
+              <option ${r.type==='Muhtelif'?'selected':''}>Muhtelif</option>
+            </select>
+          </td>
+          <td class="muted">${r.date}</td>
+          <td class="${weightClass}">${r.weight.toLocaleString('tr-TR')}</td>
+          <td class="muted">${r.confirm}</td>
+          <td>${r.pid}</td>
+          <td>${r.dia}</td>
+          <td>${r.grade}</td>
+          <td>${r.length}</td>
+          <td>${r.del ? `<span class="x-badge">${r.del}</span>` : '<span class="light">—</span>'}</td>
+          <td>${r.seq}</td>
+          <td>${r.user}</td>
+        </tr>`;
+      }).join('');
+    }
+    render(data);
+
+    // Filtreleme
+    function filterByCast(){
+      const q = document.getElementById('searchCast').value.trim();
+      if(!q){render(data);return;}
+      render(data.filter(r=>r.cast.includes(q)));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kardemir - Kontinü Haddehanesi</title>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .field label {
+      font-weight: bold;
+      color: #444;
+    }
+    .field input, .field select {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .btn {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn:hover { background: #125a9c; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 13px;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .data-table th, .data-table td {
+      padding: 8px 10px;
+      text-align: center;
+      border-bottom: 1px solid #e3e6ea;
+    }
+    .data-table thead th {
+      background: #f8f9fb;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #2c3e50;
+    }
+    .data-table tbody tr:nth-child(even) { background: #f8fbff; }
+    .data-table tbody tr:hover { background: #eef5ff; }
+
+    .bottom-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .btn-secondary {
+      background: #666;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { background: #444; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(res => res.text())
+        .then(data => document.getElementById("sidebar-container").innerHTML = data);
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <!-- Breadcrumb -->
+    <header class="header">
+      <div class="breadcrumbs">
+        <a href="siparisler_ilk.html">Sipariş Sayfası</a> <span>&gt;</span>
+        <span>Kontinü Haddehanesi</span>
+      </div>
+    </header>
+
+    <h2 class="report-title">Kontinü Haddehanesi - Yarı Mamul Listesi</h2>
+
+    <!-- Filtre Alanı -->
+    <div class="filters">
+      <div class="field">
+        <label>Başlangıç Tarihi</label>
+        <input type="date" id="startDate">
+      </div>
+      <div class="field">
+        <label>Bitiş Tarihi</label>
+        <input type="date" id="endDate">
+      </div>
+      <div class="field">
+        <label>Ürün Mal Grubu</label>
+        <select id="urunGrubu">
+          <option value="demir">Nervürlü İnşaat Demiri</option>
+          <option value="celik">İnşaat Çeliği</option>
+          
+        </select>
+      </div>
+      <button class="btn" onclick="applyFilters()">Liste Getir</button>
+      <button class="btn">Excel Rapor</button>
+    </div>
+
+    <!-- Tablo -->
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Sipariş No</th>
+            <th>Döküm No</th>
+            <th>Kütük ID</th>
+            <th>Kalite</th>
+            <th>Ürün Mal Grubu</th>
+            <th>Malzeme Kodu</th>
+            <th>Yarı Mamul Kodu</th>
+            <th>Boy</th>
+            <th>Kesit</th>
+            <th>Fırında Bekleme Süresi</th>
+            <th>Toplam İşlem Süresi</th>
+            <th>SDM Çıkış Ağırlık</th>
+            <th>Fırın Giriş Ağırlık</th>
+            <th>Detay</th>
+          </tr>
+        </thead>
+       <tbody>
+  <tr>
+    <td><a href="#">500003661</a></td>
+    <td>300003703</td>
+    <td>25123231301</td>
+    <td>B420C_00</td>
+    <td>Nervürlü İnşaat Demiri</td>
+    <td>80000025</td>
+    <td>YM-101</td>
+    <td>6000</td>
+    <td>90x90</td>
+    <td>12 dk</td>
+    <td>2 Saat 30 dk</td>
+    <td>1800 kg</td>
+    <td>1750 kg</td>
+    <td><button class="btn" onclick="window.location.href='1-3-kutuk-proses-rapor.html'">Rapor</button></td>
+  </tr>
+  <tr>
+    <td><a href="#">500003662</a></td>
+    <td>300003704</td>
+    <td>25123231302</td>
+    <td>B420C_00</td>
+    <td>Nervürlü İnşaat Demiri</td>
+    <td>80000026</td>
+    <td>YM-102</td>
+    <td>12000</td>
+    <td>100x100</td>
+    <td>10 dk</td>
+    <td>4 Saat 5 dk</td>
+    <td>1500 kg</td>
+    <td>1450 kg</td>
+    <td><button class="btn" onclick="window.location.href='1-3-kutuk-proses-rapor.html'">Rapor</button></td>
+  </tr>
+</tbody>
+
+      </table>
+    </div>
+
+    <!-- Alt Butonlar -->
+    <div class="bottom-buttons">
+      <button class="btn-secondary" onclick="window.location.href='1-1-khh-izleme-ekrani.html'">← İş Emirlerine Geri Dön</button>
+     
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kardemir - İş Emri Bilgileri</title>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      table-layout: fixed;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 8px 10px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color, #ccc);
+      font-size: 12px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+    .data-table thead th {
+      background-color: var(--main-bg-light, #f2f2f2);
+      font-weight: 700;
+      color: var(--text-color-dark, #333);
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    /* Filtre alanı */
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .field label {
+      font-weight: bold;
+      color: #444;
+    }
+    .field input {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .btn-filter {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .detail-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.detail-btn:hover {
+  background: #125a9c;
+}
+
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(res => res.text())
+        .then(data => document.getElementById("sidebar-container").innerHTML = data);
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <!-- Breadcrumb -->
+    <header class="header">
+      <div class="breadcrumbs">
+        <a href="#">Ana Sayfa</a> <span>&gt;</span>
+        <span>İş Emri Sayfası</span>
+      </div>
+    </header>
+
+    <!-- Filtre Alanı -->
+    <div class="filters">
+      <div class="field">
+        <label>Başlangıç Tarihi</label>
+        <input type="date" id="startDate">
+      </div>
+      <div class="field">
+        <label>Bitiş Tarihi</label>
+        <input type="date" id="endDate">
+      </div>
+      <div class="field">
+        <label>Döküm Numarası</label>
+        <input type="text" id="filterDokum" placeholder="Döküm No giriniz">
+      </div>
+      <div class="field">
+        <label>Sipariş Numarası</label>
+        <input type="text" id="filterSiparis" placeholder="Sipariş No giriniz">
+      </div>
+      <button class="btn-filter" onclick="applyFilters()">Filtrele</button>
+    </div>
+
+    <!-- Rapor Alanı -->
+   <!-- Tablo -->
+<div class="main-report-area">
+  <h2 class="report-title">Gerçekleşen İş Emirleri</h2>
+  <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Kayıt Tarihi</th>
+          <th>İşyeri</th>
+          <th>Malzeme</th>
+          <th>Tanım</th>
+          <th>İş Emri</th>
+          <th>Şarj Miktarı</th>
+          <th>Günlük Üretim</th>
+          <th>1. Sınıf MI</th>
+          <th>1. Sınıf Döküm</th>
+          <th>1. Sınıfa Miktarı</th>
+          <th>2. Sınıf MI</th>
+          <th>2. Sınıf Miktarı</th>
+          <th>Hold Miktarı</th>
+          <th>Hadde Bozgun Miktarı</th>
+          <th>Hurda Miktarı</th>
+          <th>Mal Grubu</th>
+          <th>Kalite</th>
+          <th>Çap (mm)</th>
+          <th>Döküm Tipi</th>
+          <th>Planlanan Miktar</th>
+          <th>Gerçekleşme Oranı</th>
+          <th></th> <!-- Yeni sütun -->
+        </tr>
+      </thead>
+      <tbody id="detail-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+  </div>
+
+  <script>
+    const detailOrders = [
+      { tarih: "27.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "551,178", gunlukUretim: "526,664", birinciSinifMI: "520,214", birinciSinifDokum: "6,450", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", haddeBozgun: "9,558", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" },
+      { tarih: "26.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "1.787,346", gunlukUretim: "1.813,997", birinciSinifMI: "1.795,482", birinciSinifDokum: "17,615", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", haddeBozgun: "14,337", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" },
+      { tarih: "25.08.2025", isyeri: "KHH", malzeme: "80000025", tanim: "Ø14,00 B420C_00 12000 Nervürlü İnşaat Çeliği", siparis: "50000001591", sarjMiktar: "1.651,941", gunlukUretim: "1.629,969", birinciSinifMI: "1.612,906", birinciSinifDokum: "17,063", birinciSinifMiktar: "0", ikinciSinifMI: "0", ikinciSinifMiktar: "0", holdMiktar: "0", haddeBozgun: "30,267", hurdaMiktar: "0", malGrubu: "8100.001", kalite: "B420C_00", cap: "14,00", dokumTipi: "A", planlanan: "", gerceklestirme: "" }
+    ];
+function renderTable(data) {
+  const detailTable = document.getElementById("detail-table-body");
+  detailTable.innerHTML = "";
+  data.forEach(order => {
+    const row = detailTable.insertRow();
+    row.innerHTML = `
+      <td>${order.tarih}</td>
+      <td>${order.isyeri}</td>
+      <td>${order.malzeme}</td>
+      <td class="tanim">${order.tanim}</td>
+      <td>
+  <a href="iş-emri-detay.html?no=${order.siparis}" 
+     style="color:#1976d2; font-weight:600; text-decoration:none;">
+     ${order.siparis}
+  </a>
+</td>
+      <td>${order.sarjMiktar}</td>
+      <td>${order.gunlukUretim}</td>
+      <td>${order.birinciSinifMI}</td>
+      <td>${order.birinciSinifDokum}</td>
+      <td>${order.birinciSinifMiktar}</td>
+      <td>${order.ikinciSinifMI}</td>
+      <td>${order.ikinciSinifMiktar}</td>
+      <td>${order.holdMiktar}</td>
+      <td>${order.haddeBozgun}</td>
+      <td>${order.hurdaMiktar}</td>
+      <td>${order.malGrubu}</td>
+      <td>${order.kalite}</td>
+      <td>${order.cap}</td>
+      <td>${order.dokumTipi}</td>
+      <td>${order.planlanan}</td>
+      <td>${order.gerceklestirme}</td>
+      <td><button class="detail-btn" onclick="window.location.href='yarı-mamul-listesi.html'">Yarı Mamul Listesi</button></td>
+    `;
+  });
+}
+
+
+
+    function applyFilters() {
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+      const dokum = document.getElementById("filterDokum").value.trim();
+      const siparis = document.getElementById("filterSiparis").value.trim();
+
+      let filtered = detailOrders;
+
+      // Tarih aralığı
+      if (startDate) {
+        filtered = filtered.filter(o => new Date(o.tarih.split(".").reverse().join("-")) >= new Date(startDate));
+      }
+      if (endDate) {
+        filtered = filtered.filter(o => new Date(o.tarih.split(".").reverse().join("-")) <= new Date(endDate));
+      }
+
+      // Döküm no
+      if (dokum) {
+        filtered = filtered.filter(o => o.malzeme.includes(dokum));
+      }
+
+      // Sipariş no
+      if (siparis) {
+        filtered = filtered.filter(o => o.siparis.includes(siparis));
+      }
+
+      renderTable(filtered);
+    }
+
+    // Başlangıçta tüm veriyi göster
+    document.addEventListener("DOMContentLoaded", () => renderTable(detailOrders));
+  </script>
+</body>
+</html>

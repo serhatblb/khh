@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARDEMİR - Sarf Malzeme Takip</title>
+    <style>
+        :root {
+            --blue: #00205B;
+            --dark: #001540;
+            --red: #ED1C24;
+            --green: #27ae60;
+            --orange: #f39912;
+            --gray-bg: #f5f7fa;
+            --border: #e1e8ed;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        /* Temel Sıfırlama */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gray-bg);
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-logo img {
+            height: 50px;
+            filter: brightness(0) invert(1);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Card Style */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 3px solid var(--blue);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.125rem;
+            color: var(--blue);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-header h2::before {
+            content: "📊";
+            font-size: 1.25rem;
+        }
+
+        /* Marka Yönetimi için özel başlık stili */
+        .marka-yonetimi-card .card-header h2::before {
+            content: "📋";
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* YAN YANA DÜZENLEME (SIDE-BY-SIDE) */
+        .side-by-side-row {
+            display: flex;
+            gap: 2rem; 
+            margin-bottom: 2rem;
+        }
+
+        .sarf-malzeme-card {
+            flex: 3; /* ~60% */
+            min-width: 0; 
+        }
+
+        .marka-yonetimi-card {
+            flex: 2; /* ~40% */
+            min-width: 0;
+        }
+        
+        /* Table headers are sticky (z-index 10), we need to ensure they don't block modals (z-index 1000+) */
+        .sarf-malzeme-card thead {
+             z-index: 10;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Buton Grubu için stil */
+        .filter-group.actions { 
+            align-items: flex-end; 
+            flex-direction: row; 
+            justify-content: flex-end;
+        }
+
+        .filter-group label::before {
+            content: "•";
+            color: var(--blue);
+            font-size: 1.5rem;
+        }
+        
+        /* Marka Yönetimi içindeki Döküm Değişti mi kontrolü */
+        .marka-yonetimi-card #radioGroup {
+            background: #e3f2fd; 
+            border: 1px solid var(--blue); 
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin-bottom: 1.5rem;
+            /* Modal içerisindeki radioGroup CSS'i kaldırıldı */
+        }
+        
+        /* Input Styles */
+        .filter-group input,
+        .filter-group select,
+        .multi-select .selectBox select,
+        .marka-yonetimi-card input, /* Yeni eklendi */
+        .marka-yonetimi-card select { /* Yeni eklendi */
+            padding: 0.625rem 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            background: white;
+            width: 100%;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus,
+        .multi-select .selectBox select:focus,
+        .marka-yonetimi-card input:focus,
+        .marka-yonetimi-card select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0, 32, 91, 0.1);
+        }
+
+        /* Buttons (Styles unchanged) */
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn-group.no-top-margin {
+            margin-top: 0;
+        }
+
+        .btn {
+            padding: 0.625rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.3px;
+        }
+        
+        .btn-sm {
+            padding: 5px 8px !important; 
+            font-size: 0.75rem !important;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #001b6a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 32, 91, 0.3);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c41519;
+        }
+
+        /* Table Styles (Unchanged) */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--blue) 0%, #002875 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 1rem 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background: #e3f2fd;
+        }
+
+        td {
+            padding: 0.875rem 0.75rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        /* Equipment Cell (Unchanged) */
+        .equipment-cell {
+            position: relative;
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        .equipment-name {
+            font-weight: 600;
+            color: var(--blue);
+        }
+
+        .equipment-brand {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin: 0.25rem 0;
+        }
+
+        .equipment-info {
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Badge (Unchanged) */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        /* Modal (Styles unchanged) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Modal Z-index Hiyerarşisi (Unchanged) */
+        #editModal { z-index: 1001; }
+        #yeniMarkaModal { z-index: 998; }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            min-width: 450px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        /* Radio/Checkbox Group (Unchanged) */
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin: 0;
+            transform: scale(1.2);
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Marka Tablosu Özel CSS (Unchanged) */
+        .marka-table th, .marka-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .islem-btn-group {
+            display: flex;
+            gap: 10px; 
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Multi-Select Styles (Unchanged) */
+        .multi-select {
+            position: relative;
+            width: 100%;
+        }
+        /* ... rest of multi-select styles are similar ... */
+
+        /* Responsive (Unchanged) */
+        @media (max-width: 1024px) {
+            .side-by-side-row {
+                flex-direction: column;
+                gap: 0; /* Boşluğu kaldır */
+            }
+            .sarf-malzeme-card,
+            .marka-yonetimi-card {
+                flex: 1; /* Tam genişlik */
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .filter-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-group.actions {
+                flex-direction: column; 
+                align-items: stretch;
+            }
+            
+            .filter-group.actions button {
+                width: 100%;
+            }
+
+            .modal-content {
+                min-width: 90%;
+                margin: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="header-title">
+            <h1>🏭 Sarf Malzeme Takip Sistemi</h1>
+        </div>
+        <div class="header-logo">
+            <img src="resimler/kardemir_logo.png" alt="Kardemir" onerror="this.style.display='none'">
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    
+    <div class="card">
+        <div class="card-header">
+            <h2>Sistem Kontrol Paneli</h2>
+        </div>
+        <div class="card-body">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>SDM Seçimi</label>
+                    <select id="sdm">
+                        <option>SDM 1</option>
+                        <option>SDM 2</option>
+                        <option>SDM 3</option>
+                        <option selected>SDM 4</option>
+                    </select>
+                </div>
+                <div class="filter-group actions">
+                    <button class="btn btn-success" onclick="yeniMarkaAc()">
+                        ➕ Yeni Marka Ekle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="side-by-side-row">
+        
+        <div class="card sarf-malzeme-card">
+            <div class="card-header">
+                <h2>Sarf Malzeme Bilgileri</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table id="ekipmanTable">
+                        <thead>
+                        <tr>
+                            <th style="width: 250px;">Sarf Malzeme</th>
+                            <th>Aktif Marka / Durum</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card marka-yonetimi-card">
+             <div class="card-header">
+                <h2>Marka Yönetimi</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Sarf Malzeme Türü Seç</label>
+                    <select id="markaListesiEkipman" onchange="markalariListele(); toggleUcarNozulCheck()">
+                        </select>
+                </div>
+
+                <div id="radioGroup" style="display: none;">
+                    <label style="margin-bottom: 10px;">Uçar Nozul için Döküm Değişti mi?</label>
+                    <div class="radio-group">
+                        <label for="degistiEvetUcar">
+                            <input type="radio" id="degistiEvetUcar" name="dokumDegistiUcar" value="Evet" checked> Evet
+                        </label>
+                        <label for="degistiHayirUcar">
+                            <input type="radio" id="degistiHayirUcar" name="dokumDegistiUcar" value="Hayır"> Hayır
+                        </label>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 1rem;">
+                    <table class="marka-table">
+                        <thead>
+                        <tr>
+                            <th>Marka Adı</th>
+                            <th style="width: 120px;">Durum</th>
+                            <th style="width: 120px;">İşlemler</th>
+                        </tr>
+                        </thead>
+                        <tbody id="markaListesiTbody">
+                            </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Sarf Malzeme Takip Raporu</h2>
+        </div>
+        <div class="card-body">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Başlangıç Tarihi</label>
+                    <input type="date" id="baslangicTarih">
+                </div>
+                <div class="filter-group">
+                    <label>Bitiş Tarihi</label>
+                    <input type="date" id="bitisTarih">
+                </div>
+                <div class="filter-group">
+                    <label>Döküm No</label>
+                    <input type="text" id="filterDokumNo" placeholder="ör: 2510038">
+                </div>
+                
+                <div class="multi-select">
+                    <div class="filter-group">
+                        <label>Çelik Kalitesi Seç</label>
+                        <div class="selectBox" onclick="toggleCheckboxes()">
+                            <select id="filterCelikKalitesiDisplay"> 
+                                <option>Seçim Yapınız</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                    </div>
+                    <div id="checkboxes">
+                        <label><input type="checkbox" value="SAE 1006" /> SAE 1006</label>
+                        <label><input type="checkbox" value="SAE 1008" /> SAE 1008</label>
+                        <label><input type="checkbox" value="42CrMo4" /> 42CrMo4</label>
+                        <label><input type="checkbox" value="C45" /> C45</label>
+                        <label><input type="checkbox" value="St52-3" /> St52-3</label>
+                        <label><input type="checkbox" value="DC01" /> DC01</label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Sarf Malzeme Türü</label>
+                    <select id="filterEkipman">
+                        <option>Ara Tüp</option>
+                        <option>Stoper</option>
+                        <option>Uçar Nozul</option>
+                        <option>Ses Nozulu</option>
+                        <option>Daldırma Nozulu</option>
+                        <option>Kalıp Yağı</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-group no-top-margin"> 
+                <button class="btn btn-primary" onclick="filtrele()">
+                    🔍 Filtrele
+                </button>
+                <button class="btn btn-secondary" onclick="filtreTemizle()">
+                    🔄 Temizle
+                </button>
+            </div>
+
+            <div class="table-container" style="margin-top: 1.5rem;">
+                <table id="raporTable">
+                    <thead>
+                    <tr>
+                        <th>Tarih</th><th>SDM</th><th>Döküm No</th>
+                        <th>Ara Tüp</th><th>Değişim Nedeni</th><th>Döküm Sayısı</th>
+                        <th>Stoper</th><th>Değişim Nedeni</th><th>Döküm Sayısı</th>
+                        <th>Uçar Nozul</th><th>Değişim Nedeni</th><th>Döküm Sayısı</th>
+                        <th>Ses Nozulu</th><th>Değişim Nedeni</th><th>Döküm Sayısı</th>
+                        <th>Daldırma Nozulu</th><th>Değişim Nedeni</th><th>Döküm Sayısı</th>
+                        <th>Kalıp Yağı</th><th>Değişim Nedeni</th><th>Döküm Sayısı</th>
+                        <th>Çelik Kalitesi</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>22.10.2025</td><td>SDM 4</td><td>2510214</td>
+                            <td>NUMTEK</td><td>-</td><td>1</td>
+                            <td>Allied</td><td>-</td><td>1</td>
+                            <td>Allied</td><td>-</td><td>1</td>
+                            <td>Ülker</td><td>-</td><td>1</td>
+                            <td>Vesuvius</td><td>-</td><td>1</td>
+                            <td>HGI</td><td>-</td><td>1</td>
+                            <td>SAE 1006</td>
+                        </tr>
+                        <tr>
+                            <td>22.10.2025</td><td>SDM 4</td><td>2510215</td>
+                            <td>NUMTEK</td><td>-</td><td>2</td>
+                            <td>Allied</td><td>-</td><td>2</td>
+                            <td>Allied</td><td>-</td><td>2</td>
+                            <td>Ülker</td><td>-</td><td>2</td>
+                            <td>Vesuvius</td><td>-</td><td>2</td>
+                            <td>HGI</td><td>-</td><td>2</td>
+                            <td>SAE 1008</td>
+                        </tr>
+                        <tr>
+                            <td>22.10.2025</td><td>SDM 4</td><td>2510216</td>
+                            <td>NUMTEK</td><td>-</td><td>3</td>
+                            <td>Allied</td><td>-</td><td>3</td>
+                            <td>Allied</td><td>-</td><td>3</td>
+                            <td>Ülker</td><td>-</td><td>3</td>
+                            <td>Vesuvius</td><td>-</td><td>3</td>
+                            <td>HGI</td><td>-</td><td>3</td>
+                            <td>42CrMo4</td>
+                        </tr>
+                        <tr>
+                            <td>22.10.2025</td><td>SDM 4</td><td>2510217</td>
+                            <td>NUMTEK</td><td><span class="badge badge-danger">Deforme oldu</span></td><td>4</td>
+                            <td>Allied</td><td><span class="badge badge-danger">Kırıldı</span></td><td>4</td>
+                            <td>Allied</td><td>-</td><td>4</td>
+                            <td>Ülker</td><td>-</td><td>4</td>
+                            <td>Vesuvius</td><td><span class="badge badge-warning">Tıkandı</span></td><td>4</td>
+                            <td>HGI</td><td>-</td><td>4</td>
+                            <td>C45</td>
+                        </tr>
+                        <tr>
+                            <td>22.10.2025</td><td>SDM 4</td><td>2510218</td>
+                            <td>RHI</td><td>-</td><td>1</td>
+                            <td>RHI</td><td>-</td><td>1</td>
+                            <td>RHI</td><td>-</td><td>1</td>
+                            <td>Ülker</td><td>-</td><td>5</td>
+                            <td>NUMTEK</td><td>-</td><td>1</td>
+                            <td>HGI</td><td>-</td><td>5</td>
+                            <td>St52-3</td>
+                        </tr>
+                        <tr>
+                            <td>22.10.2025</td><td>SDM 4</td><td>2510219</td>
+                            <td>RHI</td><td>-</td><td>2</td>
+                            <td>RHI</td><td>-</td><td>2</td>
+                            <td>RHI</td><td>-</td><td>2</td>
+                            <td>Ülker</td><td>-</td><td>6</td>
+                            <td>NUMTEK</td><td>-</td><td>2</td>
+                            <td>HGI</td><td>-</td><td>6</td>
+                            <td>DC01</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Sarf Malzeme Marka Değişim Kaydı</h3>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="modalEkipman">
+            <input type="hidden" id="modalYeniMarka">
+            <input type="hidden" id="modalUcarNozulState"> <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">
+                <span id="degisenEkipmanText" style="color: var(--blue);"></span> için
+                <span id="degisenMarkaText" style="color: var(--red);"></span> markası aktif yapılacak.
+            </p>
+
+            <div class="form-group">
+                <label>Döküm Numarası</label>
+                <input type="text" id="modalDokumNo" placeholder="ör: 2510038">
+            </div>
+
+            <div class="form-group">
+                <label>Değişim Nedeni</label>
+                <textarea id="modalNeden" rows="3" placeholder="Önceki markanın değişim nedenini (aşınma, kırılma, tıkama vb.) giriniz..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="modalKapat()">İptal</button>
+            <button class="btn btn-danger" onclick="aktifYapKaydet()">✅ Aktif Yap & Kaydet</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="yeniMarkaModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Yeni Marka Ekle</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Sarf Malzeme Türü</label>
+                <select id="yeniMarkaEkipman">
+                    <option value="Ara Tüp">Ara Tüp</option>
+                    <option value="Stoper">Stoper</option>
+                    <option value="Uçar Nozul">Uçar Nozul</option>
+                    <option value="Ses Nozulu">Ses Nozulu</option>
+                    <option value="Daldırma Nozulu">Daldırma Nozulu</option>
+                    <option value="Kalıp Yağı">Kalıp Yağı</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Yeni Marka Adı</label>
+                <input type="text" id="yeniMarkaAdi" placeholder="ör: YENİMARKA">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="yeniMarkaKapat()">İptal</button>
+            <button class="btn btn-success" onclick="yeniMarkaKaydet()">➕ Ekle</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const ekipmanListesi = [
+        "Ara Tüp",
+        "Stoper",
+        "Uçar Nozul",
+        "Ses Nozulu",
+        "Daldırma Nozulu",
+        "Kalıp Yağı"
+    ];
+
+    let tumMarkalar = {
+        "Ara Tüp": [
+            { ad: "NUMTEK", aktif: true },
+            { ad: "RHI", aktif: false },
+            { ad: "VESUVIUS", aktif: false }
+        ],
+        "Stoper": [
+            { ad: "Allied", aktif: true },
+            { ad: "RHI", aktif: false }
+        ],
+        "Uçar Nozul": [
+            { ad: "Allied", aktif: true },
+            { ad: "RHI", aktif: false },
+            { ad: "NUMTEK", aktif: false }
+        ],
+        "Ses Nozulu": [
+            { ad: "Ülker", aktif: true },
+            { ad: "Marka X", aktif: false }
+        ],
+        "Daldırma Nozulu": [
+            { ad: "Vesuvius", aktif: true },
+            { ad: "NUMTEK", aktif: false }
+        ],
+        "Kalıp Yağı": [
+            { ad: "HGI", aktif: true },
+            { ad: "FUCHS", aktif: false }
+        ]
+    };
+
+    let aktifMarkalar = {};
+    for (const ekipman in tumMarkalar) {
+        const aktif = tumMarkalar[ekipman].find(m => m.aktif);
+        aktifMarkalar[ekipman] = aktif ? aktif.ad : (tumMarkalar[ekipman].length > 0 ? tumMarkalar[ekipman][0].ad : "N/A");
+    }
+
+    let ekipmanSayac = {
+        "Ara Tüp": 0,
+        "Stoper": 0,
+        "Uçar Nozul": 0,
+        "Ses Nozulu": 0,
+        "Daldırma Nozulu": 0,
+        "Kalıp Yağı": 0
+    };
+    let sonGuncelleme = {};
+    let degisimNedenleri = {};
+
+    // Ekipman tablosunu güncelleme yardımcı fonksiyonu
+    function guncelEkipmanTablosu() {
+        const tbody = document.querySelector("#ekipmanTable tbody");
+        tbody.innerHTML = ''; 
+
+        ekipmanListesi.forEach(eq => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td class="equipment-name">${eq}</td>
+                <td class="equipment-cell">
+                    <div class="equipment-brand">${aktifMarkalar[eq]}</div>
+                    <div class="equipment-info">Sayaç: ${ekipmanSayac[eq]}</div>
+                </td>
+            `;
+        });
+    }
+
+    // YENİ FONKSİYON: Uçar Nozul için Döküm Değişti mi kontrolünü göster/gizle
+    function toggleUcarNozulCheck() {
+        const ekipman = document.getElementById("markaListesiEkipman").value;
+        const radioGroup = document.getElementById("radioGroup");
+        
+        if (ekipman === "Uçar Nozul") {
+            radioGroup.style.display = "block";
+            // Varsayılan olarak Evet seçili kalsın
+            document.getElementById("degistiEvetUcar").checked = true;
+        } else {
+            radioGroup.style.display = "none";
+        }
+    }
+
+
+    // Multi-Select Fonksiyonu (Açma/Kapama)
+    let expanded = false;
+    function toggleCheckboxes() {
+        const checkboxes = document.getElementById("checkboxes");
+        checkboxes.style.display = expanded ? "none" : "block";
+        expanded = !expanded;
+    }
+    
+    // Filtreleme fonksiyonu (Mantık değişmedi)
+    function filtrele() {
+        const selectedQualities = Array.from(document.querySelectorAll('#checkboxes input[type="checkbox"]:checked'))
+            .map(cb => cb.value);
+
+        const displaySelect = document.getElementById("filterCelikKalitesiDisplay");
+        if (selectedQualities.length === 0) {
+            displaySelect.options[0].text = "Seçim Yapınız";
+        } else if (selectedQualities.length === 1) {
+            displaySelect.options[0].text = selectedQualities[0];
+        } else {
+            displaySelect.options[0].text = `${selectedQualities.length} Kalite Seçili`;
+        }
+
+        const baslangic = document.getElementById("baslangicTarih").value;
+        const bitis = document.getElementById("bitisTarih").value;
+        const dokumFilter = document.getElementById("filterDokumNo").value.trim().toLowerCase();
+        const ekipman = document.getElementById("filterEkipman").value;
+
+        const rows = document.querySelectorAll("#raporTable tbody tr");
+        const start = baslangic ? new Date(baslangic) : null;
+        const end = bitis ? new Date(bitis) : null;
+        
+        const parseDate = (dateStr) => {
+            const [gun, ay, yil] = dateStr.split(".");
+            return new Date(`${yil}-${ay}-${gun}T00:00:00`); 
+        };
+
+        rows.forEach(row => {
+            const tarihText = row.cells[0]?.innerText;
+            const dokumText = row.cells[2]?.innerText.toLowerCase();
+            const celikText = row.cells[row.cells.length - 1]?.innerText;
+            
+            if (!tarihText) return;
+
+            const rowDate = parseDate(tarihText);
+
+            let match = true;
+            if (start && rowDate < start) match = false;
+            if (end && rowDate > end) match = false;
+            if (dokumFilter && !dokumText.includes(dokumFilter)) match = false;
+            if (selectedQualities.length > 0 && !selectedQualities.includes(celikText)) match = false;
+
+            row.style.display = match ? "" : "none";
+        });
+
+        const ekipmanIndexMap = {
+            "Ara Tüp": [3,4,5],
+            "Stoper": [6,7,8],
+            "Uçar Nozul": [9,10,11],
+            "Ses Nozulu": [12,13,14],
+            "Daldırma Nozulu": [15,16,17],
+            "Kalıp Yağı": [18,19,20]
+        };
+
+        const celikKaliteIndex = 21;
+        const visibleCols = [0,1,2, ...ekipmanIndexMap[ekipman], celikKaliteIndex];
+
+        const allTh = document.querySelectorAll("#raporTable th");
+        const allRows = document.querySelectorAll("#raporTable tr");
+
+        allTh.forEach((th, i) => {
+            th.style.display = visibleCols.includes(i) ? "" : "none";
+        });
+        allRows.forEach(row => {
+            Array.from(row.cells).forEach((td, i) => {
+                td.style.display = visibleCols.includes(i) ? "" : "none";
+            });
+        });
+    }
+
+    function filtreTemizle() {
+        document.getElementById("baslangicTarih").value = "";
+        document.getElementById("bitisTarih").value = "";
+        document.getElementById("filterDokumNo").value = "";
+        document.getElementById("filterEkipman").value = "Ara Tüp";
+
+        document.querySelectorAll('#checkboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+        document.getElementById("filterCelikKalitesiDisplay").options[0].text = "Seçim Yapınız";
+        
+        filtrele();
+    }
+    
+    // Aktif Yap Modalı Kapatma
+    function modalKapat() {
+        document.getElementById("editModal").style.display = "none";
+    }
+
+    // Marka aktif yapma işlemini gerçekleştiren ana fonksiyon (Mantık değişmedi)
+    function aktifYap(ekipman, yeniMarka, dokumNo, neden, dokumDegisti = null) {
+        // 1. Markayı "tumMarkalar" listesinde aktif yap
+        const markalarListesi = tumMarkalar[ekipman];
+        if (!markalarListesi) return;
+
+        markalarListesi.forEach(m => m.aktif = false);
+        let hedefMarka = markalarListesi.find(marka => marka.ad === yeniMarka);
+        
+        if (!hedefMarka) {
+            hedefMarka = { ad: yeniMarka, aktif: true };
+            markalarListesi.push(hedefMarka);
+        }
+        hedefMarka.aktif = true;
+
+        // 2. Takip verilerini güncelle
+        aktifMarkalar[ekipman] = yeniMarka;
+        
+        let nedeniText = neden;
+        if (ekipman === "Uçar Nozul" && dokumDegisti !== null) {
+            nedeniText += ` (Döküm Değişimi: ${dokumDegisti})`;
+        }
+        degisimNedenleri[ekipman] = nedeniText;
+
+        ekipmanSayac[ekipman] = 0;
+        sonGuncelleme[ekipman] = `Güncellendi: ${new Date().toLocaleDateString('tr-TR')} (${dokumNo})`;
+        
+        // 3. Tabloları güncelle
+        guncelEkipmanTablosu();
+        markalariListele(); 
+        
+        const currentSelectedEq = document.getElementById("markaListesiEkipman").value;
+        document.getElementById("markaListesiEkipman").value = currentSelectedEq;
+
+        alert(`${ekipman} için "${yeniMarka}" markası başarıyla AKTİF yapıldı. Sayaç sıfırlandı.`);
+    }
+
+
+    // Pop-up'tan Gelen Verilerle Kaydetme (Okuma mantığı güncellendi)
+    function aktifYapKaydet() {
+        const ekipman = document.getElementById("modalEkipman").value;
+        const dokumNo = document.getElementById("modalDokumNo").value.trim();
+        const yeniMarka = document.getElementById("modalYeniMarka").value.trim();
+        const neden = document.getElementById("modalNeden").value.trim();
+        
+        if (!dokumNo || !neden) {
+            alert("Lütfen döküm numarası ve değişim nedenini giriniz.");
+            return;
+        }
+
+        let dokumDegisti = null;
+        if (ekipman === "Uçar Nozul") {
+            // Değeri dışarıdan alınıp moda'a saklanan hidden input'tan oku
+            dokumDegisti = document.getElementById("modalUcarNozulState").value; 
+            if (dokumDegisti === "N/A") {
+                // Bu normalde olmamalı, ama bir güvenlik kontrolü olarak eklenebilir.
+                alert("Hata: Uçar Nozul için Döküm Değişimi bilgisi okunamadı.");
+                return;
+            }
+        }
+
+        aktifYap(ekipman, yeniMarka, dokumNo, neden, dokumDegisti);
+        modalKapat(); 
+    }
+
+
+    // Yeni marka ekleme (Mantık değişmedi)
+    function yeniMarkaAc() {
+        document.getElementById("yeniMarkaModal").style.display = "flex";
+        document.getElementById("yeniMarkaAdi").value = "";
+        
+        const markaListesiEkipmanSelect = document.getElementById("markaListesiEkipman");
+        if (markaListesiEkipmanSelect) {
+            const ekipman = markaListesiEkipmanSelect.value;
+            document.getElementById("yeniMarkaEkipman").value = ekipman;
+        }
+    }
+
+    function yeniMarkaKapat() {
+        document.getElementById("yeniMarkaModal").style.display = "none";
+    }
+
+    function yeniMarkaKaydet() {
+        const ekipman = document.getElementById("yeniMarkaEkipman").value;
+        const yeniMarka = document.getElementById("yeniMarkaAdi").value.trim().toUpperCase();
+
+        if (!yeniMarka) {
+            alert("Lütfen bir marka adı giriniz.");
+            return;
+        }
+
+        if (tumMarkalar[ekipman].some(m => m.ad === yeniMarka)) {
+            alert("Bu marka zaten mevcut. Lütfen farklı bir marka adı giriniz.");
+            return;
+        }
+
+        if (confirm(`"${yeniMarka}" markasını ${ekipman} için **pasif** olarak eklemek istiyor musunuz?`)) {
+            tumMarkalar[ekipman].push({ ad: yeniMarka, aktif: false });
+            
+            if (document.getElementById("markaListesiEkipman").value === ekipman) {
+                markalariListele();
+            }
+
+            alert(`"${yeniMarka}" başarıyla ${ekipman} için pasif marka olarak eklendi.`);
+        }
+
+        yeniMarkaKapat();
+    }
+
+
+    // Marka Yönetimi Fonksiyonları (Mantık değişmedi)
+    function markalariListele() {
+        const ekipman = document.getElementById("markaListesiEkipman").value;
+        const tbody = document.getElementById("markaListesiTbody");
+        tbody.innerHTML = '';
+
+        const markalar = tumMarkalar[ekipman] || [];
+        markalar.forEach(marka => {
+            const row = tbody.insertRow();
+
+            const durumBadge = marka.aktif
+                ? '<span class="badge badge-success">Aktif</span>'
+                : '<span class="badge badge-secondary">Pasif</span>';
+
+            let islemButonlari = '';
+            if (!marka.aktif) {
+                islemButonlari = `
+                    <div class="islem-btn-group">
+                        <button class="btn btn-primary btn-sm" onclick="markayiAktifYapIslemi('${ekipman}', '${marka.ad}')">Aktif Yap</button>
+                        <button class="btn btn-danger btn-sm" onclick="markayiSil('${ekipman}', '${marka.ad}')">Sil</button>
+                    </div>
+                `;
+            } else {
+                islemButonlari = '<span style="color: var(--blue); font-size:0.8rem; font-style: italic; font-weight: 600;">(Mevcut Aktif)</span>';
+            }
+
+            row.innerHTML = `
+                <td style="font-weight: 600;">${marka.ad}</td>
+                <td>${durumBadge}</td>
+                <td>${islemButonlari}</td>
+            `;
+        });
+    }
+
+    // Aktif Yapma işlemini ekipmana göre yönlendiren fonksiyon (Kural 1: Stoper için özel)
+    function markayiAktifYapIslemi(ekipman, markaAdi) {
+        if (ekipman === "Stoper") {
+            if (confirm(`Stoper için "${markaAdi}" markasını döküm kaydı GİRMEDEN direkt AKTİF yapmak istiyor musunuz?`)) {
+                aktifYap(ekipman, markaAdi, "N/A", "Hızlı Aktif Yapıldı (Döküm Kayıtsız)");
+            }
+        } else {
+            // Diğerleri için pop-up aç
+            markayiAktifYapModalAc(ekipman, markaAdi);
+        }
+    }
+
+
+    // Pop-up Modalını Hazırlayıp Açan Fonksiyon (Kural 2: Uçar Nozul için özel - GÜNCELLENDİ)
+    function markayiAktifYapModalAc(ekipman, markaAdi) {
+        document.getElementById("modalEkipman").value = ekipman;
+        document.getElementById("modalYeniMarka").value = markaAdi;
+        document.getElementById("modalDokumNo").value = "";
+        document.getElementById("modalNeden").value = "";
+
+        // YENİ EK: Döküm Değişti mi bilgisini dışarıdaki kontrolden alıp moda'a sakla
+        const modalUcarNozulState = document.getElementById("modalUcarNozulState"); 
+        let titleSuffix = '';
+        
+        if (ekipman === "Uçar Nozul") {
+            // Radyo grubundan seçili değeri al
+            const dokumDegisti = document.querySelector('input[name="dokumDegistiUcar"]:checked').value;
+            modalUcarNozulState.value = dokumDegisti; // Sakla
+            titleSuffix = ` (Döküm Değişimi: ${dokumDegisti})`;
+        } else {
+            modalUcarNozulState.value = "N/A";
+        }
+
+
+        document.getElementById("modalTitle").innerText = `${ekipman} Marka Değişim Kaydı${titleSuffix}`;
+        document.getElementById("degisenEkipmanText").innerText = ekipman;
+        document.getElementById("degisenMarkaText").innerText = markaAdi;
+        
+        document.getElementById("editModal").style.display = "flex";
+    }
+
+
+    // Bir markayı silme fonksiyonu (Mantık değişmedi)
+    function markayiSil(ekipman, markaAdi) {
+        if (aktifMarkalar[ekipman] === markaAdi) {
+            alert("Hata: Aktif olan bir markayı silemezsiniz. Önce başka bir markayı aktif yapın.");
+            return;
+        }
+
+        if (confirm(`${ekipman} için pasif durumdaki "${markaAdi}" markasını SİLMEK istediğinizden emin misiniz? Bu işlem geri alınamaz.`)) {
+            tumMarkalar[ekipman] = tumMarkalar[ekipman].filter(marka => marka.ad !== markaAdi);
+            markalariListele(); // Inline listeyi güncelle
+            alert(`"${markaAdi}" başarıyla silindi.`);
+        }
+    }
+
+    // Sayfa yüklendiğinde
+    window.onload = function() {
+        // Marka Yönetimi seçicisini doldur
+        const markaListesiSelect = document.getElementById("markaListesiEkipman");
+        ekipmanListesi.forEach(eq => {
+            markaListesiSelect.add(new Option(eq, eq));
+        });
+        
+        guncelEkipmanTablosu();
+        toggleUcarNozulCheck(); // Başlangıçta Uçar Nozul için göster/gizle
+        markalariListele(); // İlk yüklendiğinde varsayılan markaları göster
+        
+        document.getElementById("filterEkipman").value = "Ara Tüp";
+        filtrele();
+    };
+</script>
+</body>
+</html>

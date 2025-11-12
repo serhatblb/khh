@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KHH Nervürlü İnşaat Çeliği Kalite Özeti Tablosu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a3d62 0%, #1e5f87 50%, #2c3e50 100%);
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: #14233a;
+            z-index: 10;
+            }
+
+        .content-wrapper {
+            margin-left: 250px;
+            background: #fff;
+            position: relative;
+            z-index: 1;
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            width: calc(100% - 250px);
+            }
+
+        .header {
+            background: linear-gradient(135deg, #0a3d62 0%, #1565c0 100%);
+            color: white;
+            padding: 28px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #1976d2;
+        }
+
+        .header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .header-icon {
+            background: rgba(255,255,255,0.2);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+
+    /* === TARİH ALANI === */
+    .date-section {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      margin-bottom: 20px;
+      background-color: rgba(163, 126, 126, 0.2);
+      height: 60px;
+    }
+
+    .date-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8f9fa;
+      border: 2px solid #002147;
+      border-radius: 8px;
+      padding: 10px 15px;
+      transition: all 0.3s ease;
+    }
+
+    .date-group:hover {
+      background: #eef2f7;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .date-icon {
+      font-size: 18px;
+      color: #E30613;
+    }
+
+    .date-group label {
+      font-weight: 600;
+      color: #002147;
+      font-size: 14px;
+    }
+
+    .date-group input {
+      border: none;
+      font-size: 14px;
+      background: transparent;
+      color: #002147;
+    }
+
+    .date-group input:focus {
+      outline: none;
+    }
+
+    /* === ANA TABLO === */
+    .main-table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 20px;
+    }
+
+    .main-table-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .main-table-container::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    .main-table-container::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .main-table {
+      min-width: 2200px;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 12px;
+    }
+
+    .main-table th,
+    .main-table td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .main-table th {
+      background: #002147;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .main-table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    .main-table tr:hover {
+      background: #f1f5fa;
+    }
+
+    /* === GENEL TABLO === */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .summary-table th {
+      background: #002147;
+      color: #fff;
+    }
+
+    .summary-table td.category {
+      text-align: left;
+      font-weight: bold;
+      background: #ecf0f1;
+      color: #002147;
+    }
+
+    /* === BUTONLAR === */
+    .buttons {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      margin: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #E30613;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #b50510;
+    }
+
+    .btn-warning {
+      background: #002147;
+      color: #fff;
+    }
+
+    .btn-warning:hover {
+      background: #00152d;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      #sidebar {
+        width: 200px;
+      }
+
+      .content-wrapper {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+      }
+
+      .date-section {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .main-table {
+        font-size: 10px;
+        min-width: 1500px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- === SIDEBAR === -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(res => res.text())
+        .then(html => document.getElementById("sidebar-container").innerHTML = html)
+        .catch(err => console.log('Sidebar yüklenemedi:', err));
+    </script>
+  </aside>
+
+  <!-- === ANA İÇERİK === -->
+  <div class="content-wrapper">
+    <div class="glass-container">
+      <div class="header">
+        <h2>KHH Nervürlü İnşaat Çeliği Kalite Özeti</h2>
+      </div>
+
+      <!-- Tarihler -->
+      <div class="date-section">
+        <div class="date-group">
+          <i class="fa fa-calendar-alt date-icon"></i>
+          <label for="start-date">Başlangıç:</label>
+          <input type="date" id="start-date" value="2025-07-31">
+        </div>
+        <div class="date-group">
+          <i class="fa fa-calendar-alt date-icon"></i>
+          <label for="end-date">Bitiş:</label>
+          <input type="date" id="end-date" value="2025-08-28">
+        </div>
+      </div>
+
+      <!-- Ana Tablo -->
+      <div class="main-table-container">
+        <table class="main-table">
+          <thead>
+            <tr>
+              <th rowspan="3">Malzeme Kodu</th>
+              <th rowspan="3">Kalite</th>
+              <th rowspan="3">Çap</th>
+              <th rowspan="3">Şarj (ton)</th>
+              <th rowspan="3">Kont.Verilen (ton)</th>
+              <th colspan="6">Haddehane Proses Kaybı</th>
+              <th rowspan="3">1. Kalite (ton)</th>
+              <th rowspan="3">2. Kalite (ton)</th>
+              <th rowspan="3">2. Kalite (%)</th>
+              <th rowspan="3">Muhtelif Boy (ton)</th>
+              <th rowspan="3">Muhtelif Boy (%)</th>
+              <th rowspan="3">Mamul Hurda (ton)</th>
+              <th rowspan="3">Mamul Hurda (%)</th>
+              <th colspan="3" rowspan="2">Fabrika İçine Ayrılan</th>
+              <th colspan="3" rowspan="2">HOLD</th>
+              <th rowspan="3">Kalite Oranı %</th>
+              <th rowspan="3">Malzeme Oranı %</th>
+              <th rowspan="3">Satılabilir Ürün (Ton)</th>
+              <th rowspan="3">Kontrole Verilene Göre Satılabilir Ürün %</th>
+              <th rowspan="3">Şarja Göre Satılabilir Ürün %</th>
+            </tr>
+            <tr>
+              <th colspan="2">Uç Baş Tufal</th>
+              <th colspan="2">Hadde Bozuğu</th>
+              <th colspan="2">Haddehane Proses Kaybı (ton)</th>
+            </tr>
+            <tr>
+              <th>Ton</th><th>%</th>
+              <th>Ton</th><th>%</th>
+              <th>Ton</th><th>%</th>
+              <th>Mukavemet</th>
+              <th>Ölçü Tol. Harici</th>
+              <th>Diğer</th>
+              <th>Mukavemet</th>
+              <th>Bükme</th>
+              <th>Diğer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="29" style="text-align:center; color:#888; padding: 40px;">
+                <i class="fa fa-database" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.3;"></i>
+                Veri bulunamadı.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Genel Tablo -->
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Genel Tablo</th>
+            <th>Miktar, ton</th>
+            <th>%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="category">Şarj</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">Kont.Verilen</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">Haddehane Proses Kaybı</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">1. Kalite</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">Hızlı Teslimat</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">Mamul Hurdası</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">HOLD</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">Muhtelif Boy</td><td>-</td><td>-</td></tr>
+          <tr><td class="category">Satılabilir Ürün</td><td>-</td><td>-</td></tr>
+        </tbody>
+      </table>
+
+      <div class="buttons">
+        <button class="btn-primary">
+          <i class="fa fa-file-excel"></i> Excel'e Aktar
+        </button>
+        <button class="btn-warning">
+          <i class="fa fa-envelope"></i> E-mail Gönder
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

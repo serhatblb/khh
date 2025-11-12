@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kardemir - Genel Şablon</title>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f7;
+      margin: 0;
+      color: #333;
+    }
+
+    /* Sidebar */
+    aside#sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 250px; height: 100%;
+      background: #2c3e50;
+      color: white;
+      overflow-y: auto;
+    }
+
+    .content-wrapper {
+      margin-left: 250px;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    @media(max-width:768px){
+      aside#sidebar { position: relative; width: 100%; height: auto; }
+      .content-wrapper { margin-left: 0; padding: 12px; }
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      background: #fff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      font-size: 14px;
+      color: #555;
+    }
+    .breadcrumbs a {
+      color: #1976d2;
+      text-decoration: none;
+    }
+    .breadcrumbs span { margin: 0 5px; }
+
+    /* Sayfa başlığı */
+    .report-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 20px 0;
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    /* İçerik alanı */
+    .page-content {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(res => res.text())
+        .then(data => document.getElementById("sidebar-container").innerHTML = data);
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <!-- Breadcrumb -->
+    <header class="header">
+      <div class="breadcrumbs">
+        <a href="#">Ana Sayfa</a> <span>&gt;</span>
+        <span>Sayfa Adı</span>
+      </div>
+    </header>
+
+    <!-- Başlık -->
+    <h2 class="report-title">Sayfa Başlığı</h2>
+
+    <!-- İçerik alanı -->
+    <div class="page-content">
+      Buraya tablo, kart veya form gelecek.
+    </div>
+  </div>
+</body>
+</html>

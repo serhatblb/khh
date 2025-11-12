@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kardemir - Üretim Performans Tablosu (Yatay Görünüm)</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {margin:0;font-family:"Segoe UI",Roboto,sans-serif;background:#f5f7fa;}
+    #sidebar{position:fixed;top:0;left:0;width:250px;height:100vh;background:#1e293b;color:#fff;overflow-y:auto;box-shadow:2px 0 8px rgba(0,0,0,0.1);}
+    .content-wrapper{margin-left:250px;padding:30px;}
+    h1{color:#1e293b;margin-bottom:25px;}
+    h2{color:#334155;font-size:18px;margin:30px 0 10px;}
+
+    .filter-card{background:#fff;border:1px solid #e3e6ea;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);padding:20px;margin-bottom:20px;}
+    .filter-title{font-size:18px;margin-bottom:15px;color:#1e293b;font-weight:700;}
+    .filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;align-items:end;}
+    .filter-item label{font-size:14px;font-weight:600;color:#334155;display:block;margin-bottom:6px;}
+    .filter-item input,.filter-item select{width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px;color:#1e293b;background:#f8fafc;}
+    .filter-buttons{display:flex;gap:10px;}
+    .filter-buttons button{padding:8px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px;}
+    #filterBtn{background:#1976d2;color:#fff;}#filterBtn:hover{background:#125a9c;}
+    #clearBtn{background:#e2e8f0;color:#1e293b;}#clearBtn:hover{background:#cbd5e1;}
+
+    .table-wrapper{max-height:400px;overflow:auto;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);background:#fff;margin-bottom:20px;}
+    table{border-collapse:collapse;width:100%;background:#fff;font-size:14px;}
+    th,td{border:1px solid #e3e6ea;text-align:center;padding:10px 12px;min-width:100px;word-break:break-word;}
+    th{background:#f8f9fb;color:#1e293b;font-weight:700;}
+    td:first-child{font-weight:600;background:#f1f5f9;text-align:left;}
+    tbody tr:nth-child(even){background:#f8fbff;}tbody tr:hover{background:#eef5ff;}
+
+    .table-wrapper::-webkit-scrollbar{height:10px;width:10px;}
+    .table-wrapper::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:6px;}
+    .table-wrapper::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
+    .table-wrapper::-webkit-scrollbar-track{background:#f1f5f9;border-radius:6px;}
+  </style>
+</head>
+<body>
+  <aside id="sidebar"><div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html").then(r=>r.text()).then(d=>document.getElementById("sidebar-container").innerHTML=d);
+    </script>
+  </aside>
+
+  <div class="content-wrapper">
+    <h1>Üretim Performans Tablosu</h1>
+
+    <!-- Filtre Alanı -->
+    <div class="filter-card">
+      <h2 class="filter-title">Filtreleme</h2>
+      <div class="filter-grid">
+        <div class="filter-item"><label>Başlangıç Tarihi</label><input type="date" id="startDate"></div>
+        <div class="filter-item"><label>Bitiş Tarihi</label><input type="date" id="endDate"></div>
+        <div class="filter-item"><label>Üretilen Çap</label>
+          <select id="uretimCap"><option value="">Tümü</option><option>130x130</option><option>150x150</option></select></div>
+        <div class="filter-item"><label>Filtre Seçeneği</label>
+          <select id="yarimamulTip"><option value="">Tümü</option><option>Kütük</option><option>Blum</option></select></div>
+        <div class="filter-buttons"><button id="filterBtn">Filtrele</button><button id="clearBtn">Temizle</button></div>
+      </div>
+    </div>
+
+    <!-- TON TABLOSU -->
+    <h2>Ton ve Saat Değerleri</h2>
+    <div class="table-wrapper"><table id="tonTable"></table></div>
+
+    <!-- ORAN TABLOSU -->
+    <h2>Oran (%) Değerleri</h2>
+    <div class="table-wrapper"><table id="oranTable"></table></div>
+  </div>
+
+  <script>
+    const tarihler=["1.10.2025","2.10.2025","3.10.2025","4.10.2025","5.10.2025"];
+    const tonKolonlar=[
+      "Üretim Programı (TON)","Fiili Üretim (TON)","Günlük Ortalama Üretim (TON/GÜN)",
+      "Ortalama Üretim Hızı (TON/SAAT)","1. Kalite Miktarı (TON)","2. Kalite Miktarı (TON)",
+      "Muhtelif Boy Miktarı (TON)","Hadde/Mamul Bozuk Miktarı (TON)","Uç Baş Hurdası (TON)",
+      "Hurda (TON)","Tufal (TON)","Şarj Adedi (ADET)","Şarj Edilen Yarı Mamul (TON)",
+      "130x130 Kütük (TON)","150x150 Blum (TON)","Kok Gazı Sarfiyatı (Nm3/TON)",
+      "Elektrik Sarfiyatı (kWh/TON)","Net Çalışma Süresi (SAAT)"
+    ];
+    const oranKolonlar=[
+      "Üretim Programı Gerçekleştirme (%)","Kapasite Kullanım Oranı (%)","Tesis İşletme Etkinliği (OEE) (%)",
+      "Performans Oranı (%)","Net Çalışma Oranı (%)","Kalite Oranı (%)","2. Kalite Oranı (%)",
+      "Muhtelif Üretim Oranı (%)","Ünite Dışı Duruş Oranı (%)","Planlı Duruş Oranı (%)",
+      "Ünite İçi Duruş Oranı (%)","Genel Çalışma Oranı (%)","Malzeme Verimliliği (%)"
+    ];
+
+    const tonTable=document.getElementById("tonTable");
+    const oranTable=document.getElementById("oranTable");
+
+    function createTransposedTable(table,kolonlar,oran=false){
+      const thead=document.createElement("thead");
+      const tbody=document.createElement("tbody");
+
+      // Başlık satırı
+      const headRow=document.createElement("tr");
+      headRow.innerHTML="<th></th>"+tarihler.map(t=>`<th>${t}</th>`).join("");
+      thead.appendChild(headRow);
+
+      // Veri üret
+      kolonlar.forEach((k,i)=>{
+        const tr=document.createElement("tr");
+        let values;
+        if(i===0 && !oran){values=tarihler.map(()=> "1.760,00");}
+        else if(!oran && i===17){values=tarihler.map(()=>Math.floor(Math.random()*19+6));}
+        else{values=tarihler.map(()=> (oran? (Math.random()*100).toFixed(1)+"%":(Math.random()*2000+500).toFixed(2)));}
+        tr.innerHTML=`<td>${k}</td>`+values.map(v=>`<td>${v}</td>`).join("");
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+    }
+
+    createTransposedTable(tonTable,tonKolonlar);
+    createTransposedTable(oranTable,oranKolonlar,true);
+  </script>
+</body>
+</html>

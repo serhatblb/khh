@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kardemir - Kütük Proses Raporu</title>
+  <link href="style.css" rel="stylesheet"/>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f6f7; margin: 0; }
+    .content-wrapper { margin-left: 260px; padding: 20px; }
+
+    /* Ana kart */
+    .main-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    }
+
+    .report-title {
+      text-align: center;
+      color: #1976d2;
+      font-size: 20px;
+      margin: 20px 0;
+      font-weight: 700;
+    }
+
+    /* Genel Bilgiler 6 sütun */
+    .info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Her satırda 4 kutu */
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.info-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+.info-item strong {
+  display: block;
+  font-size: 12px;
+  color: #444;
+  margin-bottom: 4px;
+}
+    /* Alt kartlar */
+    .card-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 1200px) {
+      .card-container { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      font-size: 16px;
+      color: #1976d2;
+      margin: 0 0 12px 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+      font-weight: 700;
+    }
+
+    /* Tablolar */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #e3e6ea;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    .data-table th {
+      background: #f8f9fb;
+      font-weight: 600;
+      font-size: 12px;
+      color: #2c3e50;
+    }
+    .data-table tbody tr:nth-child(even) { background: #f9f9f9; }
+
+    /* Butonlar */
+    .bottom-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn:hover { background: #125a9c; }
+
+    .breadcrumbs { font-size: 13px; color:#666; margin-bottom: 10px; }
+    .breadcrumbs a { color:#1976d2; text-decoration:none; }
+    .breadcrumbs span { margin: 0 6px; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(res => res.text())
+        .then(data => document.getElementById("sidebar-container").innerHTML = data);
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <header class="header">
+      <div class="breadcrumbs">
+        <a href="1-1-khh-izleme-ekrani.html">İş Emri Sayfası</a> <span>&gt;</span>
+        <span>Kütük Proses Raporu</span>
+      </div>
+    </header>
+
+    <div class="main-card">
+      <h1 class="report-title">25123321301 Kütük Proses Bilgileri</h1>
+
+      <!-- Genel Bilgiler -->
+<div class="info-grid">
+  <div class="info-item"><strong>Üretim Başlangıç Tarihi</strong>25.09.2025</div>
+  <div class="info-item"><strong>Üretim Bitiş Tarihi</strong>26.09.2025</div>
+  <div class="info-item"><strong>İş Emri No</strong>500003662</div>
+  <div class="info-item"><strong>Döküm No</strong>2512332</div>
+
+  <div class="info-item"><strong>Kütük ID</strong>25123321301</div>
+  <div class="info-item"><strong>Yol No</strong>2</div>
+  <div class="info-item"><strong>Sıra No</strong>3</div>
+  <div class="info-item"><strong>Ürün Mal Grubu</strong>Nervürlü</div>
+
+  <div class="info-item"><strong>Enerji Miktarı</strong>210 MJ</div>
+  <div class="info-item"><strong>Kesit</strong>14 mm</div>
+  <div class="info-item"><strong>Kok Gazı Miktarı</strong>85 Nm³</div>
+  <div class="info-item"><strong>Toplam İşlem Süresi</strong>2 Saat 35 Dk</div>
+
+  <div class="info-item"><strong>SDM Çıkış Ağırlık</strong>1000 kg</div>
+  <div class="info-item"><strong>Fırın Giriş Ağırlık</strong>960 kg</div>
+  <div class="info-item"><strong>Malzeme Kodu</strong>70000565</div>
+  <div class="info-item"><strong>Yarı Mamul Kodu</strong>YRMML-10255-001</div>
+
+  <div class="info-item"><strong>Boy</strong>12 m</div>
+  <div class="info-item"><strong>Fırın Basıncı (ortalama)</strong>1.5 bar</div>
+  <div class="info-item"><strong>QTB Basıncı (ortalama)</strong>2.5 bar</div>
+</div>
+
+
+
+      <!-- Alt Kartlar -->
+      <div class="card-container">
+        <div class="card">
+          <h2>Zaman Bilgileri</h2>
+          <table class="data-table">
+            <thead><tr><th>Tezgah</th><th>Başlangıç</th><th>Bitiş</th><th>Süre</th></tr></thead>
+            <tbody>
+              <tr><td>Fırın</td><td>10:00</td><td>10:15</td><td>15 dk</td></tr>
+              <tr style="font-weight:bold;">
+                <td colspan="3" style="text-align:right;">Toplam İşlem Süresi:</td>
+                <td>53 dk</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h2>Sıcaklık Bilgileri</h2>
+          <table class="data-table">
+            <thead><tr><th>Yer</th><th>Zaman</th><th>Sıcaklık (°C)</th></tr></thead>
+            <tbody>
+              <tr><td>Fırın</td><td>10:15</td><td>1250</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h2>Analiz Bilgileri</h2>
+          <table class="data-table">
+            <thead><tr><th>Başlık</th></tr></thead>
+            <tbody>
+              <tr><td>🧪 Mamul Analiz Bilgileri</td></tr>
+              <tr><td>✏️ Yarı Mamul Analiz Bilgileri</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Butonlar -->
+      <div class="bottom-buttons">
+        <button class="btn" onclick="window.location.href='1-1-khh-izleme-ekrani.html'">← İş Emri Ekranına Geri Dön</button>
+        <button class="btn" onclick="window.location.href='1-2-yari-mamul-listesi.html'">Yarı Mamul Listesi</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

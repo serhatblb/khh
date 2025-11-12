@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kardemir - Stok Bilgileri</title>
+  <link href="style.css" rel="stylesheet" />
+
+  <style>
+    .table-container {
+      margin-top: 20px;
+    }
+
+    .section-title {
+      background: #1976d2;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      padding: 8px;
+      font-size: 15px;
+      border-radius: 6px 6px 0 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      border-radius: 0 0 6px 6px;
+      overflow: hidden;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 14px;
+      text-align: center;
+      border: 1px solid #e1e1e1;
+      font-size: 14px;
+      font-weight: 600;
+      width: calc(100% / 7); /* 7 sütun eşit genişlik */
+    }
+
+    .data-table th {
+      background: #f5f7fa;
+      color: #2c3e50;
+      font-weight: 700;
+    }
+
+    .data-table tbody tr:hover td {
+      background: #eef5ff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(res => res.text())
+        .then(data => document.getElementById("sidebar-container").innerHTML = data);
+    </script>
+  </aside>
+
+  <!-- İçerik -->
+  <div class="content-wrapper">
+    <!-- Breadcrumbs -->
+    <header class="header">
+      <div class="breadcrumbs">
+        <a href="izleme-ekranı.html">Ana Sayfa</a> <span>&gt;</span>
+        <span>Kontinü Haddehane İzleme Ekranı</span>
+      </div>
+    </header>
+
+    <h2 class="report-title">Kontinü Hat Önü Stok Miktarları (Ton)</h2>
+
+    <div class="table-container">
+      <div class="section-title">150x150 KESİT</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>B420_02</th>
+            <th>B420_01</th>
+            <th>B500_01</th>
+            <th>B600W_01</th>
+            <th>B420_00</th>
+            <th>B500_00</th>
+            <th>S420_01</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>38</td>
+            <td>330</td>
+            <td>363</td>
+            <td>60</td>
+            <td>1.940</td>
+            <td>81</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-title">130x130 KESİT</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>B420_00</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>KHH ÜRETİM RAPORU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="style.css" rel="stylesheet" />
+    <style>
+        :root {
+            --navy: #0e2a5a;
+            --navy-2: #12356e;
+            --navy-3: #194685;
+            --red: #d62828;
+            --paper: #ffffff;
+            --ink: #1a1a1a;
+            --muted: #5a6c92;
+            --grid: #dce4f2;
+            --header-bg: #f3f6fb;
+            --footer-bg: #e9f0ff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, var(--navy), var(--navy-2));
+            color: var(--paper);
+            font: 14px/1.45 "Segoe UI", Roboto, Arial;
+            overflow-x: auto;
+        }
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: #14233a;
+            z-index: 10;
+            color: white;
+        }
+
+        .wrap {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        h1 {
+            margin: 0 0 14px;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: linear-gradient(90deg, var(--navy-3), var(--navy));
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 14px;
+            padding: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .toolbar label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .inpt,
+        .sel {
+            appearance: none;
+            background: #fff;
+            border: 1px solid #ccd6eb;
+            color: #222;
+            padding: 9px 12px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .sel {
+            padding-right: 28px;
+            background-image: linear-gradient(45deg, transparent 50%, #333 50%),
+                linear-gradient(135deg, #333 50%, transparent 50%);
+            background-position: calc(100% - 16px) 50%, calc(100% - 10px) 50%;
+            background-size: 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        .btn {
+            border: 1px solid #ccc;
+            background: #fff;
+            color: #0e2a5a;
+            padding: 11px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .btn.primary {
+            background: linear-gradient(180deg, var(--red), #a3161f);
+            border-color: #a3161f;
+            color: #fff;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            background: var(--paper);
+            color: var(--ink);
+            border: 1px solid #dfe7f4;
+            border-radius: 14px;
+            margin: 22px 0;
+            padding: 10px 10px 14px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            margin: 6px 8px 12px;
+            font-size: 18px;
+            border-left: 6px solid var(--red);
+            padding-left: 10px;
+            color: var(--navy);
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid #dfe7f4;
+            border-radius: 10px;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1200px;
+            width: 100%;
+            font-size: 13px;
+            color: var(--ink);
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: var(--header-bg);
+            color: #0b1c3d;
+            border-bottom: 1px solid var(--grid);
+            padding: 9px 10px;
+            text-align: left;
+            white-space: nowrap;
+            font-weight: 800;
+        }
+
+        tbody td {
+            border-bottom: 1px solid var(--grid);
+            padding: 9px 10px;
+            white-space: nowrap;
+            background: #fff;
+        }
+
+        tbody tr:nth-child(odd) td {
+            background: #f9fbff;
+        }
+
+        tfoot td {
+            font-weight: 800;
+            background: var(--footer-bg);
+            border-top: 2px solid var(--grid);
+            color: var(--navy);
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-end;
+            margin: 26px 0 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- === SIDEBAR === -->
+    <aside id="sidebar" >
+        <div id="sidebar-container"></div>
+        <script>
+            fetch("sidebar.html")
+                .then((res) => res.text())
+                .then(
+                    (html) =>
+                        (document.getElementById("sidebar-container").innerHTML = html)
+                )
+                .catch((err) => console.log("Sidebar yüklenemedi:", err));
+        </script>
+    </aside>
+    <div class="wrap" style="margin-left: 260px;">
+        <h1 style="color: white;">KHH ÜRETİM RAPORU</h1>
+
+        <!-- Filtre Alanı -->
+        <div class="toolbar">
+            <label>Başlangıç <input class="inpt" type="date" id="startDate" /></label>
+            <label>Bitiş <input class="inpt" type="date" id="endDate" /></label>
+            <label>Vardiya
+                <select class="sel" id="vardiyaSel">
+                    <option value="">Hepsi</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+            </label>
+            <label>Döküm No <input class="inpt" type="text" id="dokumNo" /></label>
+            <button class="btn primary" id="filterBtn">Filtrele</button>
+        </div>
+
+        <!-- 1) GENEL TOPLAM -->
+        <section class="card">
+            <h2 >KHH ÜRETİM BİLGİLERİ</h2>
+            <div class="table-wrap">
+                <table id="tbl1">
+                    <thead>
+                        <tr>
+                            <th>ÜRETİM TARİHİ</th>
+                            <th>VARDİYA</th>
+                            <th>SİPARİŞ NO</th>
+                            <th>MALZEME KODU</th>
+                            <th>KALİTE</th>
+                            <th>ÇAP (mm)</th>
+                            <th>DÖKÜM NO</th>
+                            <th>KÜTÜK EBATI (mm)</th>
+                            <th>KÜTÜK BOYU (mm)</th>
+                            <th>KÜTÜK BİRİM AĞIRLIĞI (kg/m)</th>
+                            <th>KÜTÜK Adet</th>
+                            <th>ŞARJ TONAJ</th>
+                            <th>UÇ-BAŞ/TUFAL (%)</th>
+                            <th>Hadde Bozuğu (ton)</th>
+                            <th>Kontrole Verilen (ton)</th>
+                            <th>1.Kalite Ton</th>
+                            <th>1.Kalite %</th>
+                            <th>Hızlı Teslimat Ton</th>
+                            <th>Hızlı Teslimat %</th>
+                            <th>Muhtelif Boy Ton</th>
+                            <th>Muhtelif Boy %</th>
+                            <th>Hurda Ton</th>
+                            <th>Hurda %</th>
+                            <th>Karar Bekleyen Ton</th>
+                            <th>Karar Bekleyen Neden</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body1">
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr id="foot1">
+                            <td colspan="3">GENEL TOPLAM</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- 2) 2. KALİTE -->
+        <section class="card">
+            <h2>2. KALİTE NEDEN DAĞILIMI (ton)</h2>
+            <div class="table-wrap">
+                <table id="tbl2">
+                    <thead>
+                        <tr>
+                            <th>Birim Ağırlık Düşük</th>
+                            <th>Kasa Kaçağı</th>
+                            <th>Birim Ağırlık Yüksek</th>
+                            <th>Mukavemet Yüksek</th>
+                            <th>Mukavemet Düşük</th>
+                            <th>Boy Kısa</th>
+                            <th>Boy Uzun</th>
+                            <th>Çekirdek Çapı Yüksek</th>
+                            <th>Çekirdek Çapı Düşük</th>
+                            <th>Ölçü Tol. Har.</th>
+                            <th>Nervürsüz Alan (e) Yüksek</th>
+                            <th>Nervürsüz Alan (e) Düşük</th>
+                            <th>Nervür Yüksekliği Yüksek</th>
+                            <th>Nervür Yüksekliği Düşük</th>
+                            <th>Nervür Açısı (β) Yüksek</th>
+                            <th>Nervür Açısı (β) Düşük</th>
+                            <th>Nervür Uzunluğu Faz</th>
+                            <th>Nervür Uzunluğu Az</th>
+                            <th>Nervür Aralığı Faz</th>
+                            <th>Nervür Aralığı Az</th>
+                            <th>Nervür Alanı Yüksek</th>
+                            <th>Nervür Alanı Düşük</th>
+                            <th>Nervür Tepe Genişliği (b) Fazla</th>
+                            <th>Nervür Tepe Genişliği (b) Az</th>
+                            <th>Nervür Açısı Yüksek</th>
+                            <th>Gala Kırığı</th>
+                            <th>Paso Dökülmesi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body2">
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr id="foot2">
+                            <td colspan="3">GENEL TOPLAM</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3) HURDA -->
+        <section class="card">
+            <h2>HURDA NEDEN DAĞILIMI (ton)</h2>
+            <div class="table-wrap">
+                <table id="tbl3">
+                    <thead>
+                        <tr>
+                            <th>Kasa Kaçağı</th>
+                            <th>Birim Ağırlık Düşük</th>
+                            <th>Birim Ağırlık Yüksek</th>
+                            <th>Mukavemet Yüksek</th>
+                            <th>Mukavemet Düşük</th>
+                            <th>Gala Kırığı</th>
+                            <th>Boy Uzun</th>
+                            <th>Çekirdek Çapı Yüksek</th>
+                            <th>Çekirdek Çapı Düşük</th>
+                            <th>Nervürsüz Alan (e) Yüksek</th>
+                            <th>Nervürsüz Alan (e) Düşük</th>
+                            <th>Nervür Yüksekliği Yüksek</th>
+                            <th>Nervür Yüksekliği Düşük</th>
+                            <th>Nervür Açısı (β) Yüksek</th>
+                            <th>Nervür Açısı (β) Düşük</th>
+                            <th>Nervür Uzunluğu Faz</th>
+                            <th>Nervür Uzunluğu Az</th>
+                            <th>Nervür Aralığı Faz</th>
+                            <th>Nervür Aralığı Az</th>
+                            <th>Nervür Alanı Yüksek</th>
+                            <th>Nervür Alanı Düşük</th>
+                            <th>Nervür Tepe Genişliği (b) Fazla</th>
+                            <th>Nervür Tepe Genişliği (b) Az</th>
+                            <th>Nervür Açısı Yüksek</th>
+                            <th>ÖLÇÜ TOL. HAR</th>
+                            <th>Malzeme Verimi (%)</th>
+                            <th>Satılabilir Ürün (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body3">
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="27"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr id="foot3">
+                            <td colspan="3">GENEL TOPLAM</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <div class="footer-actions">
+            <button class="btn" id="exportAll">Excel’e Aktar</button>
+            <button class="btn primary" id="sendEmailBtn">E-posta Gönder</button>
+        </div>
+    </div>
+
+    <script>
+        const q = (s, r = document) => r.querySelector(s);
+        const qa = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+        function parseDate(s) {
+            const d = new Date(s);
+            return isNaN(d) ? null : d;
+        }
+
+        function applyFilters() {
+            const sVal = q("#startDate").value,
+                eVal = q("#endDate").value;
+            const s = sVal ? new Date(sVal + "T00:00:00") : null;
+            const e = eVal ? new Date(eVal + "T23:59:59") : null;
+            const vardiya = q("#vardiyaSel").value.trim();
+            const dokum = (q("#dokumNo").value || "").trim().toLowerCase();
+
+            qa("#body1 tr").forEach((tr) => {
+                const tDate = tr.cells[0]?.textContent.trim();
+                const tVard = tr.cells[1]?.textContent.trim();
+                const tDokum = tr.cells[6]?.textContent.trim().toLowerCase();
+
+                const d = tDate ? parseDate(tDate) : null;
+                let hide = false;
+                if (s && d && d < s) hide = true;
+                if (e && d && d > e) hide = true;
+                if (vardiya && tVard !== vardiya) hide = true;
+                if (dokum && (!tDokum || !tDokum.includes(dokum))) hide = true;
+
+                tr.style.display = hide ? "none" : "";
+            });
+            calcTotals();
+        }
+        q("#filterBtn").addEventListener("click", applyFilters);
+
+        function calcTotals() {
+            [1, 2, 3].forEach((idx) => {
+                const tbl = q("#tbl" + idx);
+                const body = tbl.querySelector("tbody");
+                const rows = qa("tr", body).filter((r) => r.style.display !== "none");
+                if (!rows.length) return;
+                const colCount = tbl.querySelectorAll("thead th").length;
+                const sums = new Array(colCount).fill(0);
+                rows.forEach((tr) => {
+                    qa("td", tr).forEach((td, i) => {
+                        const v = parseFloat(td.textContent.replace(",", "."));
+                        if (!isNaN(v)) sums[i] += v;
+                    });
+                });
+                const foot = tbl.querySelector("tfoot tr");
+                foot.innerHTML = "";
+                sums.forEach((val, i) => {
+                    const td = document.createElement("td");
+                    td.textContent = val
+                        ? val.toFixed(2)
+                        : i === 0
+                            ? "GENEL TOPLAM"
+                            : "";
+                    foot.appendChild(td);
+                });
+            });
+        }
+
+        
+        async function sendEmail() {
+            const to = (window.prompt("E-posta adresini girin:") || "").trim();
+            if (!to) return;
+            const payload = {
+                to,
+                subject: "KHH ÜRETİM RAPORU",
+                html: document.querySelector(".wrap").innerHTML,
+            };
+            try {
+                const res = await fetch("/send-email", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                alert("E-posta isteği gönderildi.");
+            } catch (err) {
+                console.error(err);
+                alert("E-posta için backend gereklidir (/send-email).");
+            }
+        }
+        q("#sendEmailBtn").addEventListener("click", sendEmail);
+
+        window.addEventListener("DOMContentLoaded", calcTotals);
+    </script>
+</body>
+
+</html>

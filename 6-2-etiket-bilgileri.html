@@ -1,86 +1,218 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Etiket Bilgileri - Kardemir</title>
-  <link rel="stylesheet" href="style.css" />
-  
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>KHH - Etiket İzleme Ekranı</title>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    :root{
+      --k-blue:#1976d2; --k-green:#2e7d32; --k-red:#dc3545; --k-soft:#f5f6f7;
+      --k-border:#e3e6ea; --row-alt:#f9fbfd; --text:#2c3e50;
+    }
+    body{margin:0;background:var(--k-soft);font-family:Arial,Helvetica,sans-serif;color:var(--text)}
+    .content-wrapper{margin-left:250px;padding:20px}
+    .breadcrumbs{color:#5b6b7b;font-size:14px;margin-bottom:14px}
+    .breadcrumbs a{color:var(--k-blue);text-decoration:none;font-weight:600}
+    .breadcrumbs span{margin:0 6px}
+    .topbar{background:#fff;border:1px solid var(--k-border);border-radius:12px;
+      padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+      box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:20px}
+    .title{font-size:18px;font-weight:700;color:var(--text);margin-right:auto;display:flex;align-items:center;gap:8px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--k-blue)}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .iinput{min-width:220px;padding:8px 10px;border:1px solid var(--k-border);border-radius:8px;background:#fff;font-size:14px}
+    .btn{border:0;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;transition:.2s}
+    .btn-green{background:#1ba94c;color:#fff}
+    .btn:hover{opacity:.92}
+    .table-card{background:#fff;border:1px solid var(--k-border);border-radius:12px;
+      padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:14px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid var(--k-border);padding:12px 10px;text-align:center;white-space:nowrap}
+    thead th{background:#f8f9fb;text-transform:uppercase;font-size:12px;letter-spacing:.02em;font-weight:700}
+    tbody tr:nth-child(even){background:var(--row-alt)}
+    tbody tr:hover{background:#eef5ff}
+    .link{color:var(--k-blue);text-decoration:none;font-weight:600}
+    .muted{color:#6c7580}
+    .actions{display:flex;justify-content:flex-end;margin-top:10px}
+    .btn-etiket {
+ 
+ 
+      background: linear-gradient(135deg, #1ba94c, #148f3d);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 3px 10px rgba(27,169,76,0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-etiket:hover {
+  background: linear-gradient(135deg, #19c152, #118b38);
+  box-shadow: 0 4px 14px rgba(27,169,76,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-etiket:disabled {
+  background: #b9dfc4;
+  color: #fff;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.footer-bar {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;         /* tablo ile arasında boşluk */
+  padding-top: 10px;        /* yukarıdan iç boşluk */
+  border-top: 1px solid var(--k-border); /* hafif ayırıcı çizgi */
+  background: #fff;         /* beyaz arka plan */
+  border-radius: 0 0 12px 12px; /* tablo kartı ile uyumlu */
+}
+
+  </style>
 </head>
 
 <body>
   <!-- Sidebar -->
-  <div id="sidebar"></div>
-  <script>
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(data => document.getElementById('sidebar').innerHTML = data);
-  </script>
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(r=>r.text())
+        .then(html=>document.getElementById("sidebar-container").innerHTML=html);
+    </script>
+  </aside>
 
-  <!-- İçerik -->
-  <main class="content-wrapper">
+  <div class="content-wrapper">
     <header class="header">
       <div class="breadcrumbs">
-        <a href="#">Ana Sayfa</a> <span>›</span>
-        <span>Etiket</span>
+        <a href="izleme-ekrani.html">Ana Sayfa</a> <span>&gt;</span>
+        <span>KHH Etiket İzleme</span>
       </div>
     </header>
 
-    <section class="main-report-area">
-      <h1 class="report-title">🏷️ Etiket Bilgileri</h1>
+    <div class="topbar">
+      <div class="title"><span class="dot"></span> KHH Etiket Alma Ekranı</div>
+      <div class="toolbar">
+        <input class="iinput" id="searchCast" placeholder="Döküm numarası giriniz" />
+        <input class="iinput" id="searchPkgId" placeholder="Paket ID giriniz" />
+        <button class="btn btn-green" onclick="applyFilters()">Filtrele</button>
+        <button class="btn" onclick="resetFilters()">Temizle</button>
+        <div class="pill">📅 <span id="shiftText">01 Eki 2025 - 02 Öğle Vardiyası</span></div>
+      </div>
+    </div>
+    
 
-      <div class="table-wrapper">
-        <table class="data-table">
+  <div class="table-card">
+      <div class="table-wrap">
+        <table id="pkgTable">
           <thead>
             <tr>
-              <th><span>RAY ID / PAKET ID</span></th>
-              <th><span>DÖKÜM NO / NO'LAR</span></th>
-              <th><span>SİPARİŞ NO</span></th>
-              <th><span>MÜŞTERİ</span></th>
-              <th><span>SINIF</span></th>
-              <th><span>ÜRÜN TİPİ</span></th>
-              <th><span>KALİTE STANDARDI</span></th>
-              <th><span>KALİTE</span></th>
-              <th><span>AĞIRLIK (kg)</span></th>
-              <th><span>ÜRÜN ADEDİ</span></th>
-              <th><span>TARİH - SAAT</span></th>
+              <th style="text-align:center;">
+  <label style="display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;">
+    <input type="checkbox" id="selectAll" onclick="toggleAll(this)">
+    <span style="font-weight:600;font-size:12px;">Tümünü Seç</span>
+  </label>
+</th>
+              <th>Paket ID</th>
+              <th>Etiket ID</th>
+              <th>Döküm No</th>
+              <th>İş Emri No</th>
+              <th>Paket Tipi</th>
+              <th>Kayıt Tarihi</th>
+              <th>Paket Ağırlığı (kg)</th>
+              <th>Teyit Saati</th>
+              <th>Paket ID</th>
+              <th>Çap (mm)</th>
+              <th>Ürün Kalitesi</th>
+              <th>Boy (m)</th>
+              <th>Ekleyen Kullanıcı</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>PAKET ID</td>
-              <td>2512332</td>
-              <td>500003661</td>
-              <td>X FİRMASI</td>
-              <td>1</td>
-              <td>Nervürlü İnşaat Demiri</td>
-              <td>B420C_00</td>
-              <td>B420C_01</td>
-              <td>1234</td>
-              <td>4</td>
-              <td>10.06.2025 14:32</td>
-            </tr>
-            <tr>
-              <td>RAY ID</td>
-              <td>2512332</td>
-              <td>500003662</td>
-              <td>DDY</td>
-              <td>1</td>
-              <td>Nervürlü İnşaat Demiri</td>
-              <td>B420C_00</td>
-              <td>B420C_02</td>
-              <td>1234</td>
-              <td>1</td>
-              <td>12.06.2025 15:32</td>
-            </tr>
-          </tbody>
+          <tbody id="pkgBody"></tbody>
         </table>
       </div>
+      <div class="footer-bar">
+        <button id="etiketBtn" class="btn-etiket" disabled onclick="etiketAl()">🎫 Etiket Al</button>
 
-      <div style="margin-top: 30px;">
-        <button onclick="window.print()" class="details-button">🖨 Etiketi Yazdır</button>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
+
+  <script>
+    // Veri
+    const data = [
+      {etiketId:'ETK-0001', cast:'2511234', order:'50000001802', type:'Nervürlü İnşaat Demiri', date:'01.10.2025', weight:1750, confirm:'07:45', pid:'PKT0001', dia:14, grade:'B420C_00', length:14, user:'KHH_USER'},
+      {etiketId:'ETK-0002', cast:'2511235', order:'50000001803', type:'Nervürlü İnşaat Demiri', date:'01.10.2025', weight:1780, confirm:'08:10', pid:'PKT0002', dia:14, grade:'B420C_02', length:12, user:'KHH_USER'},
+      {etiketId:'ETK-0003', cast:'2511236', order:'50000001804', type:'Nervürlü İnşaat Demiri', date:'01.10.2025', weight:1720, confirm:'09:15', pid:'PKT0003', dia:14, grade:'B420C_01', length:12, user:'KHH_USER'},
+      {etiketId:'ETK-0004', cast:'2511237', order:'50000001805', type:'Nervürlü İnşaat Demiri', date:'01.10.2025', weight:1710, confirm:'09:42', pid:'PKT0004', dia:14, grade:'B420C_00', length:18, user:'KHH_USER'},
+      {etiketId:'ETK-0005', cast:'2511238', order:'50000001806', type:'Nervürlü İnşaat Demiri', date:'01.10.2025', weight:1850, confirm:'10:05', pid:'PKT0005', dia:14, grade:'B420C_00', length:12, user:'KHH_USER'}
+    ];
+
+    const pkgBody = document.getElementById('pkgBody');
+    const etiketBtn = document.getElementById('etiketBtn');
+
+    function render(rows){
+      pkgBody.innerHTML = rows.map(r => `
+        <tr>
+          
+          <td><input type="checkbox" class="rowCheck" onchange="updateButtonState()" data-id="${r.etiketId}"></td>
+          <td>${r.pid}</td>
+          <td>${r.etiketId}</td>
+          <td><a class="link" href="#">${r.cast}</a></td>
+          <td>${r.order}</td>
+          <td>${r.type}</td>
+          <td>${r.date}</td>
+          <td>${r.weight.toLocaleString('tr-TR')}</td>
+          <td>${r.confirm}</td>
+          <td>${r.pid}</td>
+          <td>${r.dia}</td>
+          <td>${r.grade}</td>
+          <td>${r.length}</td>
+          <td class="muted">${r.user}</td>
+        </tr>
+      `).join('');
+    }
+
+    function applyFilters(){
+      const cast = document.getElementById('searchCast').value.trim();
+      const pkg = document.getElementById('searchPkgId').value.trim();
+      let filtered = data;
+
+      if(cast) filtered = filtered.filter(r => r.cast.includes(cast));
+      if(pkg)  filtered = filtered.filter(r => r.pid.toLowerCase().includes(pkg.toLowerCase()));
+
+      render(filtered);
+    }
+
+    function resetFilters(){
+      document.getElementById('searchCast').value = '';
+      document.getElementById('searchPkgId').value = '';
+      render(data);
+    }
+
+    function toggleAll(source){
+      const checkboxes = document.querySelectorAll('.rowCheck');
+      checkboxes.forEach(cb => cb.checked = source.checked);
+      updateButtonState();
+    }
+
+    function updateButtonState(){
+      const selected = document.querySelectorAll('.rowCheck:checked').length > 0;
+      etiketBtn.disabled = !selected;
+    }
+
+    function etiketAl(){
+      const selected = [...document.querySelectorAll('.rowCheck:checked')].map(cb => cb.dataset.id);
+      alert("Seçilen etiketler: " + selected.join(', '));
+    }
+
+    render(data);
+  </script>
 </body>
 </html>

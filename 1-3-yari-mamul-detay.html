@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="tr">
-
+ 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kütük Detay - Kardemir</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+ 
   <style>
     .flex-row {
       display: flex;
@@ -15,14 +15,14 @@
       gap: 20px;
       margin-bottom: 25px;
     }
-
+ 
     .info-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
       margin-bottom: 30px;
     }
-
+ 
     .info-grid .item {
       background-color: var(--card-bg-white);
       border: 1px solid var(--border-color);
@@ -31,38 +31,38 @@
       font-size: 14px;
       box-shadow: 0 1px 3px var(--shadow-light);
     }
-
+ 
     .info-grid .item strong {
       display: block;
       font-weight: 600;
       margin-bottom: 4px;
       color: var(--text-color-light-grey);
     }
-
+ 
     .small-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
     }
-
+ 
     .small-table th,
     .small-table td {
       border: 1px solid var(--border-color);
       padding: 8px 10px;
       text-align: left;
     }
-
+ 
     .small-table th {
       background-color: var(--main-bg-light);
       color: var(--text-color-dark);
     }
-
+ 
     .dual-tables {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
     }
-
+ 
     .dual-tables .table-box {
       flex: 1;
       min-width: 300px;
@@ -71,7 +71,7 @@
       border-radius: 8px;
       box-shadow: 0 2px 5px var(--shadow-medium);
     }
-
+ 
     .table-box h3 {
       margin-bottom: 10px;
       font-size: 16px;
@@ -79,7 +79,7 @@
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 5px;
     }
-
+ 
     .back-button {
       display: inline-block;
       margin-top: 30px;
@@ -91,23 +91,23 @@
       font-size: 14px;
       transition: background-color 0.3s;
     }
-
+ 
     .back-button:hover {
       background-color: #0b3d91;
     }
   </style>
 </head>
-
+ 
 <body>
-
+ 
   <div id="sidebar"></div>
   <script>
     fetch('sidebar.html')
       .then(res => res.text())
       .then(data => document.getElementById('sidebar').innerHTML = data);
   </script>
-
-
+ 
+ 
   <div class="content-wrapper">
     <header class="header">
       <div class="breadcrumbs">
@@ -115,29 +115,29 @@
         <span>Yarı Mamul Detay</span>
       </div>
     </header>
-
+ 
     <div class="detail-container">
       <h2 class="report-title">25123321301 Kütük Proses Bilgileri</h2>
-
+ 
       <div class="info-grid">
-        <div class="item"><strong>Sipariş No</strong> 300003682</div>
+        <div class="item"><strong>Sipariş No</strong> 400003682</div>
         <div class="item"><strong>Döküm No</strong> 2512332</div>
         <div class="item"><strong>Kütük ID</strong> 25123321301</div>
         <div class="item"><strong>Yol No</strong> 2</div>
         <div class="item"><strong>Sıra No</strong> 3</div>
-        <div class="item"><strong>Ürün Mal Grubu</strong> Profil </div>
+        <div class="item"><strong>Ürün Mal Grubu</strong> İnce Kangal </div>
         <div class="item"><strong>Enerji Miktarı</strong> 210 MJ</div>
         <div class="item"><strong>Malzeme Kodu</strong> 70000565 </div>
         <div class="item"><strong>Yarı Mamul Kodu</strong> YRMML-10255-001</div>
         <div class="item"><strong>Boy</strong> 12 m</div>
         <div class="item"><strong>Kesit</strong> 14 mm</div>
-        <div class="item"><strong>Kok Gazı Miktarı</strong> 85 Nm³</div>
+        <div class="item"><strong>Doğalgaz Miktarı</strong> 85 Nm³</div>
         <div class="item"><strong>Toplam İşlem Süreci</strong> 2 Saat 35 Dk</div>
         <div class="item"><strong>SDM Çıkış Ağırlık</strong> 1000 kg</div>
         <div class="item"><strong>Fırın Giriş Ağırlık</strong> 960 kg</div>
-        
+       
       </div>
-
+ 
       <div class="dual-tables">
         <div class="table-box">
           <h3>Zaman Bilgileri</h3>
@@ -152,181 +152,289 @@
             </thead>
             <tbody>
               <tr>
-                <td>Fırın</td>
+                <td>Tav Fırını</td>
                 <td>10:00</td>
                 <td>10:15</td>
                 <td>5 dk</td>
               </tr>
               <tr>
-                <td>Descaler</td>
+               <tr>
+                <td>Hadde Kaba</td>
+                <td>10:00</td>
+                <td>10:15</td>
+                <td>5 dk</td>
+              </tr>
+              <tr>
+                <td>Makas-1</td>
                 <td>10:15</td>
                 <td>10:18</td>
                 <td>3 dk</td>
               </tr>
-              <tr>
-                <td>BD1</td>
-                <td>10:18</td>
-                <td>10:21</td>
-                <td>3 dk</td>
-              </tr>
-              <tr>
-                <td>BD2</td>
-                <td>10:21</td>
-                <td>10:25</td>
-                <td>4 dk</td>
-              </tr>
-              <tr>
-                <td>Tandem</td>
+ 
+                <td>Hadde Orta</td>
                 <td>10:25</td>
                 <td>10:29</td>
                 <td>4 dk</td>
               </tr>
               <tr>
-                <td>Lazer Ölçüm</td>
+                <td>Makas-2</td>
                 <td>10:29</td>
                 <td>10:32</td>
                 <td>3 dk</td>
               </tr>
               <tr>
-                <td>Damgalama</td>
+                <td>Hadde Finish</td>
                 <td>10:32</td>
                 <td>10:35</td>
                 <td>3 dk</td>
               </tr>
               <tr>
-                <td>Sıcak Testere</td>
-                <td>10:35</td>
-                <td>10:38</td>
-                <td>3 dk</td>
-              </tr>
-              <tr>
-                <td>Kalite Kontrol</td>
+                <td>WaterBox-1</td>
                 <td>10:38</td>
                 <td>10:41</td>
                 <td>3 dk</td>
               </tr>
               <tr>
-                <td>Soğutma Izgarası</td>
+                <td>WaterBox-2</td>
+                <td>10:38</td>
+                <td>10:41</td>
+                <td>3 dk</td>
+              </tr>
+              <tr>
+                <td>Meer Drive</td>
+                <td>10:35</td>
+                <td>10:38</td>
+                <td>3 dk</td>
+              </tr>
+              <tr>
+                <td>WaterBox-4</td>
+                <td>10:38</td>
+                <td>10:41</td>
+                <td>3 dk</td>
+              </tr>
+              <tr>
+                <td>WaterBox-5</td>
                 <td>10:41</td>
                 <td>10:44</td>
                 <td>3 dk</td>
               </tr>
               <tr>
-                <td>1.Doğrultma
-                  (Dikey)</td>
+                <td>WaterBox-6</td>
                 <td>10:44</td>
                 <td>10:46</td>
                 <td>2 dk</td>
               </tr>
               <tr>
-                <td>2.Doğrultma
-                  (Yatay)</td>
+                <td>WaterBox-7</td>
                 <td>10:46</td>
                 <td>10:48</td>
                 <td>2 dk</td>
               </tr>
               <tr>
-                <td>Test Center Ünitesi</td>
+                <td>TMB</td>
                 <td>10:48</td>
                 <td>10:57</td>
                 <td>3 dk</td>
               </tr>
-              
+             
               <tr>
-                <td>Delme Kesme</td>
+                <td>WaterBox-8</td>
                 <td>10:57</td>
                 <td>11:00</td>
                 <td>3 dk</td>
               </tr>
               <tr>
-                <td>Gag Press</td>
+                <td>Serme Kafa</td>
                 <td>11:00</td>
                 <td>11:03</td>
                 <td>3 dk</td>
               </tr>
               <tr>
-                <td>2. Delme Kesme</td>
+                <td>LCC Röle Yolu</td>
                 <td>11:03</td>
                 <td>11:05</td>
                 <td>2 dk</td>
               </tr>
               <tr>
-                <td>Soğuk Testere</td>
+                <td>PSM</td>
                 <td>11:05</td>
                 <td>11:08</td>
                 <td>3 dk</td>
               </tr>
-
+              <tr>
+                <td>Soğutma Izgarası</td>
+                <td>11:05</td>
+                <td>11:08</td>
+                <td>3 dk</td>
+              </tr>
+              <tr>
+                <td>Paketleme-1</td>
+                <td>11:05</td>
+                <td>11:08</td>
+                <td>3 dk</td>
+              </tr>
+              <tr>
+                <td>Paketleme-2</td>
+                <td>11:05</td>
+                <td>11:08</td>
+                <td>3 dk</td>
+              </tr>
+ 
               <!-- Toplam Süre Satırı -->
               <tr style="font-weight: bold; background-color: #f2f2f2;">
                 <td colspan="3" style="text-align:left;">Toplam İşlem Süresi:</td>
                 <td>53 dk</td>
               </tr>
             </tbody>
-
+ 
           </table>
         </div>
-
+ 
         <div class="table-box">
-          <h3>Sıcaklık Bilgileri</h3>
+          <h3>Sıcaklık Bilgileri (Ortalama)</h3>
           <table class="small-table">
             <thead>
               <tr>
-                <th>Sıcaklık Yeri</th>
-                <th>Ölçüm Zamanı</th>
+                <th>Ölçüm Yeri</th>
                 <th>Sıcaklık (°C)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>Fırın</td>
-                <td>10:15</td>
+                <td>1250</td>
+              </tr>
+              <tr>
+                <td>Hadde Giriş</td>
+                <td>1230</td>
+              </tr>
+              <tr>
+                <td>Meer Drive Giriş</td>
+                <td>1210</td>
+              </tr>
+              <tr>
+                <td>PSM</td>
+                <td>1190</td>
+              </tr>
+              <tr>
+                <td>TBM Giriş</td>
+                <td>1190</td>
+              </tr>
+              <tr>
+                <td>Basket Dökülüş</td>
+                <td>1190</td>
+              </tr>
+              <tr>
+                <td>Izgaraya Giriş</td>
+                <td>1190</td>
+              </tr>
+              <tr>
+                <td>Serme Kafa</td>
+                <td>1170</td>
+              </tr>
+ 
+ 
+             
+            </tbody>
+          </table>
+          <br><br><br>
+           <h3>Basınç Bilgileri (Ortalama)</h3>
+          <table class="small-table">
+            <thead>
+              <tr>
+                <th>Ölçüm Yeri</th>
+                <th>Basınç (bar)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Fırın</td>
                 <td>1250</td>
               </tr>
               <tr>
                 <td>Descaler</td>
-                <td>10:30</td>
                 <td>1230</td>
               </tr>
               <tr>
-                <td>BD1</td>
-                <td>10:45</td>
+                <td>WaterBox-1</td>
                 <td>1210</td>
               </tr>
               <tr>
-                <td>BD2</td>
-                <td>11:00</td>
-                <td>1190</td>
-              </tr> 
-              <tr>
-                <td>Tandem</td>
-                <td>11:20</td>
-                <td>1170</td>
+                <td>WaterBox-2</td>
+                <td>1210</td>
+              </tr>
+               <tr>
+                <td>WaterBox-4</td>
+                <td>1210</td>
               </tr>
               <tr>
-                <td>Lazer Ölçüm</td>
-                <td>11:30</td>
-                <td>1145</td>
+                <td>WaterBox-5</td>
+                <td>1210</td>
               </tr>
               <tr>
-                <td>Damgalama</td>
-                <td>11:45</td>
-                <td>1100</td>
+                <td>WaterBox-6</td>
+                <td>1210</td>
               </tr>
               <tr>
-                <td>Soğutma Izgarası</td>
-                <td>12:00</td>
-                <td>900</td>
+                <td>WaterBox-7</td>
+                <td>1210</td>
+              </tr>
+              <tr>
+                <td>WaterBox-8</td>
+                <td>1210</td>
               </tr>
             </tbody>
           </table>
+ 
         </div>
         <div class="table-box">
-  <h3>Analiz Bilgileri</h3>
+  
+           <h3>Akış Bilgileri</h3>
+          <table class="small-table">
+            <thead>
+              <tr>
+                <th>Ölçüm Yeri</th>
+                <th>Akış (m3)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>WaterBox-1 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+               <tr>
+                <td>WaterBox-2 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+               <tr>
+                <td>WaterBox-4 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+               <tr>
+                <td>WaterBox-5 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+               <tr>
+                <td>WaterBox-6 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+               <tr>
+                <td>WaterBox-7 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+              <tr>
+              <tr>
+                <td>WaterBox-8 (Ortalama)</td>
+                <td>1210</td>
+              </tr>
+            </tbody>
+          </table>
+    <br><br><br><br><br>
+    <h3>Analiz Bilgileri</h3>
   <table class="small-table">
     <thead>
       <tr>
-        <th>Başlık</th>
+        <th>Analiz Bilgileri</th>
       </tr>
     </thead>
     <tbody>
@@ -347,15 +455,15 @@
     </tbody>
   </table>
 </div>
-
+ 
       </div>
-
-      <a href="1-1-rph-izleme-ekrani.html" class="back-button">&laquo; İş Emri Ekranına Geri Dön</a>
+ 
+      <a href="1-1-khh-izleme-ekrani.html" class="back-button">&laquo; İş Emri Ekranına Geri Dön</a>
       <a href="1-2-yari-mamul-listesi.html" class="back-button">&laquo; Yarı Mamul Listesi</a>
           </div>
-    
+   
   </div>
-
+ 
 </body>
-
+ 
 </html>

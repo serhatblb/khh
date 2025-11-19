@@ -186,19 +186,9 @@
             <th>Fırında Kalma Süresi</th>
             <th>Fırın Basıncı (Ortalama)</th>
             <th>Fırın Deşarj Sıcaklığı (Ortalama)</th>
-            <th>Descaler Basıncı (Ortalama)</th>
             <th>Hadde Giriş Sıcaklığı (Ortalama)</th>
-            <th>Waterbox 1 Basınç (Ortalama)</th>
-            <th>Waterbox 1 Akış m³ (Ortalama)</th>
-            <th>Meer Drive Giriş Sıcaklığı (Ortalama)</th>
-            <th>TBM Giriş Sıcaklığı (Ortalama)</th>
-            <th>Waterbox 8 Basınç (Ortalama)</th>
-            <th>Waterbox 8 Akış m³ (Ortalama)</th>
-            <th>HiProfile Ölçüm Verileri (Her Kangal Bazında)</th>
-            <th>Serme Kafa Sıcaklığı (Ortalama)</th>
-            <th>ICC Kapak Durumu (Açık/Kapalı)</th>
-            <th>Fan Durumu (% Verim / RPM)</th>
-            <th>Konveyör Hızları (m/sn)</th>
+            <th>Hadde Çalışma Hızı (Ortalama)</th>
+            <th>QTB Basıncı (Ortalama)</th>
           </tr>
         </thead>
         <tbody id="rapor-body"></tbody>
@@ -266,20 +256,10 @@
           firinDes: desarj,
           kalmaSure: `${kalmaMin} dk`,
           firinBas: `${(1 + Math.random()).toFixed(1)} bar`,
+          qtbBas: `${(1 + Math.random()).toFixed(1)} bar`,
+          hadHiz: `${(1 + Math.random()).toFixed(1)} m/s`,
           firinDesSic: `${(950 + Math.floor(Math.random() * 150))} °C`,
-          descalerBas: `${(3 + Math.random() * 2).toFixed(1)} bar`,
-          haddeGirisSic: `${(950 + Math.floor(Math.random() * 120))} °C`,
-          wb1Bas: `${(4 + Math.random() * 2).toFixed(1)} bar`,
-          wb1Akis: `${(12 + Math.random() * 5).toFixed(1)} m³`,
-          meerDriveSic: `${(400 + Math.floor(Math.random() * 50))} °C`,
-          tbmGirisSic: `${(380 + Math.floor(Math.random() * 40))} °C`,
-          wb8Bas: `${(3.5 + Math.random() * 2).toFixed(1)} bar`,
-          wb8Akis: `${(10 + Math.random() * 5).toFixed(1)} m³`,
-          hiprofile: `Ovalite ${(0.1 + Math.random() * 0.2).toFixed(2)} mm`,
-          sermeKafaSic: `${(250 + Math.floor(Math.random() * 30))} °C`,
-          iccKapak: Math.random() > .5 ? 'Açık' : 'Kapalı',
-          fanDurumu: `${(60 + Math.floor(Math.random() * 35))}% / ${(800 + Math.floor(Math.random() * 400))} RPM`,
-          konveyorHiz: (2 + Math.random() * 2).toFixed(2)
+          haddeGirisSic: `${(950 + Math.floor(Math.random() * 120))} °C`
         };
         data.push(row);
       }
@@ -318,19 +298,9 @@
           <td>${r.kalmaSure}</td>
           <td>${r.firinBas}</td>
           <td>${r.firinDesSic}</td>
-          <td>${r.descalerBas}</td>
           <td>${r.haddeGirisSic}</td>
-          <td>${r.wb1Bas}</td>
-          <td>${r.wb1Akis}</td>
-          <td>${r.meerDriveSic}</td>
-          <td>${r.tbmGirisSic}</td>
-          <td>${r.wb8Bas}</td>
-          <td>${r.wb8Akis}</td>
-          <td>${r.hiprofile}</td>
-          <td>${r.sermeKafaSic}</td>
-          <td>${r.iccKapak}</td>
-          <td>${r.fanDurumu}</td>
-          <td>${r.konveyorHiz}</td>
+          <td>${r.hadHiz}</td>
+          <td>${r.firinBas}</td>
         </tr>
       `).join('');
 
@@ -403,16 +373,13 @@
       const header = [
         'Kütük ID', 'İş Emri No', 'Döküm Numarası', 'Kütük Ebatı', 'Kalite', 'Çap', 'Üretim Tarihi',
         'Fırın Şarj Zamanı', 'Fırın Deşarj Zamanı', 'Fırında Kalma Süresi', 'Fırın Basıncı (Ort.)',
-        'Fırın Deşarj Sıcaklığı (Ort.)', 'Descaler Basıncı (Ort.)', 'Hadde Giriş Sıcaklığı (Ort.)',
-        'Waterbox 1 Basınç (Ort.)', 'Waterbox 1 Akış m³ (Ort.)', 'Meer Drive Giriş Sıcaklığı (Ort.)',
-        'TBM Giriş Sıcaklığı (Ort.)', 'Waterbox 8 Basınç (Ort.)', 'Waterbox 8 Akış m³ (Ort.)',
-        'HiProfile Ölçüm Verileri', 'Serme Kafa Sıcaklığı (Ort.)', 'ICC Kapak Durumu', 'Fan Durumu', 'Konveyör Hızları (m/sn)'
+        'Fırın Deşarj Sıcaklığı (Ort.)',  'Hadde Giriş Sıcaklığı (Ort.)',
+        'Hadde Çalışma Hızı', 'QTB Basıncı'
       ];
       const rows = current.map(r => [
         r.kutukId, r.isEmriNo, r.dokumNo, r.kutukEb, r.kalite, r.cap, r.uretimT,
-        r.firinSarj, r.firinDes, r.kalmaSure, r.firinBas, r.firinDesSic, r.descalerBas,
-        r.haddeGirisSic, r.wb1Bas, r.wb1Akis, r.meerDriveSic, r.tbmGirisSic, r.wb8Bas,
-        r.wb8Akis, r.hiprofile, r.sermeKafaSic, r.iccKapak, r.fanDurumu, r.konveyorHiz
+        r.firinSarj, r.firinDes, r.kalmaSure, r.firinBas, 
+        r.haddeGirisSic, r.hadHiz, r.firinBas
       ]);
 
       const wb = XLSX.utils.book_new();

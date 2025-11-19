@@ -49,13 +49,13 @@
 </head>
 
 <body>
+    <!-- Sidebar -->
     <div id="sidebar"></div>
     <script>
         fetch('sidebar.html')
             .then(res => res.text())
             .then(data => document.getElementById('sidebar').innerHTML = data);
     </script>
-
 
     <div class="content-wrapper">
         <header class="header">
@@ -67,19 +67,23 @@
 
         <div class="main-report-area">
             <h1 class="report-title">KÜTÜK DETAY LİSTESİ </h1>
-
             <div class="filter-section">
-                <div>
-                    <button class="primary-button">Liste Getir</button>
-                    <button class="excel-button">Excel Rapor</button>
-                </div>
                 <div>
                     <label>Başlangıç Tarihi<br><input type="date"></label>
                 </div>
                 <div>
                     <label>Bitiş Tarihi<br><input type="date"></label>
                 </div>
-
+                <div>
+                    <label>Döküm No<br><input type="text" placeholder="Örn: 25100213"></label>
+                </div>
+                <div>
+                    <label>Kütük ID<br><input type="text" placeholder="Örn: 2510021301"></label>
+                </div>
+                <div>
+                    <button class="primary-button">Liste Getir</button>
+                    <button class="excel-button">Excel Rapor</button>
+                </div>
             </div>
 
             <div class="table-wrapper">

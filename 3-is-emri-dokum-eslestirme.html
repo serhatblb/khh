@@ -192,8 +192,9 @@
             <tr>
               <th>Sipariş No</th>
               <th>Malzeme Kodu</th>
-              <th>Kesit</th>
-              <th>Kalite</th>
+              <th>Malzeme Tanımı</th>
+              <!-- <th>Kesit</th>
+              <th>Kalite</th> -->
               <th>Toplam Kampanya Planlanan Üretim Miktarı</th>
               <th>Toplam Kampanya Planlanan Tüketim Miktarı</th>
               <th>Planlanan Üretim Tarihi</th>
@@ -216,8 +217,9 @@ const uretimProgrami = [
   {
     siparis:"400000001591",
     malzeme:"80000025",
-    kesit:"140",
-    kalite:"B420C_00",
+    malzemeTanım:"Ø14,00 B420C_00 12000 Nervürlü İnşaat Demiri",
+    // kesit:"140",
+    // kalite:"B420C_00",
     kampUretim:"1200",
     kampTuketim:"1320",
     planTarih:"25/10/2025",
@@ -229,8 +231,9 @@ const uretimProgrami = [
   {
     siparis:"400000001592",
     malzeme:"80000025",
-    kesit:"150",
-    kalite:"B420C_00",
+    malzemeTanım:"Ø15,00 B420C_00 12000 Nervürlü İnşaat Demiri",
+    // kesit:"150",
+    // kalite:"B420C_00",
     kampUretim:"1600",
     kampTuketim:"1760",
     planTarih:"25/10/2025",
@@ -242,8 +245,9 @@ const uretimProgrami = [
   {
     siparis:"400000001593",
     malzeme:"80000025",
-    kesit:"170",
-    kalite:"B420C_01",
+    malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri",
+    // kesit:"170",
+    // kalite:"B420C_01",
     kampUretim:"1400",
     kampTuketim:"1540",
     planTarih:"25/10/2025",
@@ -255,8 +259,9 @@ const uretimProgrami = [
   {
     siparis:"400000001594",
     malzeme:"80000025",
-    kesit:"170",
-    kalite:"B420C_02",
+    malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri",
+    // kesit:"170",
+    // kalite:"B420C_02",
     kampUretim:"2500",
     kampTuketim:"2750",
     planTarih:"26/10/2025",
@@ -268,8 +273,9 @@ const uretimProgrami = [
   {
     siparis:"400000001595",
     malzeme:"80000025",
-    kesit:"170",
-    kalite:"B420C_02",
+    malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri",
+    // kesit:"170",
+    // kalite:"B420C_02",
     kampUretim:"1200",
     kampTuketim:"1320",
     planTarih:"26/10/2025",
@@ -295,8 +301,8 @@ function renderTable(rows){
     tr.innerHTML = `
       <td class="col-siparis">${r.siparis}</td>
       <td class="col-malzemekodu">${r.malzeme}</td>
-      <td class="col-kesit">${r.kesit}</td>
-      <td class="col-kalite">${r.kalite}</td>
+      <td>${r.malzemeTanım}</td>
+      
       <td>${r.kampUretim}</td>
       <td>${r.kampTuketim}</td>
       <td>${r.planTarih}</td>
@@ -309,6 +315,9 @@ function renderTable(rows){
     tb.appendChild(tr);
   });
 }
+    // Tablodan silinenler
+    //   <td class="col-kesit">${r.kesit}</td> 
+    //   <td class="col-kalite">${r.kalite}</td>
 
 /* KALİTE DROPDOWN DOLDUR */
 function initKalite(){

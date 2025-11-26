@@ -4,357 +4,1026 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Kardemir - Üretim Programı Döküm Atama</title>
-  <link href="style.css" rel="stylesheet" />
-
+  <link rel="stylesheet" href="sidebar.css">
   <style>
-    :root{
-      --k-blue:#1976d2;
-      --k-gray:#f5f7fa;
-      --k-border:#ddd;
-      --k-text:#333;
+    :root {
+      --k-blue: #1976d2;
+      --k-gray: #f5f7fa;
+      --k-border: #ddd;
+      --k-text: #333;
     }
 
-    /* Filtre Alanı */
-    .filters{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-end;
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:6px;
-      padding:12px;
-      margin-bottom:10px;
-      box-shadow:0 1px 3px rgba(0,0,0,.08);
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7fa;
     }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      font-size:12px;
+
+    /* --- FILTERS --- */
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 50px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
     }
-    .field label{
-      font-weight:bold;
-      color:#444;
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
     }
+
+    .field label {
+      font-weight: bold;
+      color: #444;
+    }
+
     .field input,
-    .field select{
-      padding:6px;
-      border:1px solid #ccc;
-      border-radius:4px;
-      font-size:13px;
-    }
-    .btn-filter{
-      background:var(--k-blue);
-      color:#fff;
-      border:none;
-      padding:8px 14px;
-      border-radius:4px;
-      cursor:pointer;
-      font-size:13px;
-      font-weight:500;
+    .field select {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
     }
 
-    /* Tablo Alanı */
-    .main-report-area{
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:8px;
-      padding:16px;
-      box-shadow:0 1px 4px rgba(0,0,0,.08);
-    }
-    .report-title{
-      font-size:18px;
-      margin:0 0 10px 0;
-      text-align:center;
-      font-weight:600;
-      letter-spacing:.5px;
+    .btn-filter {
+      background: var(--k-blue);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
     }
 
-    .data-table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:8px;
-      table-layout:auto;
+    /* --- MAIN TABLE --- */
+    .main-report-area {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
     }
+
+    .report-title {
+      font-size: 18px;
+      margin: 0 0 10px 0;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      table-layout: auto;
+    }
+
     .data-table th,
-    .data-table td{
-      padding:8px 10px;
-      text-align:center;
-      border:1px solid var(--k-border);
-      font-size:12px;
-      word-wrap:break-word;
-      white-space:normal;
+    .data-table td {
+      padding: 8px 10px;
+      text-align: center;
+      border: 1px solid var(--k-border);
+      font-size: 12px;
+      word-wrap: break-word;
+      white-space: normal;
     }
-    .data-table thead th{
-      background:#e1e7f0;
-      font-weight:700;
-      color:var(--k-text);
-      font-size:12px;
+
+    .data-table thead th {
+      background: #e1e7f0;
+      font-weight: 700;
+      color: var(--k-text);
+      font-size: 12px;
     }
-    .data-table tbody tr:nth-child(even){
-      background:#fafbfc;
+
+    .data-table tbody tr:nth-child(even) {
+      background: #fafbfc;
     }
 
     .col-siparis,
     .col-malzemekodu,
-    .col-kesit{
-      font-weight:600;
-    }
-    .col-kalite{
-      font-weight:600;
-      color:#003366;
-    }
-    .col-plan-ym{
-      background:#ff7a00;
-      color:#fff;
-      font-weight:600;
+    .col-kesit {
+      font-weight: 600;
     }
 
-    .btn-dokum{
-      padding:6px 14px;
-      border-radius:16px;
-      border:none;
-      background:#0064ff;
-      color:#fff;
-      font-size:12px;
-      cursor:pointer;
-      font-weight:500;
-      white-space:nowrap;
+    .col-kalite {
+      font-weight: 600;
+      color: #003366;
     }
-    .btn-dokum:hover{
-      background:#004bcc;
-    }
-    .header-x {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
 
+    .col-plan-ym {
+      background: #ff7a00;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .btn-dokum {
+      padding: 6px 14px;
+      border-radius: 16px;
+      border: none;
+      background: #0064ff;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .btn-dokum:hover {
+      background: #004bcc;
+    }
+
+    /* --- MODALS --- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      overflow-y: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      background: var(--k-blue);
+      color: white;
+      padding: 18px 25px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+    }
+
+    .modal-body {
+      padding: 20px 25px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 15px 25px;
+      background: #f8f9fa;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 12px 12px;
+    }
+
+    /* --- INNER TABLES --- */
+    .dokum-table,
+    .kutuk-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .dokum-table th,
+    .dokum-table td,
+    .kutuk-table th,
+    .kutuk-table td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .dokum-table th,
+    .kutuk-table th {
+      background: #e1e7f0;
+      font-weight: 600;
+    }
+
+    .dokum-table tbody tr:hover {
+      background: #f0f4ff;
+    }
+
+    .btn-detay {
+      padding: 5px 12px;
+      background: #17a2b8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      background: var(--k-blue);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-remove {
+      padding: 5px 12px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .tonaj-info {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--k-blue);
+    }
+
+    .selected-dokum-item {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #ddd;
+    }
+
+    /* DETAY MODAL ÖZEL */
+    .kutuk-modal .modal-content {
+      max-width: 95%;
+    }
+
+    .kutuk-table {
+      font-size: 11px;
+    }
+
+    .kutuk-table th,
+    .kutuk-table td {
+      padding: 6px 8px;
+      font-size: 11px;
+    }
+
+    .red-indicator {
+      background-color: #ffebee !important;
+      font-weight: bold;
+    }
+
+    /* TOOLTIP */
+    .analysis-tooltip {
+      position: absolute;
+      z-index: 1500;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .25);
+      padding: 10px 14px;
+      font-size: 11px;
+      min-width: 280px;
+      max-width: 360px;
+      border: 1px solid rgba(0, 0, 0, .06);
+      display: none;
+    }
+
+    .analysis-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1976d2;
+    }
+
+    .analysis-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .analysis-table th {
+      text-align: left;
+      padding: 2px 6px;
+      font-weight: 600;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .analysis-table td {
+      padding: 2px 6px;
+      text-align: right;
+      color: #222;
+    }
+
+    .analysis-table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
   </style>
 </head>
+
 <body>
   <!-- Sidebar -->
   <aside id="sidebar">
-    <div id="sidebar-container"></div>
+    <div id="sidebar-container" class="sidebar-container"></div>
     <script>
       fetch("sidebar.html")
-        .then(res => res.text())
-        .then(html => document.getElementById("sidebar-container").innerHTML = html);
+        .then((res) => res.text())
+        .then((data) => (document.getElementById("sidebar-container").innerHTML = data));
     </script>
   </aside>
 
-  <div class="content-wrapper">
-    <header class="header">
-      <div class="breadcrumbs">
-        <a href="#">Ana Sayfa</a> <span>&gt;</span>
-        <span>Üretim Programı</span> <span>&gt;</span>
-        <span>Döküm Atama</span>
-      </div>
-    </header>
-    <div class="header-x" style="text-align: center;" ><h1 >Çubuk Kangal Haddehanesine Ait Örnek Ekran</h1></div>
+  <div class="filters" style="margin-left: 280px;">
+    <div class="field"><label>Sipariş No</label><input type="text" id="fSiparis" placeholder="4000…"></div>
+    <div class="field"><label>Malzeme Kodu</label><input type="text" id="fMalzeme" placeholder="8000…"></div>
+    <div class="field"><label>Kalite</label><select id="fKalite">
+        <option value="">Tümü</option>
+      </select></div>
+    <div class="field"><label>Başlangıç Tarihi</label><input type="date" id="fStart"></div>
+    <div class="field"><label>Bitiş Tarihi</label><input type="date" id="fEnd"></div>
+    <button class="btn-filter" onclick="applyFilters()">Filtrele</button>
+  </div>
 
-    <!-- FİLTRE ALANI -->
-    <div class="filters">
-      <div class="field">
-        <label>Sipariş No</label>
-        <input type="text" id="fSiparis" placeholder="4000…">
-      </div>
-      <div class="field">
-        <label>Malzeme Kodu</label>
-        <input type="text" id="fMalzeme" placeholder="8000…">
-      </div>
-      <div class="field">
-        <label>Kalite</label>
-        <select id="fKalite">
-          <option value="">Tümü</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Başlangıç Tarihi</label>
-        <input type="date" id="fStart">
-      </div>
-      <div class="field">
-        <label>Bitiş Tarihi</label>
-        <input type="date" id="fEnd">
-      </div>
-      <button class="btn-filter" onclick="applyFilters()">Filtrele</button>
+  <div class="main-report-area" style="margin-left: 280px;">
+    <h2 class="report-title">ÜRETİM PROGRAMI DÖKÜM ATAMA</h2>
+    <div style="overflow-x:auto; width:100%;">
+      <table class="data-table" style="min-width:1400px;">
+        <thead>
+          <tr>
+            <th>Sipariş No</th>
+            <th>Malzeme Kodu</th>
+            <th>Kesit</th>
+            <th>Kalite</th>
+            <th>Toplam Kampanya Planlanan Üretim Miktarı</th>
+            <th>Toplam Kampanya Planlanan Tüketim Miktarı</th>
+            <th>Planlanan Üretim Tarihi</th>
+            <th>Planlanan Üretim Miktarı</th>
+            <th>Planlanan YM Tüketim Miktarı</th>
+            <th>Bağlanan YM Miktarı</th>
+            <!-- KALDIRILDI: Bağlanan Döküm Numaraları -->
+            <!-- KALDIRILDI: Açıklama -->
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="program-table-body"></tbody>
+      </table>
     </div>
+  </div>
 
-    <!-- TABLO -->
-    <div class="main-report-area">
-      <h2 class="report-title">ÜRETİM PROGRAMI DÖKÜM ATAMA</h2>
-
-      <div style="overflow-x:auto; width:100%;">
-        <table class="data-table" style="min-width:1400px;">
+  <!-- MODAL 1: Döküm Listesi -->
+  <div id="dokumModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Döküm Seçimi (Filtre: Kesit <span id="modalKesitInfo"></span>)</h2>
+        <button class="close-btn" onclick="closeDokumModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="dokum-table">
           <thead>
             <tr>
-              <th>Sipariş No</th>
-              <th>Malzeme Kodu</th>
-              <th>Malzeme Tanımı</th>
-              <!-- <th>Kesit</th>
-              <th>Kalite</th> -->
-              <th>Toplam Kampanya Planlanan Üretim Miktarı</th>
-              <th>Toplam Kampanya Planlanan Tüketim Miktarı</th>
-              <th>Planlanan Üretim Tarihi</th>
-              <th>Planlanan Üretim Miktarı</th>
-              <th>Planlanan YM Tüketim Miktarı</th>
-              <th>Bağlanan YM Miktarı</th>
-              <th>Açıklama</th>
-              <th></th>
+              <th>Seç</th>
+              <th>Döküm No</th>
+              <th>Kesit</th>
+              <th>Kalite</th>
+              <th>Toplam Kütük</th>
+              <th>Seçilen Kütük</th>
+              <th>Toplam Tonaj</th>
+              <th>Seçilen Tonaj</th>
+              <th>Detay</th>
             </tr>
           </thead>
-          <tbody id="program-table-body"></tbody>
+          <tbody id="dokum-table-body"></tbody>
         </table>
+      </div>
+      <div class="modal-footer">
+        <div class="tonaj-info">Toplam Seçilen Tonaj: <span id="totalTonaj">0.00</span> TON</div>
+        <button class="btn-primary" onclick="openEditModal()">Seçilenleri Onayla</button>
       </div>
     </div>
   </div>
 
-<script>
-/* ÖRNEK VERİLER */
-const uretimProgrami = [
-  {
-    siparis:"400000001591",
-    malzeme:"80000025",
-    malzemeTanım:"Ø14,00 B420C_00 12000 Nervürlü İnşaat Demiri",
-    // kesit:"140",
-    // kalite:"B420C_00",
-    kampUretim:"1200",
-    kampTuketim:"1320",
-    planTarih:"25/10/2025",
-    planUretim:"1200",
-    planYM:"1320",
-    bagliYM:"498",
-    aciklama:""
-  },
-  {
-    siparis:"400000001592",
-    malzeme:"80000025",
-    malzemeTanım:"Ø15,00 B420C_00 12000 Nervürlü İnşaat Demiri",
-    // kesit:"150",
-    // kalite:"B420C_00",
-    kampUretim:"1600",
-    kampTuketim:"1760",
-    planTarih:"25/10/2025",
-    planUretim:"1600",
-    planYM:"1760",
-    bagliYM:"0",
-    aciklama:""
-  },
-  {
-    siparis:"400000001593",
-    malzeme:"80000025",
-    malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri",
-    // kesit:"170",
-    // kalite:"B420C_01",
-    kampUretim:"1400",
-    kampTuketim:"1540",
-    planTarih:"25/10/2025",
-    planUretim:"1400",
-    planYM:"1540",
-    bagliYM:"0",
-    aciklama:""
-  },
-  {
-    siparis:"400000001594",
-    malzeme:"80000025",
-    malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri",
-    // kesit:"170",
-    // kalite:"B420C_02",
-    kampUretim:"2500",
-    kampTuketim:"2750",
-    planTarih:"26/10/2025",
-    planUretim:"1300",
-    planYM:"1430",
-    bagliYM:"0",
-    aciklama:""
-  },
-  {
-    siparis:"400000001595",
-    malzeme:"80000025",
-    malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri",
-    // kesit:"170",
-    // kalite:"B420C_02",
-    kampUretim:"1200",
-    kampTuketim:"1320",
-    planTarih:"26/10/2025",
-    planUretim:"1200",
-    planYM:"1320",
-    bagliYM:"0",
-    aciklama:""
-  }
-];
+  <!-- MODAL 2: Kütük Detay (Full Sütunlar Korundu) -->
+  <div id="kutukModal" class="modal kutuk-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Kütük Detayları - Döküm No: <span id="kutukDokumNo"></span></h2>
+        <button class="close-btn" onclick="closeKutukModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 15px;">
+          <strong>Stok Yeri:</strong> <span id="kutukStokYeri">KHH</span> |
+          <strong>Dökümdeki Toplam Kütük:</strong> <span id="kutukAdet"></span> |
+          <strong>Toplam Tonaj:</strong> <span id="kutukTotalTonaj"></span> ton
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="kutuk-table">
+            <thead>
+              <tr>
+                <th>Seç</th>
+                <th>KÜTÜK_ID</th>
+                <th>Kalite</th>
+                <th>YM Tipi</th>
+                <th>YM Malzeme Kodu</th>
+                <th>YM Kesit</th>
+                <th>YM Boy</th>
+                <th>Mamul Tipi</th>
+                <th>Mamul Malzeme Kodu</th>
+                <th>Mamul Kesit</th>
+                <th>Mamul Boy</th>
+                <th>Tonaj</th>
+              </tr>
+            </thead>
+            <tbody id="kutuk-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeKutukModal()">İptal</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" style="background: #17a2b8;" onclick="confirmKutukSelection()">SEÇİMİ
+            UYGULA</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-/* dd/MM/yyyy -> yyyy-MM-dd */
-function toISO(dmy){
-  const [d,m,y] = dmy.split("/");
-  return `${y}-${m}-${d}`;
-}
+  <!-- MODAL 3: Onay Ekranı -->
+  <div id="editDokumModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Seçilen Dökümler - Düzenleme</h2>
+        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="selected-dokum-list"></div>
+      </div>
+      <div class="modal-footer">
+        <div class="tonaj-info">Toplam: <span id="editTotalTonaj">0</span> TON</div>
+        <div>
+          <button class="btn-secondary" onclick="closeEditModal()">İptal</button>
+          <button class="btn-primary" onclick="saveDokumSelection()">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-/* TABLOYU BAS */
-function renderTable(rows){
-  const tb = document.getElementById("program-table-body");
-  tb.innerHTML = "";
-  rows.forEach(r => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="col-siparis">${r.siparis}</td>
-      <td class="col-malzemekodu">${r.malzeme}</td>
-      <td>${r.malzemeTanım}</td>
-      
-      <td>${r.kampUretim}</td>
-      <td>${r.kampTuketim}</td>
-      <td>${r.planTarih}</td>
-      <td>${r.planUretim}</td>
-      <td class="col-plan-ym">${r.planYM}</td>
-      <td>${r.bagliYM}</td>
-      <td>${r.aciklama || ""}</td>
-      <td><button class="btn-dokum">Döküm No Ata</button></td>
-    `;
-    tb.appendChild(tr);
-  });
-}
-    // Tablodan silinenler
-    //   <td class="col-kesit">${r.kesit}</td> 
-    //   <td class="col-kalite">${r.kalite}</td>
+  <!-- ANALİZ TOOLTIP KUTUSU -->
+  <div id="analysisTooltip" class="analysis-tooltip"></div>
 
-/* KALİTE DROPDOWN DOLDUR */
-function initKalite(){
-  const set = [...new Set(uretimProgrami.map(r => r.kalite))];
-  const sel = document.getElementById("fKalite");
-  set.forEach(k => {
-    const opt = document.createElement("option");
-    opt.value = k;
-    opt.textContent = k;
-    sel.appendChild(opt);
-  });
-}
+  <script>
+    // --- ANA VERİLER ---
+    const uretimProgrami = [
+      { siparis: "400000001591", malzeme: "80000025", kesit: "140", kalite: "B420C_00", kampUretim: "1200", kampTuketim: "1320", planTarih: "25/10/2025", planUretim: "1200", planYM: "720", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001592", malzeme: "80000025", kesit: "150", kalite: "B420C_00", kampUretim: "1600", kampTuketim: "1760", planTarih: "25/10/2025", planUretim: "1600", planYM: "860", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001593", malzeme: "80000025", kesit: "170", kalite: "B420C_01", kampUretim: "1400", kampTuketim: "1540", planTarih: "25/10/2025", planUretim: "1400", planYM: "740", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001594", malzeme: "80000025", kesit: "170", kalite: "B420C_02", kampUretim: "2500", kampTuketim: "2750", planTarih: "26/10/2025", planUretim: "1300", planYM: "1030", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001595", malzeme: "80000025", kesit: "170", kalite: "B420C_02", kampUretim: "1200", kampTuketim: "1320", planTarih: "26/10/2025", planUretim: "1200", planYM: "920", bagliYM: "0", bagliDokumler: [], aciklama: "" }
+    ];
 
-/* FİLTRE UYGULA */
-function applyFilters(){
-  const qSip  = document.getElementById("fSiparis").value.trim();
-  const qMal  = document.getElementById("fMalzeme").value.trim();
-  const qKal  = document.getElementById("fKalite").value;
-  const qS    = document.getElementById("fStart").value;
-  const qE    = document.getElementById("fEnd").value;
+    // Döküm datasında farklı ebatlar (Kesit eşleştirmesi için)
+    const dokumData = [
+      { dokumNo: "25100213", adet: 40, tonaj: 100, ebat: "150 x 150", kalite: "B420C_00" },
+      { dokumNo: "25100214", adet: 35, tonaj: 90, ebat: "150 x 150", kalite: "B420C_00" },
+      { dokumNo: "25100215", adet: 45, tonaj: 113, ebat: "170 x 170", kalite: "B420C_01" },
+      { dokumNo: "25100216", adet: 30, tonaj: 75, ebat: "170 x 170", kalite: "B420C_02" },
+      { dokumNo: "25100217", adet: 55, tonaj: 138, ebat: "170 x 170", kalite: "B420C_02" },
+      { dokumNo: "25300123", adet: 25, tonaj: 63, ebat: "140 x 140", kalite: "B420C_00" },
+      { dokumNo: "25200130", adet: 30, tonaj: 75, ebat: "140 x 140", kalite: "B420C_01" },
+      { dokumNo: "25200140", adet: 25, tonaj: 63, ebat: "150 x 150", kalite: "B420C_02" }
+    ];
 
-  let out = uretimProgrami.slice();
+    // Analiz Datası (FULL İÇERİK)
+    const analizData = {
+      "25100213": {
+        SPEK_ID: "SPEK_001", MODE: "MOD1", Dokum_No: "25100213",
+        C: 0.18, Mn: 0.55, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25100213_1",
+        Kalinlik: 150, Genislik: 150, Cap: "-", Boy: 2.5
+      },
+      "25100214": {
+        SPEK_ID: "SPEK_002", MODE: "MOD1", Dokum_No: "25100214",
+        C: 0.17, Mn: 0.53, Si: 0.21, S: 0.028, P: 0.019, N: 0.007,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.021, Alsol: 0.016,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25100214_1",
+        Kalinlik: 150, Genislik: 150, Cap: "-", Boy: 2.5
+      },
+      "25100215": {
+        SPEK_ID: "SPEK_003", MODE: "MOD1", Dokum_No: "25100215",
+        C: 0.18, Mn: 0.54, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25100215_1",
+        Kalinlik: 170, Genislik: 170, Cap: "-", Boy: 2.5
+      },
+      "25100216": {
+        SPEK_ID: "SPEK_004", MODE: "MOD1", Dokum_No: "25100216",
+        C: 0.18, Mn: 0.54, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25100216_1",
+        Kalinlik: 170, Genislik: 170, Cap: "-", Boy: 2.5
+      },
+      "25100217": {
+        SPEK_ID: "SPEK_005", MODE: "MOD1", Dokum_No: "25100217",
+        C: 0.18, Mn: 0.54, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25100217_1",
+        Kalinlik: 170, Genislik: 170, Cap: "-", Boy: 2.5
+      },
+      "25300123": {
+        SPEK_ID: "SPEK_006", MODE: "MOD1", Dokum_No: "25300123",
+        C: 0.18, Mn: 0.54, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25300123_1",
+        Kalinlik: 140, Genislik: 140, Cap: "-", Boy: 2.5
+      },
+      "25200130": {
+        SPEK_ID: "SPEK_007", MODE: "MOD1", Dokum_No: "25200130",
+        C: 0.18, Mn: 0.54, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25200130_1",
+        Kalinlik: 140, Genislik: 140, Cap: "-", Boy: 2.5
+      },
+      "25200140": {
+        SPEK_ID: "SPEK_008", MODE: "MOD1", Dokum_No: "25200140",
+        C: 0.18, Mn: 0.54, Si: 0.22, S: 0.03, P: 0.02, N: 0.008,
+        Cr: 0.02, Ni: 0.03, Cu: 0.04, Mo: 0.01, V: 0.0, Ti: 0.0,
+        As: 0.0, Sn: 0.0, Sb: 0.0, Al: 0.02, Alsol: 0.015,
+        Alins: 0.005, Nb: 0.0, Ca: 0.0, Zn: 0.0, B: 0.0, Pb: 0.0,
+        Zr: 0.0, Fe: 99.0, Kutuk_ID: "25200140_1",
+        Kalinlik: 150, Genislik: 150, Cap: "-", Boy: 2.5
+      }
+    };
 
-  if (qSip) out = out.filter(r => r.siparis.includes(qSip));
-  if (qMal) out = out.filter(r => r.malzeme.includes(qMal));
-  if (qKal) out = out.filter(r => r.kalite === qKal);
-  if (qS)   out = out.filter(r => new Date(toISO(r.planTarih)) >= new Date(qS));
-  if (qE)   out = out.filter(r => new Date(toISO(r.planTarih)) <= new Date(qE));
 
-  renderTable(out);
-}
+    // Detay Datası (Kütükler) - Otomatik oluşturuyoruz ki veri tutarlı olsun
+    const kutukData = {};
+    dokumData.forEach(d => {
+      const arr = [];
+      const birimTonaj = d.tonaj / d.adet;
+      const ebatParts = d.ebat.split('x');
+      const k = d.ebat;
 
-/* INIT */
-document.addEventListener("DOMContentLoaded", () => {
-  renderTable(uretimProgrami);
-  initKalite();
-});
-</script>
+      for (let i = 1; i <= d.adet; i++) {
+        arr.push({
+          spekId: `${d.dokumNo}_${i}`,
+          kalite: d.kalite,
+          ymTipi: "KÜTÜK",
+          ymMalzeme: "80000025",
+          ymKesit: k,
+          ymBoy: 2.5,
+          mamulTipi: "KANGAL",
+          mamulMalzeme: "80000025",
+          mamulKesit: "ɸ 160",
+          mamulBoy: "24000",
+          mamulCap: 140,
+          tonaj: parseFloat(birimTonaj.toFixed(3))
+        });
+      }
+      kutukData[d.dokumNo] = arr;
+    });
+
+    // --- GLOBAL DEĞİŞKENLER ---
+    let currentRowIndex = null;
+    let tempKutukCounts = {};
+    let currentDetailDokumNo = null;
+    let itemsToSave = [];
+
+    // --- BAŞLANGIÇ ---
+    document.addEventListener("DOMContentLoaded", () => {
+      renderTable(uretimProgrami);
+      initKalite();
+    });
+
+    function toISO(dmy) { const [d, m, y] = dmy.split("/"); return `${y}-${m}-${d}`; }
+
+    // --- ANA TABLO RENDER (DÜZENLENDİ) ---
+    function renderTable(rows) {
+      const tb = document.getElementById("program-table-body");
+      tb.innerHTML = "";
+      rows.forEach((r, idx) => {
+        // NOT: Döküm listesi string oluşturma ve Açıklama kısmı kaldırıldı.
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="col-siparis">${r.siparis}</td>
+          <td class="col-malzemekodu">${r.malzeme}</td>
+          <td class="col-kesit">${r.kesit}</td>
+          <td class="col-kalite">${r.kalite}</td>
+          <td>${r.kampUretim}</td>
+          <td>${r.kampTuketim}</td>
+          <td>${r.planTarih}</td>
+          <td>${r.planUretim}</td>
+          <td class="col-plan-ym">${r.planYM}</td>
+          <td style="font-weight:bold; color:#d32f2f;">${Number(r.bagliYM).toFixed(2)}</td>
+          <td><button class="btn-dokum" onclick="openDokumModal(${idx})">Döküm No Ata</button></td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    // --- MODAL 1: DÖKÜM SEÇİMİ (FİLTRELİ) ---
+    function openDokumModal(rowIdx) {
+      currentRowIndex = rowIdx;
+      tempKutukCounts = {};
+
+      const rowData = uretimProgrami[rowIdx];
+      const targetKesit = rowData.kesit; // Örn: "150"
+
+      document.getElementById("modalKesitInfo").textContent = targetKesit;
+
+      // Hafızadaki eski kayıtları geri yükle
+      const existing = rowData.bagliDokumler || [];
+      existing.forEach(item => {
+        tempKutukCounts[item.dokumNo] = item.count;
+      });
+
+      const tbody = document.getElementById("dokum-table-body");
+      tbody.innerHTML = "";
+
+      // FİLTRELEME MANTIĞI: Döküm Ebat'ı, Sipariş Kesit'i ile başlıyorsa (Örn 150 vs 150x150)
+      const filteredDokums = dokumData.filter(d => d.ebat.trim().startsWith(targetKesit));
+
+      if (filteredDokums.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="padding:20px;">Bu kesite (${targetKesit}) uygun döküm bulunamadı.</td></tr>`;
+      }
+
+      filteredDokums.forEach((d) => {
+        const currentCount = tempKutukCounts[d.dokumNo] || 0;
+        const birimTonaj = d.tonaj / d.adet;
+        const currentSelectedTonaj = currentCount * birimTonaj;
+        const isChecked = currentCount > 0;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <input type="checkbox" 
+                   id="cb-${d.dokumNo}" 
+                   onchange="handleMainCheckboxChange('${d.dokumNo}', ${d.adet}, ${d.tonaj})"
+                   ${isChecked ? "checked" : ""}>
+          </td>
+          <td onmouseenter="showAnalysisTooltip(event, '${d.dokumNo}')"
+              onmousemove="moveAnalysisTooltip(event)"
+              onmouseleave="hideAnalysisTooltip()"
+              style="cursor:help; color:#1976d2; font-weight:bold;">
+            ${d.dokumNo}
+          </td>
+          <td>${d.ebat}</td>
+          <td>${d.kalite}</td>
+          <td>${d.adet}</td>
+          <td id="count-cell-${d.dokumNo}" style="font-weight:bold; color:${currentCount > 0 ? '#d32f2f' : '#333'}">
+            ${currentCount}
+          </td>
+          <td>${d.tonaj}</td>
+          <td id="tonaj-cell-${d.dokumNo}">
+            ${currentSelectedTonaj.toFixed(2)}
+          </td>
+          <td><button class="btn-detay" onclick="openKutukModal('${d.dokumNo}')">Detay</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      updateTotalTonajUI();
+      document.getElementById("dokumModal").classList.add("active");
+    }
+
+    function handleMainCheckboxChange(dokumNo, maxAdet, maxTonaj) {
+      const cb = document.getElementById(`cb-${dokumNo}`);
+      const countCell = document.getElementById(`count-cell-${dokumNo}`);
+      const tonajCell = document.getElementById(`tonaj-cell-${dokumNo}`);
+
+      if (cb.checked) {
+        tempKutukCounts[dokumNo] = maxAdet;
+        countCell.textContent = maxAdet;
+        countCell.style.color = "#d32f2f";
+        tonajCell.textContent = maxTonaj.toFixed(2);
+      } else {
+        tempKutukCounts[dokumNo] = 0;
+        countCell.textContent = "0";
+        countCell.style.color = "#333";
+        tonajCell.textContent = "0.00";
+      }
+      updateTotalTonajUI();
+    }
+
+    function updateTotalTonajUI() {
+      let total = 0;
+      dokumData.forEach(d => {
+        const count = tempKutukCounts[d.dokumNo] || 0;
+        if (count > 0) {
+          const birim = d.tonaj / d.adet;
+          total += (birim * count);
+        }
+      });
+      document.getElementById("totalTonaj").textContent = total.toFixed(2);
+    }
+
+    // --- MODAL 2: KÜTÜK DETAY (FULL COLUMN) ---
+    function openKutukModal(dokumNo) {
+      currentDetailDokumNo = dokumNo;
+      document.getElementById("kutukDokumNo").textContent = dokumNo;
+
+      const dInfo = dokumData.find(d => d.dokumNo === dokumNo);
+      document.getElementById("kutukAdet").textContent = dInfo.adet;
+
+      const list = kutukData[dokumNo] || [];
+      // Detay modal toplam tonaj hesabı
+      const totalT = list.reduce((acc, curr) => acc + curr.tonaj, 0);
+      document.getElementById("kutukTotalTonaj").textContent = totalT.toFixed(2);
+
+      const tbody = document.getElementById("kutuk-table-body");
+      tbody.innerHTML = "";
+
+      const currentlySelectedCount = tempKutukCounts[dokumNo] || 0;
+
+      list.forEach((k, idx) => {
+        const isSelected = idx < currentlySelectedCount;
+
+        const tr = document.createElement("tr");
+        if (isSelected) tr.classList.add("red-indicator");
+
+        tr.innerHTML = `
+            <td><input type="checkbox" class="kutuk-cb" ${isSelected ? "checked" : ""}></td>
+            <td>${k.spekId}</td>
+            <td>${k.kalite}</td>
+            <td>${k.ymTipi}</td>
+            <td>${k.ymMalzeme}</td>
+            <td>${k.ymKesit}</td>
+            <td>${k.ymBoy}</td>
+            <td>${k.mamulTipi}</td>
+            <td>${k.mamulMalzeme}</td>
+            <td>${k.mamulKesit}</td>
+            <td>${k.mamulBoy}</td>
+            <td>${k.tonaj}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("kutukModal").classList.add("active");
+    }
+
+    function confirmKutukSelection() {
+      const dokumNo = currentDetailDokumNo;
+
+      const checkboxes = document.querySelectorAll("#kutuk-table-body .kutuk-cb");
+      let count = 0;
+      checkboxes.forEach(cb => { if (cb.checked) count++; });
+
+      tempKutukCounts[dokumNo] = count;
+
+      const dData = dokumData.find(d => d.dokumNo === dokumNo);
+      const birimTonaj = dData.tonaj / dData.adet;
+      const newTonaj = count * birimTonaj;
+
+      // Ana Modal UI Güncelle
+      // Not: Eğer Döküm Modal açıksa orayı güncelleriz.
+      const countCell = document.getElementById(`count-cell-${dokumNo}`);
+      const tonajCell = document.getElementById(`tonaj-cell-${dokumNo}`);
+      const mainCb = document.getElementById(`cb-${dokumNo}`);
+
+      if (countCell) {
+        countCell.textContent = count;
+        tonajCell.textContent = newTonaj.toFixed(2);
+
+        if (count > 0) {
+          mainCb.checked = true;
+          countCell.style.color = "#d32f2f";
+        } else {
+          mainCb.checked = false;
+          countCell.style.color = "#333";
+        }
+      }
+
+      updateTotalTonajUI();
+      closeKutukModal();
+    }
+
+    // --- MODAL 3: KAYDETME ---
+    function openEditModal() {
+      itemsToSave = [];
+
+      // tempKutukCounts üzerinden gezip dolu olanları alalım
+      Object.keys(tempKutukCounts).forEach(dNo => {
+        const cnt = tempKutukCounts[dNo];
+        if (cnt > 0) {
+          const d = dokumData.find(item => item.dokumNo === dNo);
+          if (d) {
+            const birim = d.tonaj / d.adet;
+            itemsToSave.push({
+              ...d,
+              selectedCount: cnt,
+              selectedTonaj: cnt * birim
+            });
+          }
+        }
+      });
+
+      if (itemsToSave.length === 0) {
+        alert("Seçim yapmadınız.");
+        return;
+      }
+
+      const container = document.getElementById("selected-dokum-list");
+      container.innerHTML = "";
+      let total = 0;
+
+      itemsToSave.forEach(item => {
+        total += item.selectedTonaj;
+        const div = document.createElement("div");
+        div.className = "selected-dokum-item";
+        div.innerHTML = `
+                <div>
+                    <strong>${item.dokumNo}</strong><br>
+                    <small>Seçilen: ${item.selectedCount} / ${item.adet} Adet</small>
+                </div>
+                <div style="font-weight:bold; color:#1976d2;">
+                    ${item.selectedTonaj.toFixed(2)} Ton
+                </div>
+            `;
+        container.appendChild(div);
+      });
+
+      document.getElementById("editTotalTonaj").textContent = total.toFixed(2);
+      document.getElementById("editDokumModal").classList.add("active");
+    }
+
+    function saveDokumSelection() {
+      if (currentRowIndex === null) return;
+
+      // Veriyi kaydet: {dokumNo, count, tonaj}
+      const savedData = itemsToSave.map(i => ({
+        dokumNo: i.dokumNo,
+        count: i.selectedCount,
+        tonaj: parseFloat(i.selectedTonaj.toFixed(2))
+      }));
+
+      const totalTonaj = savedData.reduce((acc, curr) => acc + curr.tonaj, 0);
+
+      uretimProgrami[currentRowIndex].bagliDokumler = savedData;
+      uretimProgrami[currentRowIndex].bagliYM = totalTonaj;
+
+      renderTable(uretimProgrami);
+      closeEditModal();
+      closeDokumModal();
+    }
+
+    // --- YARDIMCI FONKSİYONLAR ---
+    function closeDokumModal() { document.getElementById("dokumModal").classList.remove("active"); }
+    function closeKutukModal() { document.getElementById("kutukModal").classList.remove("active"); }
+    function closeEditModal() { document.getElementById("editDokumModal").classList.remove("active"); }
+
+    function initKalite() {
+      const set = [...new Set(uretimProgrami.map(r => r.kalite))];
+      const sel = document.getElementById("fKalite");
+      set.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k; opt.textContent = k; sel.appendChild(opt);
+      });
+    }
+
+    function applyFilters() {
+      const qSip = document.getElementById("fSiparis").value.trim();
+      const qMal = document.getElementById("fMalzeme").value.trim();
+      let out = uretimProgrami;
+      if (qSip) out = out.filter(r => r.siparis.includes(qSip));
+      // Diğer filtreler eklenebilir...
+      renderTable(out);
+    }
+
+    // --- ANALİZ TOOLTIP (FULL İÇERİK) ---
+    function buildAnalysisHtml(analiz) {
+      if (!analiz) return '<div class="analysis-title">Analiz bulunamadı</div>';
+      return `
+        <div class="analysis-title">Döküm Analizi - ${analiz.Dokum_No}</div>
+        <table class="analysis-table">
+          <tbody>
+            <tr><th>SPEK_ID</th><td>${analiz.SPEK_ID || ""}</td></tr>
+            <tr><th>MODE</th><td>${analiz.MODE || ""}</td></tr>
+            <tr><th>Döküm No</th><td>${analiz.Dokum_No}</td></tr>
+            <tr><th>C</th><td>${analiz.C}</td></tr>
+            <tr><th>Mn</th><td>${analiz.Mn}</td></tr>
+            <tr><th>Si</th><td>${analiz.Si}</td></tr>
+            <tr><th>S</th><td>${analiz.S}</td></tr>
+            <tr><th>P</th><td>${analiz.P}</td></tr>
+            <tr><th>N</th><td>${analiz.N}</td></tr>
+            <tr><th>Cr</th><td>${analiz.Cr}</td></tr>
+            <tr><th>Ni</th><td>${analiz.Ni}</td></tr>
+            <tr><th>Cu</th><td>${analiz.Cu}</td></tr>
+            <tr><th>Mo</th><td>${analiz.Mo}</td></tr>
+            <tr><th>V</th><td>${analiz.V}</td></tr>
+            <tr><th>Ti</th><td>${analiz.Ti}</td></tr>
+            <tr><th>As</th><td>${analiz.As}</td></tr>
+            <tr><th>Sn</th><td>${analiz.Sn}</td></tr>
+            <tr><th>Sb</th><td>${analiz.Sb}</td></tr>
+            <tr><th>Al</th><td>${analiz.Al}</td></tr>
+            <tr><th>Alsol</th><td>${analiz.Alsol}</td></tr>
+            <tr><th>Alins</th><td>${analiz.Alins}</td></tr>
+            <tr><th>Nb</th><td>${analiz.Nb}</td></tr>
+            <tr><th>Ca</th><td>${analiz.Ca}</td></tr>
+            <tr><th>Zn</th><td>${analiz.Zn}</td></tr>
+            <tr><th>B</th><td>${analiz.B}</td></tr>
+            <tr><th>Pb</th><td>${analiz.Pb}</td></tr>
+            <tr><th>Zr</th><td>${analiz.Zr}</td></tr>
+            <tr><th>Fe</th><td>${analiz.Fe}</td></tr>
+            <tr><th>Kütük_ID</th><td>${analiz.Kutuk_ID}</td></tr>
+            <tr><th>Kalınlık</th><td>${analiz.Kalinlik}</td></tr>
+            <tr><th>Genişlik</th><td>${analiz.Genislik}</td></tr>
+            <tr><th>Çap</th><td>${analiz.Cap}</td></tr>
+            <tr><th>Boy</th><td>${analiz.Boy}</td></tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    function showAnalysisTooltip(evt, dokumNo) {
+      const tooltip = document.getElementById("analysisTooltip");
+      // Analiz datasında varsa göster yoksa dummy
+      const analiz = analizData[dokumNo];
+      if (!analiz) return;
+
+      tooltip.innerHTML = buildAnalysisHtml(analiz);
+      tooltip.style.display = "block";
+      moveAnalysisTooltip(evt);
+    }
+
+    function moveAnalysisTooltip(evt) {
+      const tooltip = document.getElementById("analysisTooltip");
+      if (tooltip.style.display !== "block") return;
+      const offset = 16;
+      tooltip.style.left = (evt.pageX + offset) + "px";
+      tooltip.style.top = (evt.pageY + offset) + "px";
+    }
+
+    function hideAnalysisTooltip() {
+      document.getElementById("analysisTooltip").style.display = "none";
+    }
+
+  </script>
 </body>
+
 </html>

@@ -1,83 +1,101 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Paket İzleme Ekranı</title>
-  <link href="style.css" rel="stylesheet" />
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --card:#fff;
-      --text:#2c3e50;
-      --muted:#6b7a8c;
-      --border:#e6e9ef;
-      --primary:#1976d2;
-    }
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif}
-    .content-wrapper{
-      margin-left:250px; /* sidebar yerleşimi */
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:24px;
-    }
-    .empty{
-      width:min(520px,92vw);
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:24px;
-      text-align:center;
-    }
-    .empty svg{width:56px;height:56px;margin-bottom:10px}
-    .empty h1{font-size:20px;margin:6px 0 6px}
-    .empty p{margin:0 0 16px;color:var(--muted);font-size:14px}
-    .actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-    .btn{
-      border:1px solid var(--border);
-      background:#fff;
-      color:#2f3b4a;
-      padding:10px 14px;
-      border-radius:8px;
-      font-size:13px;
-      cursor:pointer;
-    }
-    .btn-primary{
-      background:var(--primary);
-      color:#fff;
-      border-color:var(--primary);
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>🔥 Sıcak Şarj Gerçekleşme Raporu</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <!-- Sidebar -->
-  <aside id="sidebar">
-    <div id="sidebar-container"></div>
-    <script>
-      fetch("sidebar.html")
-        .then(r=>r.text())
-        .then(html=>{document.getElementById("sidebar-container").innerHTML=html});
-    </script>
-  </aside>
+  <div id="sidebar-placeholder"></div>
 
   <!-- İçerik -->
   <div class="content-wrapper">
-    <div class="empty" role="status" aria-live="polite">
-      <!-- Basit ikon -->
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" stroke="#1976d2" stroke-width="1.5"/>
-        <path d="M8 12h8M12 8v8" stroke="#1976d2" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+    <!-- Breadcrumb -->
+    <div class="breadcrumbs">
+      <a href="index.html">Anasayfa</a> <span>›</span> <span>Sıcak Şarj Raporu</span>
+    </div>
 
-      <h1>Bu ekran geliştirilecektir.</h1>
-      <p>Şu an için içerik hazır değil. Kısa süre içinde temel işlevler eklenecek.</p>
-
-      <div class="actions">
-        <button class="btn btn-primary" onclick="location.href='1-ckh-izleme-ekrani.html'">← Ana sayfaya dön</button>
-        
+    <!-- Sayfa Başlık ve Buton -->
+    <div class="custom-card">
+      <h1 class="report-title">🔥 Sıcak Şarj Gerçekleşme Raporu</h1>
+      <div class="right-buttons">
+        <button class="btn btn-blue">Geçen Ayın Raporu</button>
+        <button class="btn btn-blue">Bu Ayın Raporu</button>
       </div>
     </div>
+
+    <!-- Filtre Alanı -->
+    <div class="filter-section">
+      <div class="filter-item">
+        <label>Başlangıç Tarihi</label>
+        <input type="date" />
+        <label>Bitiş Tarihi</label>
+        <input type="date" />
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-green">Rapor Getir</button>
+        <button class="btn btn-blue">Excel Rapor</button>
+      </div>
+    </div>
+
+    <!-- Tablo -->
+    <div class="table-wrapper">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>TARİH</th>
+            <th>SOĞUK(0-100)<br>SIC. ORT.</th>
+            <th>SOĞUK(0-100)<br>ŞARJ TON</th>
+            <th>SOĞUK(0-100)<br>YÜZDE</th>
+            <th>ILIK(101-300)<br>SIC. ORT.</th>
+            <th>ILIK(101-300)<br>ŞARJ TON</th>
+            <th>ILIK(101-300)<br>YÜZDE</th>
+            <th>SICAK(301-600)<br>SIC. ORT.</th>
+            <th>SICAK(301-600)<br>ŞARJ TON</th>
+            <th>SICAK(301-600)<br>YÜZDE</th>
+            <th>DİREKT(601+)<br>SIC. ORT.</th>
+            <th>DİREKT(601+)<br>ŞARJ TON</th>
+            <th>DİREKT(601+)<br>YÜZDE</th>
+            <th>TOPLAM<br>SIC. ORT.</th>
+            <th>TOPLAM<br>ŞARJ TON</th>
+            <th>DOĞAL GAZ<br>SARF. (Nm³)</th>
+            <th>DOĞAL GAZ<br>SARF. (Nm³/Ton)</th>
+            <th>ENERJİ<br>TÜKETİMİ (kcal/Ton)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>18.06.2025</td><td>80</td><td>12.5</td><td>10%</td>
+            <td>180</td><td>25.0</td><td>20%</td>
+            <td>420</td><td>50.0</td><td>40%</td>
+            <td>610</td><td>37.5</td><td>30%</td>
+            <td>365</td><td>125.0</td><td>900</td><td>7.2</td><td>7300</td>
+          </tr>
+          <tr>
+            <td>19.06.2025</td><td>85</td><td>10.0</td><td>8%</td>
+            <td>175</td><td>20.0</td><td>18%</td>
+            <td>430</td><td>55.0</td><td>45%</td>
+            <td>605</td><td>42.0</td><td>29%</td>
+            <td>368</td><td>127.0</td><td>910</td><td>7.1</td><td>7350</td>
+          </tr>
+          <tr>
+            <td>20.06.2025</td><td>78</td><td>15.0</td><td>12%</td>
+            <td>160</td><td>22.0</td><td>17%</td>
+            <td>415</td><td>53.0</td><td>41%</td>
+            <td>615</td><td>36.0</td><td>30%</td>
+            <td>362</td><td>126.0</td><td>890</td><td>7.3</td><td>7280</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+
+  <!-- Sidebar'ı Yükle -->
+  <script>
+    fetch("sidebar.html")
+      .then(res => res.text())
+      .then(html => document.getElementById("sidebar-placeholder").innerHTML = html);
+  </script>
 </body>
 </html>

@@ -404,8 +404,9 @@
           <tr>
             <th>Sipariş No</th>
             <th>Malzeme Kodu</th>
-            <th>Kesit</th>
-            <th>Kalite</th>
+            <th>Malzeme Tanımı</th>
+            <!-- <th>Kesit</th>
+            <th>Kalite</th> -->
             <th>Toplam Kampanya Planlanan Üretim Miktarı</th>
             <th>Toplam Kampanya Planlanan Tüketim Miktarı</th>
             <th>Planlanan Üretim Tarihi</th>
@@ -525,11 +526,12 @@
   <script>
     // --- ANA VERİLER ---
     const uretimProgrami = [
-      { siparis: "400000001591", malzeme: "80000025", kesit: "140", kalite: "B420C_00", kampUretim: "1200", kampTuketim: "1320", planTarih: "25/10/2025", planUretim: "1200", planYM: "720", bagliYM: "0", bagliDokumler: [], aciklama: "" },
-      { siparis: "400000001592", malzeme: "80000025", kesit: "150", kalite: "B420C_00", kampUretim: "1600", kampTuketim: "1760", planTarih: "25/10/2025", planUretim: "1600", planYM: "860", bagliYM: "0", bagliDokumler: [], aciklama: "" },
-      { siparis: "400000001593", malzeme: "80000025", kesit: "170", kalite: "B420C_01", kampUretim: "1400", kampTuketim: "1540", planTarih: "25/10/2025", planUretim: "1400", planYM: "740", bagliYM: "0", bagliDokumler: [], aciklama: "" },
-      { siparis: "400000001594", malzeme: "80000025", kesit: "170", kalite: "B420C_02", kampUretim: "2500", kampTuketim: "2750", planTarih: "26/10/2025", planUretim: "1300", planYM: "1030", bagliYM: "0", bagliDokumler: [], aciklama: "" },
-      { siparis: "400000001595", malzeme: "80000025", kesit: "170", kalite: "B420C_02", kampUretim: "1200", kampTuketim: "1320", planTarih: "26/10/2025", planUretim: "1200", planYM: "920", bagliYM: "0", bagliDokumler: [], aciklama: "" }
+      // { siparis: "400000001591", malzeme: "80000025", kesit: "140", kalite: "B420C_00", kampUretim: "1200", kampTuketim: "1320", planTarih: "25/10/2025", planUretim: "1200", planYM: "720", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001592", malzeme: "80000025", malzemeTanım:"Ø14,00 B420C_00 12000 Nervürlü İnşaat Demiri", kampUretim: "1600", kampTuketim: "1760", planTarih: "25/10/2025", planUretim: "1600", planYM: "860", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001592", malzeme: "80000025", malzemeTanım:"Ø15,00 B420C_00 12000 Nervürlü İnşaat Demiri", kampUretim: "1600", kampTuketim: "1760", planTarih: "25/10/2025", planUretim: "1600", planYM: "860", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001593", malzeme: "80000025", malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri", kampUretim: "1400", kampTuketim: "1540", planTarih: "25/10/2025", planUretim: "1400", planYM: "740", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001594", malzeme: "80000025", malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri", kampUretim: "2500", kampTuketim: "2750", planTarih: "26/10/2025", planUretim: "1300", planYM: "1030", bagliYM: "0", bagliDokumler: [], aciklama: "" },
+      { siparis: "400000001595", malzeme: "80000025", malzemeTanım:"Ø17,00 B420C_00 12000 Nervürlü İnşaat Demiri", kampUretim: "1200", kampTuketim: "1320", planTarih: "26/10/2025", planUretim: "1200", planYM: "920", bagliYM: "0", bagliDokumler: [], aciklama: "" }
     ];
 
     // Döküm datasında farklı ebatlar (Kesit eşleştirmesi için)
@@ -673,8 +675,8 @@
         tr.innerHTML = `
           <td class="col-siparis">${r.siparis}</td>
           <td class="col-malzemekodu">${r.malzeme}</td>
-          <td class="col-kesit">${r.kesit}</td>
-          <td class="col-kalite">${r.kalite}</td>
+          <td class="col-malzemeTanım">${r.malzemeTanım}</td>
+          
           <td>${r.kampUretim}</td>
           <td>${r.kampTuketim}</td>
           <td>${r.planTarih}</td>
@@ -687,13 +689,41 @@
       });
     }
 
+          // Tablodan silinenler
+    //   <td class="col-kesit">${r.kesit}</td> 
+    //   <td class="col-kalite">${r.kalite}</td>
+
+    // --- YENİ EKLENEN FONKSİYON: Tanımdan Kesit Bulma ---
+    function getKesitFromTanim(tanimString) {
+      if (!tanimString) return "";
+
+      // Regex: "Ø" işaretini bul, (varsa boşluğu geç), sayıları al
+      // Örnek: "Ø14,00" -> "14" yakalar
+      // Örnek: "Ø 15" -> "15" yakalar
+      const match = tanimString.match(/Ø\s*(\d+)/);
+
+      if (match && match[1]) {
+        const cap = parseInt(match[1], 10);
+
+        // İSTEK: Çap değerini 10 ile çarpıp string olarak döndür
+        // 14 -> 140, 15 -> 150, 17 -> 170
+        return (cap * 10).toString();
+      }
+      
+      return ""; // Eşleşme yoksa boş döner
+    }
+
+
     // --- MODAL 1: DÖKÜM SEÇİMİ (FİLTRELİ) ---
     function openDokumModal(rowIdx) {
       currentRowIndex = rowIdx;
       tempKutukCounts = {};
 
       const rowData = uretimProgrami[rowIdx];
-      const targetKesit = rowData.kesit; // Örn: "150"
+      
+      // ESKİ YÖNTEM: const targetKesit = rowData.kesit;
+      // YENİ YÖNTEM: Tanımdan otomatik bul
+      const targetKesit = getKesitFromTanim(rowData.malzemeTanım);
 
       document.getElementById("modalKesitInfo").textContent = targetKesit;
 
@@ -706,7 +736,14 @@
       const tbody = document.getElementById("dokum-table-body");
       tbody.innerHTML = "";
 
-      // FİLTRELEME MANTIĞI: Döküm Ebat'ı, Sipariş Kesit'i ile başlıyorsa (Örn 150 vs 150x150)
+      // Hata kontrolü: Eğer kesit bulunamadıysa uyarı ver
+      if (!targetKesit) {
+         tbody.innerHTML = `<tr><td colspan="9" style="padding:20px; color:red;">Malzeme tanımından kesit (Ø) bilgisi okunamadı!</td></tr>`;
+         document.getElementById("dokumModal").classList.add("active");
+         return;
+      }
+
+      // FİLTRELEME MANTIĞI: Döküm Ebat'ı, Bulunan Kesit ile başlıyorsa
       const filteredDokums = dokumData.filter(d => d.ebat.trim().startsWith(targetKesit));
 
       if (filteredDokums.length === 0) {

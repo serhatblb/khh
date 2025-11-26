@@ -1,6 +1,7 @@
+<link href="sidebar.css" rel="stylesheet" />
 <aside id="sidebar" class="sidebar">
   <div class="logo">
-    
+    <!-- Logo buraya gelecek -->
   </div>
 
   <nav>
@@ -25,13 +26,32 @@
       <li class="dropdown">
         <input type="radio" name="sb-acc" id="acc-kalite" hidden />
         <label class="dropbtn" for="acc-kalite">🧪 Kalite Kontrol</label>
+        
         <div class="dropdown-content">
           <a href="5-1-kalite-uygulamasi.html">⚙️ Kalite Uygulaması</a>
-          <!-- <a href="5-2-kalite-kullanim-karar.html">🧾 Kalite Kullanım Kararı</a>
-          <a href="5-3-analiz-sonuclari.html">📈 Analiz Sonuçları</a> -->
           <a href="5-4-kalite-vardiya-raporu.html">📋 Kalite Vardiya Raporu</a>
           <a href="5-5-parti-verileri-goruntuleme-ekrani.html">📋 Analiz Sonuçları Görüntüleme</a>
-          <a href="7-5-proses-parametreleri.html">🔬 Proses İzleme Ekranı(Kalite)</a>
+
+          <!-- 🔥 İÇ İÇE MENÜ BAŞLANGICI (KALİTE NUMUNE) 🔥 -->
+          <div class="sub-group">
+            <!-- Alt menü tetikleyicisi -->
+            <input type="checkbox" id="sub-numune-toggle" class="sub-trigger" hidden />
+            
+            <!-- Alt menü başlığı -->
+            <label class="sub-dropbtn" for="sub-numune-toggle">
+              📋 Kalite Numune 
+              <span class="arrow">▼</span>
+            </label>
+            
+            <!-- Alt menü linkleri -->
+            <div class="sub-content">
+              <a href="5-8-numune-krd-no-alma.html">🔹 Numune KRD No Alma</a>
+              <!-- Yeni numune ekranları buraya eklenebilir -->
+            </div>
+          </div>
+          <!-- 🔥 İÇ İÇE MENÜ BİTİŞİ 🔥 -->
+
+          <a href="7-5-proses-parametreleri.html">🔬 Proses İzleme (Kalite)</a>
           <a href="5-6-kalite-ozet-tablosu.html">📋 Kalite Özet Tablosu</a>
           <a href="5-7-kalite-uretim-raporu.html">📋 Kalite Üretim Raporu</a>
         </div>
@@ -43,9 +63,6 @@
         <label class="dropbtn" for="acc-paket">🏷️ Paket / Etiket</label>
         <div class="dropdown-content">
           <a href="6-1-paket-izleme.html">📦 Paket ve Etiket İzleme Ekranı</a>
-          <!-- <a href="6-2-etiket-bilgileri.html">🏷️ Etiket Bilgileri</a> -->
-          <!-- <a href="6-3-yeniden-etiket-alma.html">🔁 Yeniden Etiket Alma</a> -->
-          <!-- <a href="6-4-etiket-paketleme-raporu.html">📊 Etiket ve Paketleme Raporu</a> -->
         </div>
       </li>
 
@@ -56,8 +73,6 @@
         <div class="dropdown-content">
           <a href="7-1-uretim-izleme-raporu.html">🏭 Üretim İzleme Raporu</a>
           <a href="7-2-tuketim-raporu.html">📉 Tüketim Raporu</a>
-          <!-- <a href="7-3-stok-raporu.html">📦 Stok İzleme Raporu</a>
-          <a href="7-4-dokum-gecmis.html">🧾 İş Emri Döküm Geçmişi</a> -->
           <a href="7-5-proses-parametreleri.html">🔬 Proses Parametreleri Takip Raporu</a>
           <a href="7-6-uretim-performans-raporu.html">📑 Üretim Performans Rapor</a>
           <a href="7-7-sicak-sarj.html">🔥 Sıcak Şarj Gerçekleşme Raporu</a>
@@ -91,7 +106,7 @@
         </div>
       </li>
 
-      <!-- Hepsini kapalı başlatmak için (opsiyonel) -->
+      <!-- Hepsini kapalı başlatmak için -->
       <li class="sr-only">
         <input type="radio" name="sb-acc" id="acc-none" hidden checked />
         <label for="acc-none"></label>

@@ -8,274 +8,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="sidebar.css" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* Main Card */
-        .main-card {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* Header */
-        .main-header {
-            background: linear-gradient(135deg, #0f2744 0%, #1a3a5c 100%);
-            padding: 16px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .header-title h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .header-title h2 {
-            font-size: 0.75rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 2px;
-            letter-spacing: 1.5px;
-        }
-
-        .header-time {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            color: #ffffff;
-            font-weight: 500;
-        }
-
-        /* Filter Section */
-        .filter-section {
-            padding: 18px 30px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-end;
-        }
-
-        .filter-item {
-            flex-direction: row;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .filter-item label {
-            margin-bottom: 0;
-        }
-
-        .filter-item label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .filter-item input,
-        .filter-item select {
-            padding: 9px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #ffffff;
-            color: #1e293b;
-            font-size: 0.85rem;
-            font-weight: 500;
-            min-width: 160px;
-            transition: all 0.2s ease;
-        }
-
-        .filter-item input:focus,
-        .filter-item select:focus {
-            outline: none;
-            border-color: #1a3a5c;
-            box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-left: auto;
-        }
-
-        .btn {
-            padding: 9px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.8rem;
-        }
-
-        .btn-filter {
-            background: linear-gradient(135deg, #0f2744 0%, #1a3a5c 100%);
-            color: white;
-        }
-
-        .btn-filter:hover {
-            box-shadow: 0 4px 15px rgba(26, 58, 92, 0.3);
-        }
-
-        .btn-clear {
-            background: #e2e8f0;
-            color: #64748b;
-        }
-
-        .btn-clear:hover {
-            background: #cbd5e1;
-        }
-
-        /* Table Section */
-        .table-section {
-            padding: 20px 30px;
-            overflow-x: auto;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-
-        .data-table thead th {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            padding: 12px 10px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            text-transform: uppercase;
-            font-size: 0.65rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #cbd5e1;
-            white-space: nowrap;
-        }
-
-        .data-table tbody tr {
-            border-bottom: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-
-        .data-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .data-table tbody td {
-            padding: 12px 10px;
-            color: #334155;
-            vertical-align: middle;
-        }
-
-        /* Submit Section */
-        .submit-section {
-            padding: 16px 30px;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .btn-submit {
-            padding: 12px 35px;
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-        }
-
-        .btn-submit:hover {
-            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
-        }
-
-        .btn-cancel {
-            padding: 12px 35px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-cancel:hover {
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .table-section {
-                padding: 15px;
-            }
-        }
-
+        /* CSS KODLARI AYNEN KORUNDU */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #ffffff; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .main-card { background: #ffffff; border-radius: 16px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        .main-header { background: linear-gradient(135deg, #0f2744 0%, #1a3a5c 100%); padding: 16px 30px; display: flex; align-items: center; justify-content: space-between; }
+        .header-title h1 { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
+        .header-title h2 { font-size: 0.75rem; font-weight: 400; color: rgba(255, 255, 255, 0.7); margin-top: 2px; letter-spacing: 1.5px; }
+        .header-time { background: rgba(255, 255, 255, 0.1); padding: 8px 18px; border-radius: 50px; font-size: 0.8rem; color: #ffffff; font-weight: 500; }
+        .filter-section { padding: 18px 30px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .filter-item { display: flex; flex-direction: row; align-items: center; gap: 8px; }
+        .filter-item label { font-size: 0.65rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .filter-item input, .filter-item select { padding: 9px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; color: #1e293b; font-size: 0.85rem; font-weight: 500; min-width: 160px; transition: all 0.2s ease; }
+        .filter-item input:focus, .filter-item select:focus { outline: none; border-color: #1a3a5c; box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1); }
+        .filter-buttons { display: flex; gap: 10px; margin-left: auto; }
+        .btn { padding: 9px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-size: 0.8rem; }
+        .btn-filter { background: linear-gradient(135deg, #0f2744 0%, #1a3a5c 100%); color: white; }
+        .btn-filter:hover { box-shadow: 0 4px 15px rgba(26, 58, 92, 0.3); }
+        .btn-clear { background: #e2e8f0; color: #64748b; }
+        .btn-clear:hover { background: #cbd5e1; }
+        .table-section { padding: 20px 30px; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .data-table thead th { background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); padding: 12px 10px; text-align: left; font-weight: 600; color: #475569; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 2px solid #cbd5e1; white-space: nowrap; }
+        .data-table tbody tr { border-bottom: 1px solid #e2e8f0; transition: all 0.2s ease; }
+        .data-table tbody tr:hover { background: #f8fafc; }
+        .data-table tbody td { padding: 12px 10px; color: #334155; vertical-align: middle; }
+        .submit-section { padding: 16px 30px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; }
+        .no-records { text-align: center; padding: 20px; color: #64748b; font-style: italic; }
+        
+        @media (max-width: 1200px) { .table-section { padding: 15px; } }
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .main-header {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-
-            .filter-row {
-                flex-direction: column;
-            }
-
-            .filter-item {
-                width: 100%;
-            }
-
-            .filter-item input,
-            .filter-item select {
-                min-width: 100%;
-            }
-
-            .filter-buttons {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .filter-buttons .btn {
-                flex: 1;
-            }
+            body { padding: 10px; }
+            .main-header { flex-direction: column; gap: 10px; text-align: center; }
+            .filter-row { flex-direction: column; }
+            .filter-item { width: 100%; flex-direction: column; align-items: flex-start; }
+            .filter-item input, .filter-item select { min-width: 100%; }
+            .filter-buttons { margin-left: 0; width: 100%; }
+            .filter-buttons .btn { flex: 1; }
+            .container { margin-left: 0 !important; } /* Sidebar mobil düzeltmesi */
         }
     </style>
 </head>
@@ -285,12 +57,18 @@
     <aside id="sidebar">
         <div id="sidebar-container"></div>
         <script>
+            // Sidebar yoksa hata vermemesi için basit bir kontrol
             fetch("sidebar.html")
-                .then(r => r.text())
-                .then(html => { document.getElementById("sidebar-container").innerHTML = html });
+                .then(r => {
+                    if(r.ok) return r.text();
+                    throw new Error('Sidebar bulunamadı');
+                })
+                .then(html => { document.getElementById("sidebar-container").innerHTML = html })
+                .catch(e => console.log("Sidebar yüklenemedi (Demo modunda çalışıyor olabilir)."));
         </script>
     </aside>
-    <div class="container" style="margin-left: 260px;">
+
+    <div class="container" style="margin-left: 260px;"> <!-- Sidebar genişliğine göre -->
         <div class="main-card">
             <!-- Header -->
             <header class="main-header">
@@ -306,23 +84,30 @@
                 <div class="filter-row">                    
                     <div class="filter-item">
                         <label>KRD No</label>
-                        <input type="text" value="KRD2100000018">
+                        <input type="text" id="filterKRD" placeholder="KRD No girin">
+                    </div>
+                    <div class="filter-item">
+                        <label>Döküm No</label>
+                        <input type="text" id="filterDokum" placeholder="Döküm No girin">
+                    </div>
+                    <div class="filter-item">
                         <label>Tarih</label>
-                        <input type="date" value="2025-10-01">
+                        <!-- Default value'yu kaldırdım ki açılışta tüm veriler mantıklı görünsün -->
+                        <input type="date" id="filterTarih">
                     </div>
                     <div class="filter-buttons">
-                        <button class="btn btn-filter">Filtrele</button>
-                        <button class="btn btn-clear">Filtreleri Temizle</button>
+                        <button class="btn btn-filter" id="filterBtn">Filtrele</button>
+                        <button class="btn btn-clear" id="clearBtn">Filtreleri Temizle</button>
                     </div>
                 </div>
             </div>
-
 
             <!-- Table Section -->
             <div class="table-section">
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>KRD No</th>
                             <th>Parti No</th>
                             <th>Ürün ID</th>
                             <th>Malzeme No</th>
@@ -342,147 +127,138 @@
                             <th>Açıklama</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>0002934769</td>
-                            <td>25N1734470</td>
-                            <td>80000014</td>
-                            <td>B420C_01 12000 NERVÜRLÜ</td>
-                            <td>2535785</td>
-                            <td>B402C_01</td>
-                            <td>1111111111</td>
-                            <td>KARDEMİR</td>
-                            <td>01.10.2025</td>
-                            <td>08-16</td>
-                            <td>7</td>
-                            <td>İşletme Ortamı</td>
-                            <td>3</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>0002934770</td>
-                            <td>25N1734471</td>
-                            <td>80000015</td>
-                            <td>B420C_01 14000 NERVÜRLÜ</td>
-                            <td>2535786</td>
-                            <td>B402C_01</td>
-                            <td>1111111112</td>
-                            <td>KARDEMİR</td>
-                            <td>01.10.2025</td>
-                            <td>08-16</td>
-                            <td>8</td>
-                            <td>Üretim Alanı</td>
-                            <td>2</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>0002934771</td>
-                            <td>25N1734472</td>
-                            <td>80000016</td>
-                            <td>B420C_01 16000 NERVÜRLÜ</td>
-                            <td>2535787</td>
-                            <td>B402C_02</td>
-                            <td>1111111113</td>
-                            <td>KARDEMİR</td>
-                            <td>02.10.2025</td>
-                            <td>16-24</td>
-                            <td>7</td>
-                            <td>İşletme Ortamı</td>
-                            <td>3</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>0002934772</td>
-                            <td>25N1734473</td>
-                            <td>80000017</td>
-                            <td>B420C_01 18000 NERVÜRLÜ</td>
-                            <td>2535788</td>
-                            <td>B402C_01</td>
-                            <td>1111111114</td>
-                            <td>KARDEMİR</td>
-                            <td>02.10.2025</td>
-                            <td>16-24</td>
-                            <td>5</td>
-                            <td>Depo</td>
-                            <td>1</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>0002934773</td>
-                            <td>25N1734474</td>
-                            <td>80000018</td>
-                            <td>B420C_01 20000 NERVÜRLÜ</td>
-                            <td>2535789</td>
-                            <td>B402C_03</td>
-                            <td>1111111115</td>
-                            <td>KARDEMİR</td>
-                            <td>03.10.2025</td>
-                            <td>00-08</td>
-                            <td>6</td>
-                            <td>İşletme Ortamı</td>
-                            <td>3</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                    <tbody id="tableBody">
+                        <!-- Veriler Javascript ile buraya gelecek -->
                     </tbody>
                 </table>
             </div>
 
             <!-- Submit Section -->
             <div class="submit-section">
-                <!-- <button class="btn-submit" id="submitBtn">Kaydet / Güncelle</button>
-                <button class="btn-cancel" id="cancelBtn">İptal</button> -->
+                <!-- Butonlar gerekirse buraya eklenebilir -->
             </div>
         </div>
     </div>
 
     <script>
+        // Store original data (Simüle edilmiş veritabanı)
+        const originalData = [
+            { krd: 'KRD2100000019', partiNo: '0002934769', urunId: '25N1734470', malzemeNo: '80000014', malzemeMetni: 'B420C_01 12000 NERVÜRLÜ', dokumNo: '2535785', kalite: 'B402C_01', musteriNo: '1111111111', musteriAdi: 'KARDEMİR', tarih: '01.10.2025', vardiya: '08-16', lab: '7', bolge: 'İşletme Ortamı', test: '3', ortam: '', personel: '', miktar: '', aciklama: '' },
+            { krd: 'KRD2100000020', partiNo: '0002934770', urunId: '25N1734471', malzemeNo: '80000015', malzemeMetni: 'B420C_01 14000 NERVÜRLÜ', dokumNo: '2535786', kalite: 'B402C_01', musteriNo: '1111111112', musteriAdi: 'KARDEMİR', tarih: '01.10.2025', vardiya: '08-16', lab: '8', bolge: 'Üretim Alanı', test: '2', ortam: '', personel: '', miktar: '', aciklama: '' },
+            { krd: 'KRD2100000021', partiNo: '0002934771', urunId: '25N1734472', malzemeNo: '80000016', malzemeMetni: 'B420C_01 16000 NERVÜRLÜ', dokumNo: '2535787', kalite: 'B402C_02', musteriNo: '1111111113', musteriAdi: 'KARDEMİR', tarih: '02.10.2025', vardiya: '16-24', lab: '7', bolge: 'İşletme Ortamı', test: '3', ortam: '', personel: '', miktar: '', aciklama: '' },
+            { krd: 'KRD2100000022', partiNo: '0002934772', urunId: '25N1734473', malzemeNo: '80000017', malzemeMetni: 'B420C_01 18000 NERVÜRLÜ', dokumNo: '2535788', kalite: 'B402C_01', musteriNo: '1111111114', musteriAdi: 'KARDEMİR', tarih: '02.10.2025', vardiya: '16-24', lab: '5', bolge: 'Depo', test: '1', ortam: '', personel: '', miktar: '', aciklama: '' },
+            { krd: 'KRD2100000023', partiNo: '0002934773', urunId: '25N1734474', malzemeNo: '80000018', malzemeMetni: 'B420C_01 20000 NERVÜRLÜ', dokumNo: '2535789', kalite: 'B402C_03', musteriNo: '1111111115', musteriAdi: 'KARDEMİR', tarih: '03.10.2025', vardiya: '00-08', lab: '6', bolge: 'İşletme Ortamı', test: '3', ortam: '', personel: '', miktar: '', aciklama: '' }
+        ];
+
+        // Tarih ve Saat Güncelleme
         function updateDateTime() {
             const now = new Date();
             const formatted = now.toLocaleString('tr-TR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
             });
             document.getElementById('currentDateTime').textContent = formatted;
         }
 
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
+        // Input type="date" (YYYY-MM-DD) formatını tablodaki (DD.MM.YYYY) formata çevirir
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}.${month}.${year}`;
+        }
 
-        document.getElementById('submitBtn').addEventListener('click', function () {
-            const btn = this;
-            btn.textContent = '✓ Kaydedildi!';
-            btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        // Tabloyu Oluşturma Fonksiyonu
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
 
-            setTimeout(() => {
-                btn.textContent = 'Kaydet / Güncelle';
-                btn.style.background = 'linear-gradient(135deg, #059669 0%, #047857 100%)';
-            }, 2000);
-        });
+            if (data.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="18" class="no-records">Aradığınız kriterlere uygun kayıt bulunamadı.</td>`;
+                tbody.appendChild(tr);
+                return;
+            }
 
-        document.getElementById('cancelBtn').addEventListener('click', function () {
-            // İptal işlemi
-            window.location.reload();
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.krd}</td>
+                    <td>${row.partiNo}</td>
+                    <td>${row.urunId}</td>
+                    <td>${row.malzemeNo}</td>
+                    <td>${row.malzemeMetni}</td>
+                    <td>${row.dokumNo}</td>
+                    <td>${row.kalite}</td>
+                    <td>${row.musteriNo}</td>
+                    <td>${row.musteriAdi}</td>
+                    <td>${row.tarih}</td>
+                    <td>${row.vardiya}</td>
+                    <td>${row.lab}</td>
+                    <td>${row.bolge}</td>
+                    <td>${row.test}</td>
+                    <td>${row.ortam}</td>
+                    <td>${row.personel}</td>
+                    <td>${row.miktar}</td>
+                    <td>${row.aciklama}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filtreleme Fonksiyonu
+        function filterTable() {
+            // Türkçe karakter uyumlu büyük harf dönüşümü
+            const filterKrd = document.getElementById('filterKRD').value.trim().toLocaleUpperCase('tr-TR');
+            const filterDokum = document.getElementById('filterDokum').value.trim().toLocaleUpperCase('tr-TR');
+            
+            // Tarih işlemleri
+            const filterTarihInput = document.getElementById('filterTarih').value;
+            const formattedTarih = filterTarihInput ? formatDate(filterTarihInput) : '';
+
+            const filtered = originalData.filter(row => {
+                // KRD Kontrolü (İçeriyor mu?)
+                const krdMatch = row.krd.toLocaleUpperCase('tr-TR').includes(filterKrd);
+                
+                // Döküm No Kontrolü (İçeriyor mu?)
+                const dokumMatch = row.dokumNo.toLocaleUpperCase('tr-TR').includes(filterDokum);
+                
+                // Tarih Kontrolü (Eşit mi? Tarih seçili değilse true döner)
+                const tarihMatch = !formattedTarih || row.tarih === formattedTarih;
+
+                return krdMatch && dokumMatch && tarihMatch;
+            });
+
+            renderTable(filtered);
+        }
+
+        // Filtreleri Temizle
+        function clearFilters() {
+            document.getElementById('filterKRD').value = '';
+            document.getElementById('filterDokum').value = '';
+            document.getElementById('filterTarih').value = '';
+            // Tabloyu orijinal verilerle tekrar doldur
+            renderTable(originalData);
+        }
+
+        // Sayfa Yüklendiğinde
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable(originalData); // Tüm verileri göster
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Event Listener'lar
+            document.getElementById('filterBtn').addEventListener('click', filterTable);
+            document.getElementById('clearBtn').addEventListener('click', clearFilters);
+
+            // Enter tuşuna basınca da filtrelesin (Opsiyonel kullanıcı kolaylığı)
+            document.querySelectorAll('.filter-item input').forEach(input => {
+                input.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        filterTable();
+                    }
+                });
+            });
         });
     </script>
 </body>
-
 </html>

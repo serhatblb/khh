@@ -459,8 +459,7 @@
 
             <!-- Submit Section -->
             <div class="submit-section">
-                <button class="btn-submit" id="submitBtn">Kaydet / Güncelle</button>
-                <button class="btn-cancel" id="cancelBtn">İptal</button>
+                <button class="btn-submit" id="submitBtn">Etiket Bas</button>
             </div>
         </div>
     </div>
@@ -496,11 +495,11 @@
 
         document.getElementById('submitBtn').addEventListener('click', function () {
             const btn = this;
-            btn.textContent = '✓ Kaydedildi!';
+            btn.textContent = '✓ Etiket Basıldı!';
             btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
 
             setTimeout(() => {
-                btn.textContent = 'Kaydet / Güncelle';
+                btn.textContent = 'Etiket Bas';
                 btn.style.background = 'linear-gradient(135deg, #059669 0%, #047857 100%)';
             }, 2000);
         });

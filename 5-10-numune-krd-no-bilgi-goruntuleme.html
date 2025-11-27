@@ -82,9 +82,13 @@
         }
 
         .filter-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .filter-item label {
+            margin-bottom: 0;
         }
 
         .filter-item label {
@@ -299,10 +303,12 @@
 
             <!-- Filter Section -->
             <div class="filter-section">
-                <div class="filter-row">
+                <div class="filter-row">                    
                     <div class="filter-item">
                         <label>KRD No</label>
                         <input type="text" value="KRD2100000018">
+                        <label>Tarih</label>
+                        <input type="date" value="2025-10-01">
                     </div>
                     <div class="filter-buttons">
                         <button class="btn btn-filter">Filtrele</button>
@@ -310,6 +316,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Table Section -->
             <div class="table-section">
@@ -437,8 +444,8 @@
 
             <!-- Submit Section -->
             <div class="submit-section">
-                <button class="btn-submit" id="submitBtn">Kaydet / Güncelle</button>
-                <button class="btn-cancel" id="cancelBtn">İptal</button>
+                <!-- <button class="btn-submit" id="submitBtn">Kaydet / Güncelle</button>
+                <button class="btn-cancel" id="cancelBtn">İptal</button> -->
             </div>
         </div>
     </div>

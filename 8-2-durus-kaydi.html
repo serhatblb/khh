@@ -269,7 +269,7 @@
             fetch("sidebar.html").then(r => r.text()).then(t => document.getElementById("sidebar-container").innerHTML = t);
         </script>
     </aside>
-<div class="container" style="margin-left: 240px;">
+<div class="container">
     <!-- Header -->
     <div class="header">
         <div class="header-content">
@@ -300,11 +300,15 @@
                             <label class="form-label">Hat / Bölge <span class="required">*</span></label>
                             <select class="form-select" id="hat" required>
                                 <option value="">Seçiniz</option>
-                                <option>Kontinü Haddehane</option>
-                                <option>Hadde Tezgahı</option>
-                                <option>Çelik Haddehanesi</option>
-                                <option>Sürekli Döküm</option>
-                                
+                                <option>Rph Bd1 Üretim Hattı</option>
+                                <option>Rph Bd2 Üretim Hattı</option>
+                                <option>Rph Fırın Üretim Hattı</option>
+                                <option>Rph Profil Tamamlama Hattı</option>
+                                <option>Rph Ray Sertleştirme Hattı</option>
+                                <option>Rph Ray Tamamlama Hattı</option>
+                                <option>Rph Doğrultma Üretim Hattı</option>
+                                <option>Rph Tandem Üretim Hattı</option>
+                                <option>Rph Kalın Yuvarlak Üretim Hattı</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -365,6 +369,27 @@
                     </div>
                 </div>
             </div>
+
+ <!-- Duruş Detayları -->
+<div class="form-card">
+    <div class="card-header">
+        <i class="fas fa-pause-circle"></i> Duruş Detayları (Bakım ekibi tarafından SAP de girilecek)
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <label class="form-label">EKİPMAN <span class="required">*</span></label>
+            <input type="text" class="form-control" id="ekipman" value="Ekipman No - Ekipman Adı" readonly>
+        </div>
+        <div class="form-group">
+            <label class="form-label">HASAR <span class="required">*</span></label>
+            <input type="text" class="form-control" id="hasar" value="Mekanik Darbe" readonly>
+        </div>
+        <div class="form-group">
+            <label class="form-label">NEDEN <span class="required">*</span></label>
+            <input type="text" class="form-control" id="neden" value="Motor Güç Arızası" readonly>
+        </div>
+    </div>
+</div>
 
             <!-- Action Buttons -->
             <div class="btn-group">

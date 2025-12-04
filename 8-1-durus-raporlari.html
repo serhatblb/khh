@@ -294,7 +294,7 @@
   <div class="page" style="margin-left: 240px;">
     <div class="header">
       <h1>Duruş Raporları</h1>
-      
+      <small>Duruş Kayıt Formu ile uyumlu rapor tablosu</small>
     </div>
 
     <div class="filters">
@@ -312,9 +312,7 @@
         <label>Hat / Bölge</label>
         <select id="hat">
           <option value="">Hepsi</option>
-          <option>Kontinü Haddehane</option>
-          <option>Çelik Haddehanesi</option>
-          <option>Sürekli Döküm</option>
+          <option selected>Rph BD2 Üretim Hattı</option>
         </select>
       </div>
 
@@ -433,6 +431,9 @@
               <th>Kaynak</th>
               <th>Duruş Tipi</th>
               <th>Duruş Nedeni</th>
+              <th>Ekipman</th>
+              <th>Hasar</th>
+              <th>Neden</th>
               <th>Başlangıç</th>
               <th>Bitiş</th>
               <th class="nowrap">Süre (dk)</th>
@@ -446,7 +447,7 @@
           <tbody id="tbody"></tbody>
           <tfoot>
             <tr>
-              <td colspan="8">Toplam</td>
+              <td colspan="11">Toplam</td>
               <td id="footTotal">0</td>
               <td colspan="5"></td>
             </tr>
@@ -470,12 +471,12 @@
     };
 
     const sample = [
-      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Kontinü Haddehane', kaynak:'Operatör Girişi', tip:'Proses Gereği Duruşlar', neden:'Kesit / Ebat Değişimi', bas:'08:10', bit:'08:45', sure:35, planli:'PL', oee:'Orta', op:'SB', id:'DK-10231', acik:'Kesit geçişi planlıydı.'},
-      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Kontinü Haddehane', kaynak:'Seviye 2 Entegrasyonu', tip:'Elektrik - Otomasyon Duruşu', neden:'Elektrik Arıza', bas:'09:12', bit:'09:47', sure:35, planli:'PS', oee:'Yüksek', op:'ME', id:'DK-10232', acik:'Motor koruma attı.'},
-      {tarih:'2025-11-10', vardiya:'08:00-16:00', hat:'Çelik Haddehanesi', kaynak:'Operatör Girişi', tip:'Mekanik Duruş', neden:'Mekanik Arıza', bas:'15:05', bit:'15:40', sure:35, planli:'PS', oee:'Yüksek', op:'AK', id:'DK-10240', acik:'Rulman değişimi.'},
-      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Sürekli Döküm', kaynak:'ERP', tip:'Planlı Bakım Duruşu', neden:'Planlı Mekanik Bakım', bas:'00:00', bit:'01:00', sure:60, planli:'PL', oee:'Düşük', op:'ERP', id:'DK-10252', acik:'Yıllık bakım'},
-      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Sürekli Döküm', kaynak:'Seviye 2 Entegrasyonu', tip:'Yardımcı Tesisler-İşletmeler Nedeniyle Duruş', neden:'Elektrik Kesintisi', bas:'02:20', bit:'03:05', sure:45, planli:'PS', oee:'Yüksek', op:'OT', id:'DK-10253', acik:'Şebeke dalgalanması'},
-      {tarih:'2025-11-12', vardiya:'00:00-08:00', hat:'Kontinü Haddehane', kaynak:'Operatör Girişi', tip:'İşletme Duruşu', neden:'İşletme Ekibi Kaynaklı Duruş', bas:'07:20', bit:'07:35', sure:15, planli:'PS', oee:'Orta', op:'SB', id:'DK-10277', acik:'Malzeme hazırlığı gecikti'}
+      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'Proses Gereği Duruşlar', neden:'Kesit / Ebat Değişimi', ekipman:'Bükme Makinesi', hasar:'Aşınma', nedenDetay:'Normal kullanım', bas:'08:10', bit:'08:45', sure:35, planli:'PL', oee:'Orta', op:'SB', id:'DK-10231', acik:'Kesit geçişi planlıydı.'},
+      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Seviye 2 Entegrasyonu', tip:'Elektrik - Otomasyon Duruşu', neden:'Elektrik Arıza', ekipman:'Ana Motor', hasar:'Motor Arızası', nedenDetay:'Aşırı yük', bas:'09:12', bit:'09:47', sure:35, planli:'PS', oee:'Yüksek', op:'ME', id:'DK-10232', acik:'Motor koruma attı.'},
+      {tarih:'2025-11-10', vardiya:'08:00-16:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'Mekanik Duruş', neden:'Mekanik Arıza', ekipman:'Rulman Ünitesi', hasar:'Rulman Hasarı', nedenDetay:'Yağlama eksikliği', bas:'15:05', bit:'15:40', sure:35, planli:'PS', oee:'Yüksek', op:'AK', id:'DK-10240', acik:'Rulman değişimi.'},
+      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Rph BD2 Üretim Hattı', kaynak:'ERP', tip:'Planlı Bakım Duruşu', neden:'Planlı Mekanik Bakım', ekipman:'Hidrolik Sistem', hasar:'Bakım', nedenDetay:'Periyodik bakım', bas:'00:00', bit:'01:00', sure:60, planli:'PL', oee:'Düşük', op:'ERP', id:'DK-10252', acik:'Yıllık bakım'},
+      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Seviye 2 Entegrasyonu', tip:'Yardımcı Tesisler-İşletmeler Nedeniyle Duruş', neden:'Elektrik Kesintisi', ekipman:'Elektrik Panosu', hasar:'Şebeke Kesintisi', nedenDetay:'Harici sebep', bas:'02:20', bit:'03:05', sure:45, planli:'PS', oee:'Yüksek', op:'OT', id:'DK-10253', acik:'Şebeke dalgalanması'},
+      {tarih:'2025-11-12', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'İşletme Duruşu', neden:'İşletme Ekibi Kaynaklı Duruş', ekipman:'Konveyör', hasar:'Operasyonel', nedenDetay:'Malzeme gecikmesi', bas:'07:20', bit:'07:35', sure:15, planli:'PS', oee:'Orta', op:'SB', id:'DK-10277', acik:'Malzeme hazırlığı gecikti'}
     ];
 
     const tipSel = document.getElementById('durusTipi');
@@ -534,6 +535,7 @@
 
     function clearFilters() {
       document.querySelectorAll('.filter-group input, .filter-group select').forEach(el => el.value = '');
+      document.getElementById('hat').value = 'Rph BD2 Üretim Hattı';
       document.getElementById('durusNedeni').innerHTML = '<option value="">Hepsi</option>';
       applyFilters();
     }
@@ -563,7 +565,7 @@
         const [tarih, hat] = g.k.split('__');
         const trg = document.createElement('tr');
         trg.className = 'group-row';
-        trg.innerHTML = `<td colspan="14">${tarih} • ${hat} — Toplam: <strong>${g.sum} dk</strong></td>`;
+        trg.innerHTML = `<td colspan="17">${tarih} • ${hat} — Toplam: <strong>${g.sum} dk</strong></td>`;
         tb.appendChild(trg);
 
         g.list.forEach(r => {
@@ -575,6 +577,9 @@
             <td>${r.kaynak}</td>
             <td>${r.tip}</td>
             <td>${r.neden}</td>
+            <td>${r.ekipman}</td>
+            <td>${r.hasar}</td>
+            <td>${r.nedenDetay}</td>
             <td class="nowrap">${r.bas}</td>
             <td class="nowrap">${r.bit}</td>
             <td class="nowrap">${r.sure}</td>
@@ -617,8 +622,8 @@
     }
 
     function toCsv(arr) {
-      const headers = ["Tarih","Vardiya","Hat / Bölge","Kaynak","Duruş Tipi","Duruş Nedeni","Başlangıç","Bitiş","Süre (dk)","Planlılık","OEE Etkisi","Operatör","Kayıt No","Açıklama"];
-      const rows = arr.map(r => [r.tarih, r.vardiya, r.hat, r.kaynak, r.tip, r.neden, r.bas, r.bit, r.sure, (r.planli === 'PL' ? 'Planlı' : 'Plansız'), r.oee, r.op, r.id, (r.acik || '')]);
+      const headers = ["Tarih","Vardiya","Hat / Bölge","Kaynak","Duruş Tipi","Duruş Nedeni","Ekipman","Hasar","Neden","Başlangıç","Bitiş","Süre (dk)","Planlılık","OEE Etkisi","Operatör","Kayıt No","Açıklama"];
+      const rows = arr.map(r => [r.tarih, r.vardiya, r.hat, r.kaynak, r.tip, r.neden, r.ekipman, r.hasar, r.nedenDetay, r.bas, r.bit, r.sure, (r.planli === 'PL' ? 'Planlı' : 'Plansız'), r.oee, r.op, r.id, (r.acik || '')]);
       const all = [headers, ...rows].map(r => r.map(x => `"${String(x).replaceAll('"', '""')}"`).join(',')).join('\n');
       const blob = new Blob([all], {type: 'text/csv;charset=utf-8;'});
       const a = document.createElement('a');

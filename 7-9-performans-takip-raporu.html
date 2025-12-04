@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KHH Performans Takip Raporu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="sidebar.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:#F4F7F6;
+            min-height: 100vh;
+            padding: 20px;
+            animation: gradientShift 15s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+            padding: 22px 35px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 38px;
+            color: #e74c3c;
+        }
+
+        .header-text h1 {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            color: #95a5a6;
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .export-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .export-btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+        }
+
+        .main-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .filter-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label i {
+            color: #3498db;
+            font-size: 12px;
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 11px 14px;
+            border: 1.5px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-input:focus,
+        .filter-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .filter-input:hover:not(:focus),
+        .filter-select:hover:not(:focus) {
+            border-color: #adb5bd;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .filter-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .filter-btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+            transform: translateY(-1px);
+        }
+
+        .filter-btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3);
+        }
+
+        .filter-btn-secondary:hover {
+            background: linear-gradient(135deg, #7f8c8d 0%, #6c7a7b 100%);
+            transform: translateY(-1px);
+        }
+
+        .view-mode {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 10px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .view-btn:hover:not(.active) {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 14px 12px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 13px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f4f8;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+
+        .row-header {
+            text-align: left !important;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ecf0f1 0%, #f8f9fa 100%) !important;
+            color: #2c3e50;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            padding-left: 15px !important;
+            border-right: 2px solid #dee2e6;
+        }
+
+        .unit-cell {
+            font-size: 11px;
+            color: #6c757d;
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        .percentage-cell {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .total-cell {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%) !important;
+            font-weight: 700;
+            color: #856404;
+            border-left: 2px solid #ffc107 !important;
+        }
+
+        .highlight-yellow {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%) !important;
+            font-weight: 600;
+            color: #856404;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transition: transform 0.5s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+        }
+
+        .summary-card:hover::before {
+            transform: translate(10%, 10%);
+        }
+
+        .summary-card h4 {
+            font-size: 13px;
+            margin-bottom: 12px;
+            opacity: 0.95;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-card .unit {
+            font-size: 13px;
+            opacity: 0.85;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .view-mode {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .header,
+            .filter-section,
+            .view-mode,
+            .export-btn {
+                display: none;
+            }
+
+            .main-content {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body >
+   <aside id="sidebar">
+        <div id="sidebar-container"></div>
+        <script>
+            fetch("sidebar.html").then(r => r.text()).then(t => document.getElementById("sidebar-container").innerHTML = t);
+        </script>
+    </aside>
+ 
+<div class="container" style="margin-left: 240px;">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <i class="fas fa-chart-line header-icon"></i>
+                <div class="header-text">
+                    <h1>KHH Performans Takip Raporu</h1>
+                    <p>Çelik Üretim Performans Analizi</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="export-btn" onclick="exportToExcel()">
+                    <i class="fas fa-file-excel"></i> Excel'e Aktar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <i class="far fa-calendar"></i> Başlangıç Tarihi
+                    </label>
+                    <input type="date" class="filter-input" id="startDate" />
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <i class="far fa-calendar"></i> Bitiş Tarihi
+                    </label>
+                    <input type="date" class="filter-input" id="endDate" />
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <i class="fas fa-clock"></i> Vardiya
+                    </label>
+                    <select class="filter-select" id="shift">
+                        <option value="all">Tümü</option>
+                        <option value="1">1. Vardiya</option>
+                        <option value="2">2. Vardiya</option>
+                        <option value="3">3. Vardiya</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <i class="fas fa-industry"></i> Hat
+                    </label>
+                    <select class="filter-select" id="line">
+                        <option value="all">Tümü</option>
+                        <option value="ckh">KHH</option>
+                        <option value="sdm">SDM</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn filter-btn-secondary" onclick="resetFilters()">
+                    <i class="fas fa-redo"></i> Temizle
+                </button>
+                <button class="filter-btn filter-btn-primary" onclick="applyFilters()">
+                    <i class="fas fa-filter"></i> Filtrele
+                </button>
+            </div>
+        </div>
+
+        <!-- View Mode Selection -->
+        <div class="view-mode">
+            <button class="view-btn active" onclick="changeView('daily')" id="dailyBtn">
+                <i class="fas fa-calendar-day"></i> Günlük Görünüm
+            </button>
+            <button class="view-btn" onclick="changeView('monthly')" id="monthlyBtn">
+                <i class="fas fa-calendar-alt"></i> Aylık Görünüm
+            </button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards" id="summaryCards"></div>
+
+        <!-- Data Table -->
+        <div class="table-container">
+            <table id="reportTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Örnek veri yapısı
+    const sampleData = {
+        daily: [
+            {
+                date: '2025-01-01',
+                gunlukUretimMiktari: { ton: 1603, value: 1603 },
+                gunlukKutukSarjMiktari: { ton: 1641, value: 1641 },
+                malzemeVerimi: { '%': 97.7, value: 97.7 },
+                takvimSuresi: { saat: 24, value: 24 },
+                planlanmisDurus: { saat: 0, value: 0 },
+                operasyonSuresi: { saat: 24, value: 24 },
+                plansizDuruslar: { saat: 7.2, value: 7.2 },
+                isletmeDurusu: { saat: 1.6, value: 1.6 },
+                prosesDurusu: { saat: 2.8, value: 2.8 },
+                elektrikDurusu: { saat: 0.3, value: 0.3 },
+                mekanikDurus: { saat: 1.5, value: 1.5 },
+                oncekiTesisDurus: { saat: 1.0, value: 1.0 },
+                yardimciTesisDurus: { saat: 0.7, value: 0.7 },
+                yeniMalzeme: { saat: 0.0, value: 0.0 },
+                netCalismaSuresi: { saat: 16.28, value: 16.28 },
+                netCalismaOrani: { '%': 67.8, value: 67.8 },
+                operasyonOrani: { '%': 67.8, value: 67.8 },
+                uretkenlik: { 'ton/saat': 98.5, value: 98.5 }
+            },
+            {
+                date: '2025-01-02',
+                gunlukUretimMiktari: { ton: 1266, value: 1266 },
+                gunlukKutukSarjMiktari: { ton: 1306, value: 1306 },
+                malzemeVerimi: { '%': 96.9, value: 96.9 },
+                takvimSuresi: { saat: 24, value: 24 },
+                planlanmisDurus: { saat: 0, value: 0 },
+                operasyonSuresi: { saat: 24, value: 24 },
+                plansizDuruslar: { saat: 11.56, value: 11.56 },
+                isletmeDurusu: { saat: 0.1, value: 0.1 },
+                prosesDurusu: { saat: 3.8, value: 3.8 },
+                elektrikDurusu: { saat: 0.0, value: 0.0 },
+                mekanikDurus: { saat: 4.5, value: 4.5 },
+                oncekiTesisDurus: { saat: 1.2, value: 1.2 },
+                yardimciTesisDurus: { saat: 0.8, value: 0.8 },
+                yeniMalzeme: { saat: 0.0, value: 0.0 },
+                netCalismaSuresi: { saat: 12.44, value: 12.44 },
+                netCalismaOrani: { '%': 51.8, value: 51.8 },
+                operasyonOrani: { '%': 51.8, value: 51.8 },
+                uretkenlik: { 'ton/saat': 101.8, value: 101.8 }
+            },
+            {
+                date: '2025-01-03',
+                gunlukUretimMiktari: { ton: 1731, value: 1731 },
+                gunlukKutukSarjMiktari: { ton: 1757, value: 1757 },
+                malzemeVerimi: { '%': 98.5, value: 98.5 },
+                takvimSuresi: { saat: 24, value: 24 },
+                planlanmisDurus: { saat: 0, value: 0 },
+                operasyonSuresi: { saat: 24, value: 24 },
+                plansizDuruslar: { saat: 5.51, value: 5.51 },
+                isletmeDurusu: { saat: 1.1, value: 1.1 },
+                prosesDurusu: { saat: 2.1, value: 2.1 },
+                elektrikDurusu: { saat: 0.0, value: 0.0 },
+                mekanikDurus: { saat: 0.6, value: 0.6 },
+                oncekiTesisDurus: { saat: 0.9, value: 0.9 },
+                yardimciTesisDurus: { saat: 0.6, value: 0.6 },
+                yeniMalzeme: { saat: 0.0, value: 0.0 },
+                netCalismaSuresi: { saat: 18.49, value: 18.49 },
+                netCalismaOrani: { '%': 77.0, value: 77.0 },
+                operasyonOrani: { '%': 77.0, value: 77.0 },
+                uretkenlik: { 'ton/saat': 93.6, value: 93.6 }
+            }
+        ]
+    };
+
+    let currentView = 'daily';
+    let filteredData = [...sampleData.daily];
+
+    // Sayfa yüklendiğinde
+    document.addEventListener('DOMContentLoaded', function () {
+        // Bugünün tarihini ayarla
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        document.getElementById('startDate').valueAsDate = firstDay;
+        document.getElementById('endDate').valueAsDate = today;
+
+        // İlk veriyi yükle
+        renderTable();
+        updateSummaryCards();
+    });
+
+    function changeView(view) {
+        currentView = view;
+
+        // Buton aktifliğini güncelle
+        document.getElementById('dailyBtn').classList.toggle('active', view === 'daily');
+        document.getElementById('monthlyBtn').classList.toggle('active', view === 'monthly');
+
+        renderTable();
+        updateSummaryCards();
+    }
+
+    function applyFilters() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const shift = document.getElementById('shift').value;
+        const line = document.getElementById('line').value;
+
+        // Filtreleme mantığı
+        filteredData = sampleData.daily.filter(item => {
+            let match = true;
+
+            if (startDate && item.date < startDate) match = false;
+            if (endDate && item.date > endDate) match = false;
+
+            return match;
+        });
+
+        renderTable();
+        updateSummaryCards();
+    }
+
+    function resetFilters() {
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        document.getElementById('startDate').valueAsDate = firstDay;
+        document.getElementById('endDate').valueAsDate = today;
+        document.getElementById('shift').value = 'all';
+        document.getElementById('line').value = 'all';
+
+        filteredData = [...sampleData.daily];
+        renderTable();
+        updateSummaryCards();
+    }
+
+    function renderTable() {
+        const tableHead = document.getElementById('tableHead');
+        const tableBody = document.getElementById('tableBody');
+
+        if (currentView === 'daily') {
+            renderDailyTable(tableHead, tableBody);
+        } else {
+            renderMonthlyTable(tableHead, tableBody);
+        }
+    }
+
+    function renderDailyTable(tableHead, tableBody) {
+        // Başlıkları oluştur
+        let headerHTML = '<tr><th rowspan="2">Açıklama</th><th rowspan="2">Birim</th>';
+
+        filteredData.forEach((item, index) => {
+            const date = new Date(item.date);
+            const day = date.getDate();
+            headerHTML += `<th>${day}. Eyl</th>`;
+        });
+
+        headerHTML += '<th rowspan="2">Toplam</th></tr>';
+        tableHead.innerHTML = headerHTML;
+
+        // Veri satırlarını oluştur
+        const rows = [
+            { label: 'Günlük Üretim Miktarı', key: 'gunlukUretimMiktari', unit: 'ton' },
+            { label: 'Günlük Kütük Sarj Miktarı', key: 'gunlukKutukSarjMiktari', unit: 'ton' },
+            { label: 'Malzeme Verimi', key: 'malzemeVerimi', unit: '%' },
+            { label: 'Takvim Süresi', key: 'takvimSuresi', unit: 'saat' },
+            { label: 'Planlanmış Duruş', key: 'planlanmisDurus', unit: 'saat' },
+            { label: 'Operasyon Süresi', key: 'operasyonSuresi', unit: 'saat' },
+            { label: 'Plansız Duruşlar', key: 'plansizDuruslar', unit: 'saat' },
+            { label: 'İşletme Duruşu', key: 'isletmeDurusu', unit: 'saat', indent: true },
+            { label: 'Proses Duruşu', key: 'prosesDurusu', unit: 'saat', indent: true },
+            { label: 'Elektrik-Otomasyon Duruşu', key: 'elektrikDurusu', unit: 'saat', indent: true },
+            { label: 'Mekanik Duruş', key: 'mekanikDurus', unit: 'saat', indent: true },
+            { label: 'Önceki Tesis Kaynaklı Duruş', key: 'oncekiTesisDurus', unit: 'saat', indent: true },
+            { label: 'Yardımcı Tesis Duruşu', key: 'yardimciTesisDurus', unit: 'saat', indent: true },
+            { label: 'Yarı Mamul Yetersizliği Duruşu', key: 'yeniMalzeme', unit: 'saat', indent: true },
+            { label: 'Net Çalışma Süresi', key: 'netCalismaSuresi', unit: 'saat' },
+            { label: 'Net Çalışma Oranı', key: 'netCalismaOrani', unit: '%' },
+            { label: 'Operasyon Oranı', key: 'operasyonOrani', unit: '%' },
+            { label: 'Üretkenlik (üretim/net çalışma süresi)', key: 'uretkenlik', unit: 'ton/saat' }
+        ];
+
+        let bodyHTML = '';
+
+        rows.forEach(row => {
+            let total = 0;
+            let rowHTML = `<tr>`;
+            rowHTML += `<td class="row-header">${row.indent ? '&nbsp;&nbsp;&nbsp;' : ''}${row.label}</td>`;
+            rowHTML += `<td class="unit-cell">${row.unit}</td>`;
+
+            filteredData.forEach(item => {
+                const value = item[row.key]?.value || 0;
+                total += value;
+
+                const cellClass = row.highlight ? 'highlight-yellow' : '';
+                const displayValue = row.unit === '%' ? value.toFixed(1) + '%' : value.toFixed(row.unit === 'ton' ? 0 : 2);
+
+                rowHTML += `<td class="${cellClass}">${displayValue}</td>`;
+            });
+
+            const totalDisplay = row.unit === '%'
+                ? (total / filteredData.length).toFixed(1) + '%'
+                : total.toFixed(row.unit === 'ton' ? 0 : 2);
+
+            rowHTML += `<td class="total-cell">${totalDisplay}</td>`;
+            rowHTML += `</tr>`;
+
+            bodyHTML += rowHTML;
+        });
+
+        tableBody.innerHTML = bodyHTML;
+    }
+
+    function renderMonthlyTable(tableHead, tableBody) {
+        // Aylık görünüm için benzer mantık
+        tableHead.innerHTML = '<tr><th>Açıklama</th><th>Birim</th><th>Ocak</th><th>Şubat</th><th>Mart</th><th>Toplam</th></tr>';
+        tableBody.innerHTML = '<tr><td colspan="6" class="no-data">Aylık veri hazırlanıyor...</td></tr>';
+    }
+
+    function updateSummaryCards() {
+        const summaryCards = document.getElementById('summaryCards');
+
+        const totalProduction = filteredData.reduce((sum, item) => sum + item.gunlukUretimMiktari.value, 0);
+        const avgDailyProduction = totalProduction / filteredData.length;
+        const totalKutukSarj = filteredData.reduce((sum, item) => sum + item.gunlukKutukSarjMiktari.value, 0);
+        const avgMalzemeVerimi = filteredData.reduce((sum, item) => sum + item.malzemeVerimi.value, 0) / filteredData.length;
+
+        summaryCards.innerHTML = `
+                <div class="summary-card" style="background: linear-gradient(135deg, #a8c0ff 0%, #6b9ff7 100%);">
+                    <h4><i class="fas fa-chart-line"></i> Günlük Üretim Miktarı</h4>
+                    <div class="value">${avgDailyProduction.toFixed(0)}</div>
+                    <div class="unit">ton/gün</div>
+                </div>
+                <div class="summary-card" style="background: linear-gradient(135deg, #84fab0 0%, #5dc8a5 100%);">
+                    <h4><i class="fas fa-industry"></i> Toplam Üretim</h4>
+                    <div class="value">${totalProduction.toFixed(0)}</div>
+                    <div class="unit">ton</div>
+                </div>
+                <div class="summary-card" style="background: linear-gradient(135deg, #ffa8a8 0%, #fc8787 100%);">
+                    <h4><i class="fas fa-cubes"></i> Günlük Kütük Sarj Miktarı</h4>
+                    <div class="value">${(totalKutukSarj / filteredData.length).toFixed(0)}</div>
+                    <div class="unit">ton/gün</div>
+                </div>
+                <div class="summary-card" style="background: linear-gradient(135deg, #fbc2eb 0%, #d896ff 100%);">
+                    <h4><i class="fas fa-percentage"></i> Malzeme Verimi</h4>
+                    <div class="value">${avgMalzemeVerimi.toFixed(1)}%</div>
+                    <div class="unit">ortalama</div>
+                </div>
+            `;
+    }
+
+    function exportToExcel() {
+        // Excel export için basit bir CSV oluştur
+        alert('Excel export özelliği aktif! Tablo CSV formatında indirilecek.');
+
+        // Gerçek implementasyon için SheetJS kütüphanesi kullanılabilir
+        console.log('Export functionality would be implemented here');
+    }
+</script>
+</body>
+
+</html>

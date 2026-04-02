@@ -160,15 +160,66 @@
             border-color: #adb5bd;
         }
 
-        .form-control:read-only {
-            background-color: #f8f9fa;
+        .form-control:read-only,
+        .form-control[readonly] {
+            background-color: #e9ecef;
             cursor: not-allowed;
+            color: #6c757d;
+        }
+
+        /* SAP'den gelen alanlar – değiştirilemez blok */
+        .sap-readonly-block {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.95;
+        }
+
+        .sap-readonly-block .form-control {
+            background-color: #e9ecef !important;
+            cursor: not-allowed !important;
+        }
+
+        .sap-readonly-note {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .rapor-satir-bilgisi {
+            background: linear-gradient(135deg, #e8f4fd 0%, #d4ebf7 100%);
+            border: 1px solid #3498db;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .rapor-satir-icon {
+            font-size: 18px;
         }
 
         textarea.form-control {
             resize: vertical;
             min-height: 100px;
             font-family: inherit;
+        }
+
+        .container-fluid {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            max-width: none;
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                margin-left: 0;
+                width: 100%;
+            }
         }
 
         .btn-group {
@@ -269,7 +320,7 @@
             fetch("sidebar.html").then(r => r.text()).then(t => document.getElementById("sidebar-container").innerHTML = t);
         </script>
     </aside>
-<div class="container" style="margin-left: 240px;">
+<div class="container container-fluid">
     <!-- Header -->
     <div class="header">
         <div class="header-content">
@@ -283,6 +334,11 @@
     <!-- Main Content -->
     <div class="main-content">
         <h3 class="page-title">Duruş Kayıt Formu</h3>
+
+        <div id="raporSatirBilgisi" class="rapor-satir-bilgisi" style="display: none;">
+            <span class="rapor-satir-icon">ℹ️</span>
+            <span>Bu kayıt rapor satırından alındı. <strong>Üstteki alanları</strong> (Tarih, Hat, Kaynak, Duruş Tipi/Nedeni, Saat, Açıklama) istediğiniz gibi düzenleyebilirsiniz.</span>
+        </div>
 
         <form id="durusForm">
             <div class="form-grid">
@@ -370,23 +426,24 @@
                 </div>
             </div>
 
- <!-- Duruş Detayları -->
-<div class="form-card">
+ <!-- Duruş Detayları – SAP'den gelir, değiştirilemez -->
+<div class="form-card sap-readonly-block">
     <div class="card-header">
-        <i class="fas fa-pause-circle"></i> Duruş Detayları (Bakım ekibi tarafından SAP de girilecek)
+        <i class="fas fa-pause-circle"></i> Duruş Detayları (Bakım ekibi tarafından SAP'de girilecek)
     </div>
     <div class="card-body">
+        <p class="sap-readonly-note">Bu alanlar SAP sisteminden gelir ve bu ekranda değiştirilemez.</p>
         <div class="form-group">
             <label class="form-label">EKİPMAN <span class="required">*</span></label>
-            <input type="text" class="form-control" id="ekipman" value="Ekipman No - Ekipman Adı" readonly>
+            <input type="text" class="form-control" id="ekipman" readonly tabindex="-1" aria-readonly="true" />
         </div>
         <div class="form-group">
             <label class="form-label">HASAR <span class="required">*</span></label>
-            <input type="text" class="form-control" id="hasar" value="Mekanik Darbe" readonly>
+            <input type="text" class="form-control" id="hasar" readonly tabindex="-1" aria-readonly="true" />
         </div>
         <div class="form-group">
             <label class="form-label">NEDEN <span class="required">*</span></label>
-            <input type="text" class="form-control" id="neden" value="Motor Güç Arızası" readonly>
+            <input type="text" class="form-control" id="neden" readonly tabindex="-1" aria-readonly="true" />
         </div>
     </div>
 </div>
@@ -405,8 +462,45 @@
 </div>
 
 <script>
-    // Bugünün tarihini otomatik olarak ayarla
-    document.getElementById('tarih').valueAsDate = new Date();
+    // Rapor ekranından seçilen satır varsa formu doldur (üst alanlar dolu ve düzenlenebilir)
+    (function fillFormFromReport() {
+        try {
+            const raw = sessionStorage.getItem('durusRaporSecilenSatir');
+            if (!raw) return;
+            const r = JSON.parse(raw);
+            sessionStorage.removeItem('durusRaporSecilenSatir');
+
+            document.getElementById('raporSatirBilgisi').style.display = 'flex';
+
+            document.getElementById('tarih').value = r.tarih || '';
+            const hatSelect = document.getElementById('hat');
+            const hatOpt = Array.from(hatSelect.options).find(o => o.text === r.hat);
+            if (hatOpt) hatSelect.value = hatOpt.value || r.hat;
+
+            const kaynakSelect = document.getElementById('kaynak');
+            const kaynakOpt = Array.from(kaynakSelect.options).find(o => o.text === r.kaynak);
+            if (kaynakOpt) kaynakSelect.value = kaynakOpt.value || r.kaynak;
+
+            document.getElementById('durusTipi').value = r.tip || '';
+            document.getElementById('durusNedeni').value = r.neden || '';
+
+            document.getElementById('baslangic').value = (r.bas && r.bas.length >= 5) ? r.bas.substring(0, 5) : (r.bas || '');
+            document.getElementById('bitis').value = (r.bit && r.bit.length >= 5) ? r.bit.substring(0, 5) : (r.bit || '');
+            document.getElementById('sure').value = r.sure != null ? r.sure : '';
+            document.getElementById('aciklama').value = r.acik || '';
+
+            document.getElementById('ekipman').value = r.ekipman || '';
+            document.getElementById('hasar').value = r.hasar || '';
+            document.getElementById('neden').value = r.nedenDetay || r.neden || '';
+        } catch (e) {
+            console.error('Rapor verisi doldurulurken hata:', e);
+        }
+    })();
+
+    // Bugünün tarihini otomatik olarak ayarla (rapor verisi yoksa)
+    if (!document.getElementById('tarih').value) {
+        document.getElementById('tarih').valueAsDate = new Date();
+    }
 
     function hesaplaSure() {
         const bas = document.getElementById("baslangic").value;

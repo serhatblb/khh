@@ -20,8 +20,10 @@
     }
 
     .page {
-      max-width: 1400px;
-      margin: 0 auto;
+      max-width: none;
+      width: calc(100% - 240px);
+      margin-left: 240px;
+      padding-right: 24px;
     }
 
     .header {
@@ -80,6 +82,16 @@
     .filter-group select:focus {
       outline: none;
       border-color: #1976d2;
+    }
+
+    .filter-group.filter-group-wide {
+      grid-column: 1 / -1;
+    }
+
+    .filter-group-wide input {
+      min-width: 320px;
+      width: 100%;
+      max-width: 480px;
     }
 
     .filter-actions {
@@ -159,7 +171,7 @@
     }
 
     .table-container {
-      background: white;
+      background: #ffffff;
       border: 1px solid #e6e9ef;
       border-radius: 12px;
       overflow: hidden;
@@ -176,16 +188,17 @@
 
     .legend {
       display: flex;
-      gap: 16px;
+      gap: 20px;
       align-items: center;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 13px;
-      color: #6b7a8c;
+      color: #64748b;
+      font-weight: 500;
     }
 
     .dot {
@@ -196,17 +209,18 @@
 
     .table-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
 
     .table-wrapper {
       overflow-x: auto;
-      max-height: 600px;
+      max-height: 560px;
     }
 
     .table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
     }
 
     .table thead th {
@@ -219,6 +233,12 @@
       border-bottom: 2px solid #e6e9ef;
       position: sticky;
       top: 0;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    .table thead th.col-tarih,
+    .table thead th.col-vardiya {
       white-space: nowrap;
     }
 
@@ -226,6 +246,42 @@
       padding: 12px 16px;
       border-bottom: 1px solid #e6e9ef;
       font-size: 14px;
+    }
+
+    .table tbody td.col-tarih,
+    .table tbody td.col-vardiya {
+      white-space: nowrap;
+    }
+
+    .table tbody tr.data-row {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .table tbody tr.data-row:hover {
+      background-color: #e8eef9;
+    }
+
+    .table tbody tr.data-row:active {
+      background-color: #d0daf0;
+    }
+
+    .seviye3-sap-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .seviye3-sap-badge.yes {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .seviye3-sap-badge.no {
+      color: #64748b;
+      background: #f1f5f9;
     }
 
     .table tfoot td {
@@ -239,10 +295,81 @@
       background: #eef2ff;
       color: #334155;
       font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .group-row:hover {
+      background: #e0e7ff;
     }
 
     .group-row td {
       padding: 10px 16px;
+      white-space: normal;
+    }
+
+    .group-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      font-weight: 500;
+      color: #334155;
+      max-width: 100%;
+    }
+
+    .group-summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .group-summary-total {
+      display: flex;
+      align-items: center;
+    }
+
+    .group-summary .item {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 4px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    .group-summary .item strong {
+      font-weight: 700;
+    }
+
+    .group-summary-total .item {
+      background: #e0e7ff;
+      border-color: #c7d2fe;
+      font-size: 14px;
+    }
+
+    .group-row .group-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      margin-right: 10px;
+      border-radius: 6px;
+      background: rgba(51, 65, 85, 0.15);
+      transition: transform 0.25s ease;
+    }
+
+    .group-row.collapsed .group-toggle {
+      transform: rotate(-90deg);
+    }
+
+    .table tbody tr.data-row.group-hidden {
+      display: none;
     }
 
     .pill {
@@ -291,7 +418,7 @@
             fetch("sidebar.html").then(r => r.text()).then(t => document.getElementById("sidebar-container").innerHTML = t);
         </script>
     </aside>
-  <div class="page" style="margin-left: 240px;">
+  <div class="page">
     <div class="header">
       <h1>Duruş Raporları</h1>
       <small>Duruş Kayıt Formu ile uyumlu rapor tablosu</small>
@@ -369,7 +496,7 @@
         <input type="number" id="maxSure" placeholder="" />
       </div>
 
-      <div class="filter-group">
+      <div class="filter-group filter-group-wide">
         <label>Serbest Arama</label>
         <input type="text" id="q" placeholder="Açıklama, kayıt no, operatör..." />
       </div>
@@ -425,10 +552,12 @@
         <table class="table">
           <thead>
             <tr>
-              <th>Tarih</th>
-              <th>Vardiya</th>
+              <th class="col-tarih">Tarih</th>
+              <th class="col-vardiya">Vardiya</th>
               <th>Hat / Bölge</th>
               <th>Kaynak</th>
+              <th>Seviye 3</th>
+              <th>SAP</th>
               <th>Duruş Tipi</th>
               <th>Duruş Nedeni</th>
               <th>Ekipman</th>
@@ -449,7 +578,7 @@
             <tr>
               <td colspan="11">Toplam</td>
               <td id="footTotal">0</td>
-              <td colspan="5"></td>
+              <td colspan="7"></td>
             </tr>
           </tfoot>
         </table>
@@ -471,12 +600,12 @@
     };
 
     const sample = [
-      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'Proses Gereği Duruşlar', neden:'Kesit / Ebat Değişimi', ekipman:'Bükme Makinesi', hasar:'Aşınma', nedenDetay:'Normal kullanım', bas:'08:10', bit:'08:45', sure:35, planli:'PL', oee:'Orta', op:'SB', id:'DK-10231', acik:'Kesit geçişi planlıydı.'},
-      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Seviye 2 Entegrasyonu', tip:'Elektrik - Otomasyon Duruşu', neden:'Elektrik Arıza', ekipman:'Ana Motor', hasar:'Motor Arızası', nedenDetay:'Aşırı yük', bas:'09:12', bit:'09:47', sure:35, planli:'PS', oee:'Yüksek', op:'ME', id:'DK-10232', acik:'Motor koruma attı.'},
-      {tarih:'2025-11-10', vardiya:'08:00-16:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'Mekanik Duruş', neden:'Mekanik Arıza', ekipman:'Rulman Ünitesi', hasar:'Rulman Hasarı', nedenDetay:'Yağlama eksikliği', bas:'15:05', bit:'15:40', sure:35, planli:'PS', oee:'Yüksek', op:'AK', id:'DK-10240', acik:'Rulman değişimi.'},
-      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Rph BD2 Üretim Hattı', kaynak:'ERP', tip:'Planlı Bakım Duruşu', neden:'Planlı Mekanik Bakım', ekipman:'Hidrolik Sistem', hasar:'Bakım', nedenDetay:'Periyodik bakım', bas:'00:00', bit:'01:00', sure:60, planli:'PL', oee:'Düşük', op:'ERP', id:'DK-10252', acik:'Yıllık bakım'},
-      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Seviye 2 Entegrasyonu', tip:'Yardımcı Tesisler-İşletmeler Nedeniyle Duruş', neden:'Elektrik Kesintisi', ekipman:'Elektrik Panosu', hasar:'Şebeke Kesintisi', nedenDetay:'Harici sebep', bas:'02:20', bit:'03:05', sure:45, planli:'PS', oee:'Yüksek', op:'OT', id:'DK-10253', acik:'Şebeke dalgalanması'},
-      {tarih:'2025-11-12', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'İşletme Duruşu', neden:'İşletme Ekibi Kaynaklı Duruş', ekipman:'Konveyör', hasar:'Operasyonel', nedenDetay:'Malzeme gecikmesi', bas:'07:20', bit:'07:35', sure:15, planli:'PS', oee:'Orta', op:'SB', id:'DK-10277', acik:'Malzeme hazırlığı gecikti'}
+      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'Proses Gereği Duruşlar', neden:'Kesit / Ebat Değişimi', ekipman:'Bükme Makinesi', hasar:'Aşınma', nedenDetay:'Normal kullanım', bas:'08:00', bit:'09:00', sure:60, planli:'PL', oee:'Orta', op:'SB', id:'DK-10231', acik:'Kesit geçişi planlıydı.', seviye3:true, sap:false},
+      {tarih:'2025-11-10', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Seviye 2 Entegrasyonu', tip:'Elektrik - Otomasyon Duruşu', neden:'Elektrik Arıza', ekipman:'Ana Motor', hasar:'Motor Arızası', nedenDetay:'Aşırı yük', bas:'08:30', bit:'10:00', sure:90, planli:'PS', oee:'Yüksek', op:'ME', id:'DK-10232', acik:'Motor koruma attı.', seviye3:true, sap:true},
+      {tarih:'2025-11-10', vardiya:'08:00-16:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'Mekanik Duruş', neden:'Mekanik Arıza', ekipman:'Rulman Ünitesi', hasar:'Rulman Hasarı', nedenDetay:'Yağlama eksikliği', bas:'15:05', bit:'15:40', sure:35, planli:'PS', oee:'Yüksek', op:'AK', id:'DK-10240', acik:'Rulman değişimi.', seviye3:true, sap:false},
+      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Rph BD2 Üretim Hattı', kaynak:'ERP', tip:'Planlı Bakım Duruşu', neden:'Planlı Mekanik Bakım', ekipman:'Hidrolik Sistem', hasar:'Bakım', nedenDetay:'Periyodik bakım', bas:'00:00', bit:'01:00', sure:60, planli:'PL', oee:'Düşük', op:'ERP', id:'DK-10252', acik:'Yıllık bakım', seviye3:false, sap:true},
+      {tarih:'2025-11-11', vardiya:'16:00-00:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Seviye 2 Entegrasyonu', tip:'Yardımcı Tesisler-İşletmeler Nedeniyle Duruş', neden:'Elektrik Kesintisi', ekipman:'Elektrik Panosu', hasar:'Şebeke Kesintisi', nedenDetay:'Harici sebep', bas:'02:20', bit:'03:05', sure:45, planli:'PS', oee:'Yüksek', op:'OT', id:'DK-10253', acik:'Şebeke dalgalanması', seviye3:true, sap:true},
+      {tarih:'2025-11-12', vardiya:'00:00-08:00', hat:'Rph BD2 Üretim Hattı', kaynak:'Operatör Girişi', tip:'İşletme Duruşu', neden:'İşletme Ekibi Kaynaklı Duruş', ekipman:'Konveyör', hasar:'Operasyonel', nedenDetay:'Malzeme gecikmesi', bas:'07:20', bit:'07:35', sure:15, planli:'PS', oee:'Orta', op:'SB', id:'DK-10277', acik:'Malzeme hazırlığı gecikti', seviye3:true, sap:false}
     ];
 
     const tipSel = document.getElementById('durusTipi');
@@ -559,22 +688,57 @@
       const tb = document.getElementById('tbody');
       tb.innerHTML = '';
       let grand = 0;
+      let groupIndex = 0;
 
       groups.sort((a, b) => a.k.localeCompare(b.k)).forEach(g => {
         grand += g.sum;
         const [tarih, hat] = g.k.split('__');
         const trg = document.createElement('tr');
-        trg.className = 'group-row';
-        trg.innerHTML = `<td colspan="17">${tarih} • ${hat} — Toplam: <strong>${g.sum} dk</strong></td>`;
+        trg.className = 'group-row' + (groupIndex > 0 ? ' collapsed' : '');
+        trg.dataset.groupIndex = String(groupIndex);
+        const durusCount = g.list.length;
+        const durusItems = g.list.map((r, i) => `<span class="item"><strong>${i + 1}. duruş</strong> ${r.sure} dk</span>`).join('');
+        trg.innerHTML = `
+          <td colspan="19">
+            <div>
+              <span class="group-toggle" aria-hidden="true">▼</span>
+              <strong>${tarih}</strong> • ${hat}
+            </div>
+            <div class="group-summary">
+              <div class="group-summary-row">
+                <span class="item"><strong>${durusCount}</strong> duruş</span>
+                ${durusItems}
+              </div>
+              <div class="group-summary-total">
+                <span class="item"><strong>Toplam</strong> ${g.sum} dk</span>
+              </div>
+            </div>
+          </td>`;
+        trg.addEventListener('click', () => {
+          trg.classList.toggle('collapsed');
+          const idx = trg.dataset.groupIndex;
+          let el = trg.nextElementSibling;
+          while (el && el.classList.contains('data-row') && el.dataset.groupIndex === idx) {
+            el.classList.toggle('group-hidden');
+            el = el.nextElementSibling;
+          }
+        });
         tb.appendChild(trg);
 
         g.list.forEach(r => {
           const tr = document.createElement('tr');
+          tr.className = 'data-row' + (groupIndex > 0 ? ' group-hidden' : '');
+          tr.dataset.groupIndex = String(groupIndex);
+          tr.dataset.row = JSON.stringify(r);
+          const seviye3Badge = (r.seviye3 !== undefined && r.seviye3) ? '<span class="seviye3-sap-badge yes">Evet</span>' : '<span class="seviye3-sap-badge no">Hayır</span>';
+          const sapBadge = (r.sap !== undefined && r.sap) ? '<span class="seviye3-sap-badge yes">Evet</span>' : '<span class="seviye3-sap-badge no">Hayır</span>';
           tr.innerHTML = `
-            <td>${r.tarih}</td>
-            <td>${r.vardiya}</td>
+            <td class="col-tarih">${r.tarih}</td>
+            <td class="col-vardiya">${r.vardiya}</td>
             <td>${r.hat}</td>
             <td>${r.kaynak}</td>
+            <td>${seviye3Badge}</td>
+            <td>${sapBadge}</td>
             <td>${r.tip}</td>
             <td>${r.neden}</td>
             <td>${r.ekipman}</td>
@@ -588,8 +752,18 @@
             <td>${r.op}</td>
             <td class="nowrap">${r.id}</td>
             <td>${r.acik || ''}</td>`;
+          tr.addEventListener('click', (ev) => {
+            if (ev.target.closest('a')) return;
+            try {
+              sessionStorage.setItem('durusRaporSecilenSatir', tr.dataset.row);
+              window.location.href = '8-2-durus-kaydi.html';
+            } catch (e) {
+              console.error(e);
+            }
+          });
           tb.appendChild(tr);
         });
+        groupIndex++;
       });
 
       document.getElementById('footTotal').textContent = grand;
@@ -622,8 +796,8 @@
     }
 
     function toCsv(arr) {
-      const headers = ["Tarih","Vardiya","Hat / Bölge","Kaynak","Duruş Tipi","Duruş Nedeni","Ekipman","Hasar","Neden","Başlangıç","Bitiş","Süre (dk)","Planlılık","OEE Etkisi","Operatör","Kayıt No","Açıklama"];
-      const rows = arr.map(r => [r.tarih, r.vardiya, r.hat, r.kaynak, r.tip, r.neden, r.ekipman, r.hasar, r.nedenDetay, r.bas, r.bit, r.sure, (r.planli === 'PL' ? 'Planlı' : 'Plansız'), r.oee, r.op, r.id, (r.acik || '')]);
+      const headers = ["Tarih","Vardiya","Hat / Bölge","Kaynak","Seviye 3","SAP","Duruş Tipi","Duruş Nedeni","Ekipman","Hasar","Neden","Başlangıç","Bitiş","Süre (dk)","Planlılık","OEE Etkisi","Operatör","Kayıt No","Açıklama"];
+      const rows = arr.map(r => [r.tarih, r.vardiya, r.hat, r.kaynak, (r.seviye3 ? 'Evet' : 'Hayır'), (r.sap ? 'Evet' : 'Hayır'), r.tip, r.neden, r.ekipman, r.hasar, r.nedenDetay, r.bas, r.bit, r.sure, (r.planli === 'PL' ? 'Planlı' : 'Plansız'), r.oee, r.op, r.id, (r.acik || '')]);
       const all = [headers, ...rows].map(r => r.map(x => `"${String(x).replaceAll('"', '""')}"`).join(',')).join('\n');
       const blob = new Blob([all], {type: 'text/csv;charset=utf-8;'});
       const a = document.createElement('a');

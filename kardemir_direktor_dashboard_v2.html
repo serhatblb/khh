@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KARDEMİR MES — Haddehaneler Direktör Ekranı</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --kdm-blue: #1a3a5c;
+      --kdm-blue-mid: #1e5799;
+      --kdm-blue-light: #2e7bcf;
+      --kdm-accent: #c8a84b;
+      --kdm-steel: #4a5568;
+      --kdm-steel-light: #718096;
+      --kdm-bg: #f0f4f8;
+      --kdm-card: #ffffff;
+      --kdm-border: #d0dce8;
+      --kdm-success: #2d7d46;
+      --kdm-danger: #c0392b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--kdm-bg); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    /* TOP BAR */
+    .top-bar {
+      background: var(--kdm-blue); border-bottom: 3px solid var(--kdm-accent);
+      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .logo-box {
+      background: var(--kdm-accent); width: 42px; height: 42px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--kdm-blue);
+      letter-spacing: 0.5px; line-height: 1.2; text-align: center;
+    }
+    .top-bar-title .main { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: 0.3px; }
+    .top-bar-title .sub { font-size: 11px; color: #a0b8d0; margin-top: 1px; }
+    .top-bar-right { display: flex; align-items: center; gap: 20px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 4px 12px; color: #fff; font-size: 12px;
+    }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #48bb78; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .date-box { color: #a0b8d0; font-size: 12px; }
+
+    /* CONTENT */
+    .content { padding: 0; }
+
+    .section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+      color: var(--kdm-steel-light); text-transform: uppercase;
+      margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--kdm-border);
+    }
+
+    /* ÖZET KARTLAR */
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .sum-card {
+      background: var(--kdm-blue); border-radius: 10px; padding: 16px;
+      position: relative; overflow: hidden;
+    }
+    .sum-card::after {
+      content: ''; position: absolute; right: -10px; top: -10px;
+      width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.05);
+    }
+    .sum-card .label { font-size: 10px; color: #a0b8d0; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
+    .sum-card .value { font-size: 26px; font-weight: 700; color: #fff; line-height: 1; }
+    .sum-card .unit { font-size: 12px; color: #a0b8d0; margin-top: 4px; }
+    .sum-card .delta { font-size: 11px; margin-top: 6px; }
+    .sum-card .delta.up { color: #68d391; }
+    .sum-card .delta.down { color: #fc8181; }
+    .sum-card.accent { background: var(--kdm-accent); }
+    .sum-card.accent .label { color: rgba(26,58,92,0.7); }
+    .sum-card.accent .value { color: var(--kdm-blue); }
+    .sum-card.accent .unit { color: rgba(26,58,92,0.6); }
+    .sum-card.accent .delta.up { color: #1a5c2a; }
+
+    /* HADDEHANE KARTLARI */
+    .hh-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .hh-card { background: var(--kdm-card); border-radius: 10px; border: 1px solid var(--kdm-border); overflow: hidden; }
+    .hh-header {
+      background: var(--kdm-blue); padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .hh-header .hh-name { font-size: 13px; font-weight: 700; color: #fff; }
+    .hh-header .hh-code { font-size: 10px; color: var(--kdm-accent); letter-spacing: 1px; }
+    .hh-status { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #68d391; }
+    .hh-body { padding: 14px; }
+
+    .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .kpi-item .k-label { font-size: 10px; color: var(--kdm-steel-light); margin-bottom: 2px; }
+    .kpi-item .k-val { font-size: 17px; font-weight: 700; color: var(--kdm-blue); }
+    .kpi-item .k-val.good { color: var(--kdm-success); }
+    .kpi-item .k-val.warn { color: #c8a84b; }
+
+    .oee-bar-wrap { margin-bottom: 10px; }
+    .oee-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--kdm-steel-light); margin-bottom: 4px; }
+    .oee-bar-track { height: 6px; background: #e2eaf2; border-radius: 3px; }
+    .oee-bar-fill { height: 100%; border-radius: 3px; }
+
+    .prod-compare { background: #f8fafc; border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+    .prod-compare .pc-label { font-size: 10px; color: var(--kdm-steel-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pc-bars { display: flex; flex-direction: column; gap: 4px; }
+    .pc-row { display: flex; align-items: center; gap: 6px; }
+    .pc-row .pc-name { width: 55px; color: var(--kdm-steel); text-align: right; font-size: 10px; }
+    .pc-row .pc-track { flex: 1; height: 14px; background: #e2eaf2; border-radius: 3px; overflow: hidden; }
+    .pc-row .pc-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 4px; }
+    .pc-row .pc-fill span { font-size: 9px; font-weight: 600; color: #fff; }
+    .planned-fill { background: #93b8dc; }
+    .actual-fill { background: var(--kdm-blue-mid); }
+
+    .energy-row { display: flex; gap: 8px; }
+    .e-pill { flex: 1; background: #f0f4f8; border-radius: 6px; padding: 8px; text-align: center; }
+    .e-pill .ev { font-size: 13px; font-weight: 700; color: var(--kdm-blue); }
+    .e-pill .el { font-size: 9px; color: var(--kdm-steel-light); }
+
+    .duris-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #fff5f5; border: 1px solid #fed7d7;
+      border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #c53030; margin-top: 4px;
+    }
+    .duris-badge.ok { background: #f0fff4; border-color: #c6f6d5; color: #276749; }
+
+    /* GENEL KART */
+    .card { background: var(--kdm-card); border-radius: 10px; border: 1px solid var(--kdm-border); padding: 16px; }
+    .card-title { font-size: 12px; font-weight: 600; color: var(--kdm-blue); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ALT ANA SATIR - BİLDİRİMLER + TABLO */
+    .bottom-row { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+    /* DETAY TABLO */
+    .detail-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .detail-table th {
+      background: #f0f4f8; color: var(--kdm-steel); font-weight: 600;
+      padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--kdm-border); font-size: 11px;
+    }
+    .detail-table td { padding: 8px 10px; border-bottom: 1px solid #eef2f7; color: var(--kdm-steel); }
+    .detail-table tr:hover td { background: #f8fafc; }
+    .hh-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+    .tag-rph { background: #dbeafe; color: #1e40af; }
+    .tag-khh { background: #d1fae5; color: #065f46; }
+    .tag-ckh { background: #fef3c7; color: #92400e; }
+    .tag-dyt { background: #ede9fe; color: #4c1d95; }
+    .pct-good { color: var(--kdm-success); font-weight: 700; }
+    .pct-mid { color: #c8a84b; font-weight: 700; }
+    .trend-up { color: #2d7d46; font-size: 11px; }
+    .trend-down { color: #c0392b; font-size: 11px; }
+
+    /* BİLDİRİMLER */
+    .alert-list { display: flex; flex-direction: column; gap: 8px; }
+    .alert-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: 6px; border-left: 3px solid transparent; }
+    .alert-item.danger { background: #fff5f5; border-color: #c53030; }
+    .alert-item.warn   { background: #fffbeb; border-color: #c8a84b; }
+    .alert-item.info   { background: #ebf5fb; border-color: var(--kdm-blue-light); }
+    .alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .alert-item.danger .alert-dot { background: #c53030; }
+    .alert-item.warn   .alert-dot { background: #c8a84b; }
+    .alert-item.info   .alert-dot { background: var(--kdm-blue-light); }
+    .alert-text { font-size: 12px; color: var(--kdm-steel); line-height: 1.4; }
+    .alert-text strong { color: var(--kdm-blue); font-weight: 600; display: block; font-size: 11px; }
+    .alert-time { font-size: 10px; color: var(--kdm-steel-light); margin-top: 2px; }
+
+    /* ============================================================
+       YENİ BLOK 1: ENERJİ TÜKETİM ÖZETİ
+       ============================================================ */
+    .iki-kolon { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+    .enerji-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .e-card { background: #f8fafc; border-radius: 8px; padding: 12px; }
+    .e-hhname {
+      font-size: 10px; font-weight: 700; color: var(--kdm-steel-light);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .e-vals { display: flex; gap: 8px; }
+    .e-chip { flex: 1; text-align: center; }
+    .e-chip .ec-val { font-size: 15px; font-weight: 700; color: var(--kdm-blue); }
+    .e-chip .ec-val.warn { color: var(--kdm-danger); }
+    .e-chip .ec-label { font-size: 9px; color: var(--kdm-steel-light); margin-top: 1px; }
+    .e-divider { width: 1px; background: var(--kdm-border); align-self: stretch; }
+
+    .enerji-chart-wrap { position: relative; width: 100%; height: 140px; }
+
+    /* ============================================================
+       YENİ BLOK 2: AKTİF ÜRETİM KALİTELERİ
+       ============================================================ */
+    .kalite-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .kalite-hh-card {
+      border-radius: 8px; border: 1px solid var(--kdm-border);
+      overflow: hidden;
+    }
+    .kalite-hh-header {
+      padding: 7px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .kalite-hh-header .kh-name { font-size: 12px; font-weight: 700; color: #fff; }
+    .kalite-hh-header .kh-urun { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 1px; }
+    .kh-rph { background: #1e40af; }
+    .kh-khh { background: #065f46; }
+    .kh-ckh { background: #92400e; }
+    .kh-dyt { background: #4c1d95; }
+
+    .kalite-body { padding: 10px 12px; }
+
+    .kalite-bar-group { margin-bottom: 8px; }
+    .kalite-bar-label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 10px; color: var(--kdm-steel-light); margin-bottom: 3px;
+    }
+    .kalite-bar-label .kbl-name { font-weight: 500; }
+    .kalite-bar-label .kbl-val { font-weight: 700; }
+    .kbl-val.k1-color { color: var(--kdm-success); }
+    .kbl-val.k2-color { color: #c8a84b; }
+    .kbl-val.k3-color { color: var(--kdm-danger); }
+    .kbl-val.hold-color { color: #6b7280; }
+    .kbl-val.bozuk-color { color: #c0392b; }
+
+    .kalite-bar-track { height: 7px; background: #e2eaf2; border-radius: 3px; overflow: hidden; }
+    .kalite-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+    .fill-k1    { background: var(--kdm-success); }
+    .fill-k2    { background: #c8a84b; }
+    .fill-hold  { background: #9ca3af; }
+    .fill-bozuk { background: var(--kdm-danger); }
+
+    .kalite-toplam {
+      margin-top: 10px; padding-top: 8px; border-top: 1px solid #eef2f7;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .kalite-toplam .kt-label { font-size: 10px; color: var(--kdm-steel-light); }
+    .kalite-toplam .kt-val { font-size: 13px; font-weight: 700; color: var(--kdm-blue); }
+
+    .kalite-legend {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 12px; font-size: 10px; color: var(--kdm-steel-light);
+    }
+    .kleg { display: flex; align-items: center; gap: 4px; }
+    .kleg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div id="sidebar-container"></div>
+    <script>
+      fetch("sidebar.html")
+        .then(r => r.text())
+        .then(html => { document.getElementById("sidebar-container").innerHTML = html; });
+    </script>
+  </aside>
+
+  <div class="content-wrapper">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="logo-box">KDM<br>MES</div>
+      <div class="top-bar-title">
+        <div class="main">HADDEHANEler yönetim sistemi</div>
+        <div class="sub">Direktör İzleme Ekranı · Faz 2 Prototip</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <div class="live-badge"><div class="live-dot"></div>Canlı · Son güncelleme: 08:42</div>
+      <div class="date-box">21 Ekim 2025 · Vardiya: 3</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ÖZET KARTLAR -->
+    <div class="section-label">Genel Özet — Tüm Haddehaneler</div>
+    <div class="summary-grid">
+      <div class="sum-card accent">
+        <div class="label">Toplam Günlük Üretim</div>
+        <div class="value">940</div>
+        <div class="unit">ton · Gerçekleşen</div>
+        <div class="delta up">↑ %96.9 plan gerçekleşme</div>
+      </div>
+      <div class="sum-card">
+        <div class="label">Ortalama OEE</div>
+        <div class="value">78<span style="font-size:16px">%</span></div>
+        <div class="unit">4 haddehane ortalaması</div>
+        <div class="delta up">↑ Hedef: %80</div>
+      </div>
+      <div class="sum-card">
+        <div class="label">Toplam Duruş (Günlük)</div>
+        <div class="value">10</div>
+        <div class="unit">saat · 4 haddehane toplamı</div>
+        <div class="delta down">↓ Dün: 8.2 saat</div>
+      </div>
+      <div class="sum-card">
+        <div class="label">Aktif İş Emri</div>
+        <div class="value">4</div>
+        <div class="unit">haddehane üretimde</div>
+        <div class="delta up">↑ Tümü çalışıyor</div>
+      </div>
+    </div>
+
+    <!-- HADDEHANE KPI KARTLARI -->
+    <div class="section-label">Haddehane Bazlı KPI Kartları</div>
+    <div class="hh-grid">
+
+      <!-- RPH -->
+      <div class="hh-card">
+        <div class="hh-header">
+          <div>
+            <div class="hh-name">Ray Profil Haddehane</div>
+            <div class="hh-code">RPH · İŞ EMRİ: 300003661</div>
+          </div>
+          <div class="hh-status"><div class="live-dot"></div>Aktif</div>
+        </div>
+        <div class="hh-body">
+          <div class="kpi-row">
+            <div class="kpi-item"><div class="k-label">OEE</div><div class="k-val warn">78%</div></div>
+            <div class="kpi-item"><div class="k-label">Net Çalışma</div><div class="k-val good">92%</div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Genel Çalışma</span><span>85%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:85%;background:#1e5799;"></div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Verim</span><span>92%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:92%;background:#2d7d46;"></div></div>
+          </div>
+          <div class="prod-compare">
+            <div class="pc-label">Günlük Üretim (ton)</div>
+            <div class="pc-bars">
+              <div class="pc-row"><div class="pc-name">Planlanan</div><div class="pc-track"><div class="pc-fill planned-fill" style="width:100%"><span>240</span></div></div></div>
+              <div class="pc-row"><div class="pc-name">Gerçekleşen</div><div class="pc-track"><div class="pc-fill actual-fill" style="width:97.9%"><span>235</span></div></div></div>
+            </div>
+          </div>
+          <div class="energy-row">
+            <div class="e-pill"><div class="ev">1.250</div><div class="el">Nm³/t · Gaz</div></div>
+            <div class="e-pill"><div class="ev">420</div><div class="el">kWh/t · Elektrik</div></div>
+          </div>
+          <div class="duris-badge">Duruş: 2.5 saat (%10.4)</div>
+        </div>
+      </div>
+
+      <!-- KHH -->
+      <div class="hh-card">
+        <div class="hh-header">
+          <div>
+            <div class="hh-name">Kontinü Haddehane</div>
+            <div class="hh-code">KHH · İŞ EMRİ: 500003661</div>
+          </div>
+          <div class="hh-status"><div class="live-dot"></div>Aktif</div>
+        </div>
+        <div class="hh-body">
+          <div class="kpi-row">
+            <div class="kpi-item"><div class="k-label">OEE</div><div class="k-val warn">78%</div></div>
+            <div class="kpi-item"><div class="k-label">Net Çalışma</div><div class="k-val good">92%</div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Genel Çalışma</span><span>85%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:85%;background:#1e5799;"></div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Verim</span><span>92%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:92%;background:#2d7d46;"></div></div>
+          </div>
+          <div class="prod-compare">
+            <div class="pc-label">Günlük Üretim (ton)</div>
+            <div class="pc-bars">
+              <div class="pc-row"><div class="pc-name">Planlanan</div><div class="pc-track"><div class="pc-fill planned-fill" style="width:100%"><span>240</span></div></div></div>
+              <div class="pc-row"><div class="pc-name">Gerçekleşen</div><div class="pc-track"><div class="pc-fill actual-fill" style="width:97.9%"><span>235</span></div></div></div>
+            </div>
+          </div>
+          <div class="energy-row">
+            <div class="e-pill"><div class="ev">1.250</div><div class="el">Nm³/t · Gaz</div></div>
+            <div class="e-pill"><div class="ev">420</div><div class="el">kWh/t · Elektrik</div></div>
+          </div>
+          <div class="duris-badge">Duruş: 2.5 saat (%10.4)</div>
+        </div>
+      </div>
+
+      <!-- ÇKH -->
+      <div class="hh-card">
+        <div class="hh-header">
+          <div>
+            <div class="hh-name">Çubuk Kangal HH</div>
+            <div class="hh-code">ÇKH · İŞ EMRİ: 4000001802</div>
+          </div>
+          <div class="hh-status"><div class="live-dot"></div>Aktif</div>
+        </div>
+        <div class="hh-body">
+          <div class="kpi-row">
+            <div class="kpi-item"><div class="k-label">OEE</div><div class="k-val warn">78%</div></div>
+            <div class="kpi-item"><div class="k-label">Net Çalışma</div><div class="k-val good">92%</div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Genel Çalışma</span><span>85%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:85%;background:#1e5799;"></div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Verim</span><span>92%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:92%;background:#2d7d46;"></div></div>
+          </div>
+          <div class="prod-compare">
+            <div class="pc-label">Vardiya + Günlük Üretim (ton)</div>
+            <div class="pc-bars">
+              <div class="pc-row"><div class="pc-name">Planlanan</div><div class="pc-track"><div class="pc-fill planned-fill" style="width:100%"><span>80/240</span></div></div></div>
+              <div class="pc-row"><div class="pc-name">Gerçekleşen</div><div class="pc-track"><div class="pc-fill actual-fill" style="width:97.5%"><span>78/235</span></div></div></div>
+            </div>
+          </div>
+          <div class="energy-row">
+            <div class="e-pill"><div class="ev">1.310</div><div class="el">Nm³/t · Gaz</div></div>
+            <div class="e-pill"><div class="ev">420</div><div class="el">kWh/t · Elektrik</div></div>
+          </div>
+          <div class="duris-badge">Duruş: 2.5 saat (%10.4)</div>
+        </div>
+      </div>
+
+      <!-- DYT -->
+      <div class="hh-card">
+        <div class="hh-header">
+          <div>
+            <div class="hh-name">Demiryolu Teker Tesisi</div>
+            <div class="hh-code">DYT · İŞ EMRİ: 6000001802</div>
+          </div>
+          <div class="hh-status"><div class="live-dot"></div>Aktif</div>
+        </div>
+        <div class="hh-body">
+          <div class="kpi-row">
+            <div class="kpi-item"><div class="k-label">OEE</div><div class="k-val warn">78%</div></div>
+            <div class="kpi-item"><div class="k-label">Net Çalışma</div><div class="k-val good">92%</div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Genel Çalışma</span><span>85%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:85%;background:#1e5799;"></div></div>
+          </div>
+          <div class="oee-bar-wrap">
+            <div class="oee-bar-label"><span>Verim</span><span>92%</span></div>
+            <div class="oee-bar-track"><div class="oee-bar-fill" style="width:92%;background:#2d7d46;"></div></div>
+          </div>
+          <div class="prod-compare">
+            <div class="pc-label">Vardiya + Günlük Üretim (ton)</div>
+            <div class="pc-bars">
+              <div class="pc-row"><div class="pc-name">Planlanan</div><div class="pc-track"><div class="pc-fill planned-fill" style="width:100%"><span>80/240</span></div></div></div>
+              <div class="pc-row"><div class="pc-name">Gerçekleşen</div><div class="pc-track"><div class="pc-fill actual-fill" style="width:97.5%"><span>78/235</span></div></div></div>
+            </div>
+          </div>
+          <div class="energy-row">
+            <div class="e-pill"><div class="ev">1.250</div><div class="el">Nm³/t · Gaz</div></div>
+            <div class="e-pill"><div class="ev">420</div><div class="el">kWh/t · Elektrik</div></div>
+          </div>
+          <div class="duris-badge ok">Teker: 85 adet üretildi</div>
+        </div>
+      </div>
+
+    </div><!-- /hh-grid -->
+
+    <!-- TABLO -->
+    <div class="bottom-row" style="grid-template-columns: 1fr;">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="card-title" style="margin-bottom:0;">Detay Karşılaştırma Tablosu</div>
+          <div style="display:flex;gap:8px;font-size:11px;color:var(--kdm-steel-light);align-items:center;">
+            <span style="width:10px;height:10px;background:#93b8dc;border-radius:2px;display:inline-block;"></span>Planlanan
+            <span style="width:10px;height:10px;background:#1e5799;border-radius:2px;display:inline-block;"></span>Gerçekleşen
+          </div>
+        </div>
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>Haddehane</th><th>Ürün</th><th>Plan (t)</th><th>Gerçek (t)</th>
+              <th>Gerç.%</th><th>OEE</th><th>Duruş</th><th>Enerji (kWh/t)</th><th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="hh-tag tag-rph">RPH</span></td><td>HEB 400 Profil</td>
+              <td>240</td><td>235</td><td class="pct-good">%97.9</td><td class="pct-mid">%78</td>
+              <td>2.5 sa</td><td>420</td><td class="trend-up">↑ +2.1%</td>
+            </tr>
+            <tr>
+              <td><span class="hh-tag tag-khh">KHH</span></td><td>Ø14 İnş. Demiri</td>
+              <td>240</td><td>235</td><td class="pct-good">%97.9</td><td class="pct-mid">%78</td>
+              <td>2.5 sa</td><td>420</td><td class="trend-up">↑ +1.4%</td>
+            </tr>
+            <tr>
+              <td><span class="hh-tag tag-ckh">ÇKH</span></td><td>Ø52.5 Kalın Kangal</td>
+              <td>240</td><td>235</td><td class="pct-good">%97.9</td><td class="pct-mid">%78</td>
+              <td>2.5 sa</td><td>420</td><td class="trend-down">↓ -0.8%</td>
+            </tr>
+            <tr>
+              <td><span class="hh-tag tag-dyt">DYT</span></td><td>Demiryolu Tekeri</td>
+              <td>240</td><td>235</td><td class="pct-good">%97.9</td><td class="pct-mid">%78</td>
+              <td>2.5 sa</td><td>420</td><td class="trend-up">↑ +3.2%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px;">
+          <div class="card-title">Günlük Üretim Karşılaştırması</div>
+          <div style="position:relative;width:100%;height:180px;">
+            <canvas id="prodChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div><!-- /bottom-row -->
+
+
+    <!-- ============================================================
+         YENİ BLOK 1: ENERJİ TÜKETİM ÖZETİ + AYLIK TREND
+         ============================================================ -->
+    <div class="section-label">Enerji Tüketim Özeti</div>
+    <div class="iki-kolon" style="margin-bottom:16px;">
+
+      <!-- Sol: 4 haddehane enerji kartları -->
+      <div class="card">
+        <div class="card-title">Anlık Birim Tüketimler (Günlük)</div>
+        <div class="enerji-grid">
+
+          <div class="e-card">
+            <div class="e-hhname"><span class="hh-tag tag-rph" style="margin-right:6px;">RPH</span>Ray Profil</div>
+            <div class="e-vals" style="margin-top:8px;">
+              <div class="e-chip">
+                <div class="ec-val">1.250</div>
+                <div class="ec-label">Nm³/t · Doğalgaz</div>
+              </div>
+              <div class="e-divider"></div>
+              <div class="e-chip">
+                <div class="ec-val">420</div>
+                <div class="ec-label">kWh/t · Elektrik</div>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:var(--kdm-steel-light);">
+              Aylık Gaz: <strong style="color:var(--kdm-blue);">35.000 Nm³</strong> &nbsp;|&nbsp; Aylık El.: <strong style="color:var(--kdm-blue);">12.500 kWh</strong>
+            </div>
+          </div>
+
+          <div class="e-card">
+            <div class="e-hhname"><span class="hh-tag tag-khh" style="margin-right:6px;">KHH</span>Kontinü</div>
+            <div class="e-vals" style="margin-top:8px;">
+              <div class="e-chip">
+                <div class="ec-val">1.250</div>
+                <div class="ec-label">Nm³/t · Doğalgaz</div>
+              </div>
+              <div class="e-divider"></div>
+              <div class="e-chip">
+                <div class="ec-val">420</div>
+                <div class="ec-label">kWh/t · Elektrik</div>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:var(--kdm-steel-light);">
+              Aylık Gaz: <strong style="color:var(--kdm-blue);">35.000 Nm³</strong> &nbsp;|&nbsp; Aylık El.: <strong style="color:var(--kdm-blue);">12.500 kWh</strong>
+            </div>
+          </div>
+
+          <div class="e-card">
+            <div class="e-hhname"><span class="hh-tag tag-ckh" style="margin-right:6px;">ÇKH</span>Çubuk Kangal</div>
+            <div class="e-vals" style="margin-top:8px;">
+              <div class="e-chip">
+                <!-- ÇKH doğalgaz tüketimi yüksek → kırmızı -->
+                <div class="ec-val warn">1.310</div>
+                <div class="ec-label">Nm³/t · Doğalgaz</div>
+              </div>
+              <div class="e-divider"></div>
+              <div class="e-chip">
+                <div class="ec-val">420</div>
+                <div class="ec-label">kWh/t · Elektrik</div>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:var(--kdm-steel-light);">
+              Aylık Gaz: <strong style="color:#c0392b;">37.800 Nm³</strong> &nbsp;|&nbsp; Aylık El.: <strong style="color:var(--kdm-blue);">12.500 kWh</strong>
+            </div>
+          </div>
+
+          <div class="e-card">
+            <div class="e-hhname"><span class="hh-tag tag-dyt" style="margin-right:6px;">DYT</span>Demiryolu Teker</div>
+            <div class="e-vals" style="margin-top:8px;">
+              <div class="e-chip">
+                <div class="ec-val">1.250</div>
+                <div class="ec-label">Nm³/t · Doğalgaz</div>
+              </div>
+              <div class="e-divider"></div>
+              <div class="e-chip">
+                <div class="ec-val">420</div>
+                <div class="ec-label">kWh/t · Elektrik</div>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:var(--kdm-steel-light);">
+              Aylık Gaz: <strong style="color:var(--kdm-blue);">35.000 Nm³</strong> &nbsp;|&nbsp; Aylık El.: <strong style="color:var(--kdm-blue);">12.500 kWh</strong>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sağ: Aylık doğalgaz trend chart -->
+      <div class="card">
+        <div class="card-title">Aylık Doğalgaz Tüketimi — Haddehane Karşılaştırması (Nm³)</div>
+        <div class="enerji-chart-wrap" style="height:200px;">
+          <canvas id="enerjiChart"></canvas>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:10px;color:var(--kdm-steel-light);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:3px;background:#1e40af;display:inline-block;border-radius:2px;"></span>RPH</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:3px;background:#065f46;display:inline-block;border-radius:2px;"></span>KHH</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:3px;background:#c8a84b;display:inline-block;border-radius:2px;"></span>ÇKH</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:3px;background:#7c3aed;display:inline-block;border-radius:2px;"></span>DYT</span>
+        </div>
+      </div>
+
+    </div><!-- /enerji iki-kolon -->
+
+
+    <!-- ============================================================
+         YENİ BLOK 2: AKTİF ÜRETİMDE OLAN KALİTELER
+         ============================================================ -->
+    <div class="section-label">Şu An Aktif Üretimde Olan Kaliteler</div>
+    <div class="kalite-legend">
+      <div class="kleg"><div class="kleg-dot" style="background:#2d7d46;"></div>1. Kalite</div>
+      <div class="kleg"><div class="kleg-dot" style="background:#c8a84b;"></div>2. Kalite</div>
+      <div class="kleg"><div class="kleg-dot" style="background:#9ca3af;"></div>Hold</div>
+      <div class="kleg"><div class="kleg-dot" style="background:#c0392b;"></div>Hadde Bozuğu</div>
+    </div>
+    <div class="kalite-grid" style="margin-bottom:20px;">
+
+      <!-- RPH -->
+      <div class="kalite-hh-card">
+        <div class="kalite-hh-header kh-rph">
+          <div>
+            <div class="kh-name">RPH</div>
+            <div class="kh-urun">HEB 400 S275JR · 12000 Profil</div>
+          </div>
+          <span class="hh-tag" style="background:rgba(255,255,255,0.2);color:#fff;font-size:10px;">300003661</span>
+        </div>
+        <div class="kalite-body">
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">1. Kalite</span>
+              <span class="kbl-val k1-color">1.200 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k1" style="width:89%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">2. Kalite</span>
+              <span class="kbl-val k2-color">100 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k2" style="width:7%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hold</span>
+              <span class="kbl-val hold-color">10 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-hold" style="width:2%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hadde Bozuğu</span>
+              <span class="kbl-val bozuk-color">20 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-bozuk" style="width:1.5%;"></div></div>
+          </div>
+          <div class="kalite-toplam">
+            <span class="kt-label">Kalan Üretim</span>
+            <span class="kt-val" style="color:#c0392b;">5 t</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHH -->
+      <div class="kalite-hh-card">
+        <div class="kalite-hh-header kh-khh">
+          <div>
+            <div class="kh-name">KHH</div>
+            <div class="kh-urun">Ø14,00 B420C · Nervürlü İnş. Demiri</div>
+          </div>
+          <span class="hh-tag" style="background:rgba(255,255,255,0.2);color:#fff;font-size:10px;">500003661</span>
+        </div>
+        <div class="kalite-body">
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">1. Kalite</span>
+              <span class="kbl-val k1-color">1.200 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k1" style="width:88%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">2. Kalite</span>
+              <span class="kbl-val k2-color">100 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k2" style="width:7%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hold</span>
+              <span class="kbl-val hold-color">10 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-hold" style="width:2%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Muhtelif</span>
+              <span class="kbl-val hold-color">50 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-hold" style="width:3%;"></div></div>
+          </div>
+          <div class="kalite-toplam">
+            <span class="kt-label">Kalan Üretim</span>
+            <span class="kt-val" style="color:#c0392b;">5 t</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÇKH -->
+      <div class="kalite-hh-card">
+        <div class="kalite-hh-header kh-ckh">
+          <div>
+            <div class="kh-name">ÇKH</div>
+            <div class="kh-urun">Ø52,50 S275JR · Kalın Kangal</div>
+          </div>
+          <span class="hh-tag" style="background:rgba(255,255,255,0.2);color:#fff;font-size:10px;">4000001802</span>
+        </div>
+        <div class="kalite-body">
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">1. Kalite</span>
+              <span class="kbl-val k1-color">1.200 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k1" style="width:90%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">2. Kalite</span>
+              <span class="kbl-val k2-color">100 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k2" style="width:7%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hold</span>
+              <span class="kbl-val hold-color">10 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-hold" style="width:1%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hadde Bozuğu</span>
+              <span class="kbl-val bozuk-color">20 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-bozuk" style="width:1.5%;"></div></div>
+          </div>
+          <div class="kalite-toplam">
+            <span class="kt-label">Kalan Üretim</span>
+            <span class="kt-val" style="color:#c0392b;">5 t</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DYT -->
+      <div class="kalite-hh-card">
+        <div class="kalite-hh-header kh-dyt">
+          <div>
+            <div class="kh-name">DYT</div>
+            <div class="kh-urun">BA303 Demiryolu Tekeri · 85 adet</div>
+          </div>
+          <span class="hh-tag" style="background:rgba(255,255,255,0.2);color:#fff;font-size:10px;">4000001802</span>
+        </div>
+        <div class="kalite-body">
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">1. Kalite</span>
+              <span class="kbl-val k1-color">1.200 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k1" style="width:91%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">2. Kalite</span>
+              <span class="kbl-val k2-color">100 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-k2" style="width:6%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hold</span>
+              <span class="kbl-val hold-color">10 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-hold" style="width:1%;"></div></div>
+          </div>
+          <div class="kalite-bar-group">
+            <div class="kalite-bar-label">
+              <span class="kbl-name">Hadde Bozuğu</span>
+              <span class="kbl-val bozuk-color">20 t</span>
+            </div>
+            <div class="kalite-bar-track"><div class="kalite-bar-fill fill-bozuk" style="width:1.5%;"></div></div>
+          </div>
+          <div class="kalite-toplam">
+            <span class="kt-label">Kalan Üretim</span>
+            <span class="kt-val" style="color:#c0392b;">5 t</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /kalite-grid -->
+
+  </div><!-- /content -->
+  </div><!-- /content-wrapper -->
+
+  <script>
+    /* Üretim karşılaştırma bar chart */
+    new Chart(document.getElementById('prodChart'), {
+      type: 'bar',
+      data: {
+        labels: ['RPH', 'KHH', 'ÇKH', 'DYT'],
+        datasets: [
+          { label: 'Planlanan', data: [240,240,240,240], backgroundColor: '#93b8dc', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.8 },
+          { label: 'Gerçekleşen', data: [235,235,235,235], backgroundColor: '#1e5799', borderRadius: 4, barPercentage: 0.7, categoryPercentage: 0.8 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#718096' } },
+          y: { grid: { color: '#eef2f7' }, ticks: { font: { size: 10 }, color: '#718096' }, min: 200, max: 260 }
+        }
+      }
+    });
+
+    /* Aylık doğalgaz trend - 4 haddehane */
+    new Chart(document.getElementById('enerjiChart'), {
+      type: 'line',
+      data: {
+        labels: ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki'],
+        datasets: [
+          { label: 'RPH',  data: [33000,31500,34000,32000,33500,32000,34500,33000,34000,35000], borderColor: '#1e40af', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#1e40af', tension: 0.3, fill: false },
+          { label: 'KHH',  data: [32000,30500,33000,31500,34000,32500,35000,33500,34500,35000], borderColor: '#065f46', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#065f46', tension: 0.3, fill: false },
+          { label: 'ÇKH',  data: [34000,33000,35500,34000,36000,35000,37000,36000,37500,37800], borderColor: '#c8a84b', borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#c8a84b', tension: 0.3, fill: false },
+          { label: 'DYT',  data: [31000,30000,32500,31000,33000,31500,34000,32500,33500,35000], borderColor: '#7c3aed', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#7c3aed', tension: 0.3, fill: false }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#718096' } },
+          y: { grid: { color: '#eef2f7' }, ticks: { font: { size: 9 }, color: '#718096', callback: v => (v/1000).toFixed(0)+'K' }, min: 28000, max: 40000 }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
